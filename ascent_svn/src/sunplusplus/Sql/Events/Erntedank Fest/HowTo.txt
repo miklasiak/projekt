@@ -1,0 +1,5 @@
+1. Zum Event starten "Erntedank_Spawn.sql" batchen.
+
+2. Zum Beenden des Events "Erntedank_Remove.sql" batchen.
+
+
