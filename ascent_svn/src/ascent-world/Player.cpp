@@ -9140,8 +9140,8 @@ void Player::_UpdateMaxSkillCounts()
 		}
 
 		// force to be within limits
-		if (new_max > 375)
-			new_max = 375;
+		if (new_max > 1275)
+			new_max = 1275;
 		if (new_max < 1)
 			new_max = 1;
 

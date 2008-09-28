@@ -59,7 +59,7 @@
  * Also, it only works for parties. Custom chat channels are not fully supported yet.
  * However, if you want to play around with it, feel free to enable this define.
  */
-//#define VOICE_CHAT 1
+#define VOICE_CHAT 1
 
 /** Enable/disable movement compression.
  * This allows the server to compress long-range creatures movement into a buffer and then flush
