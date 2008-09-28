@@ -1,6 +1,6 @@
-// Major Updates, Fixes, and Core by Nebels
-// Some help by insanesk8123 <3
-// Version 3.0
+//Title of Script: SkillNPC
+//Description of Script: Adds the players their skills
+//Original Script Author: Arotho
 
 #include "StdAfx.h"
 #include "Setup.h"

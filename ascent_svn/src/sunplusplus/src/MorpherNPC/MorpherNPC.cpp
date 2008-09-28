@@ -1,7 +1,7 @@
 //Title of Script: Morpher NPC
-//Author of this script: Soul02
-//Morphs ID List: Aspire Team
-//Thankyou Jmulhern345 of Mmowned for posting the MorphsID.txt DL link
+//Description of the Script: Morphs a Player over an NPC
+//Original Script Author: Arotho
+
 
 #include "StdAfx.h"
 #include "Setup.h"

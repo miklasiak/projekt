@@ -1,3 +1,6 @@
+//Title of Script: antiPVP
+//Description of Script: Teleports a player who makes PVP in an identified area
+//Original Script Author: Arotho
 #include "StdAfx.h"
 #include "Setup.h"
 void EventKillHandler(Player * pPlayer, Player * pVictim)

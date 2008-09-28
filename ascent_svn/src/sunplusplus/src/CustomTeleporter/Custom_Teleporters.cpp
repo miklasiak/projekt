@@ -1,3 +1,6 @@
+//Title of Script: Custom Teleporter
+//Description of Script: Teleports a player by an npc coordinates can be insered in the database
+//Original Script Author: Arotho
 #include "StdAfx.h"
 #include "Setup.h"
 #include <iostream>

@@ -1,4 +1,6 @@
-// Script By Miraculix
+//Title of Script: WarpNPC
+//Description of Script: Teleports a Player to different Locations
+//Original Script Author: Arotho
 
 #include "StdAfx.h"
 #include "Setup.h"
@@ -28,7 +30,7 @@ void WarpNPC::GossipHello(Object * pObject, Player* Plr, bool AutoSend)
 			Menu->AddItem(0, "Allianz Gebiete", 4); }
 			Menu->AddItem(0, "Neutrale Gebiete", 5);
 			Menu->AddItem(0, "Instanzen", 22);
-			//Menu->AddItem(5, "Shattrath", 6);
+			Menu->AddItem(5, "Shattrath", 6);
 			Menu->AddItem(5, "Gurubashi Arena", 7);
 			Menu->AddItem(9, "Meine Besonderen F\303\244higkeiten", 8);
 
@@ -192,11 +194,11 @@ GossipMenu * Menu;
 				}
 				break;
 				
-		/*case 6: // Shattrath
+		case 6: // Shattrath
 				{
 					Plr->EventTeleport(530, -1523.40, 5312.05, 9.0066);
 				}
-				break;*/
+				break;
 				
 		case 18: // Booty bay
 				{
@@ -243,7 +245,7 @@ GossipMenu * Menu;
 			Menu->AddItem(0, "Allianz Gebiete", 4); }
 			Menu->AddItem(0, "Neutrale Gebiete", 5);
 			Menu->AddItem(0, "Instanzen", 22);
-			//Menu->AddItem(5, "Shattrath", 6);
+			Menu->AddItem(5, "Shattrath", 6);
 			Menu->AddItem(5, "Gurubashi Arena", 7);
 			Menu->AddItem(9, "Meine Besonderen F\303\244higkeiten", 8);
 					Menu->SendTo(Plr);

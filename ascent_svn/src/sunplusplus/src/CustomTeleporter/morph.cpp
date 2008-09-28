@@ -1,9 +1,6 @@
 //Title of Script: Portable Morpher
 //Description of Script: Morphs the player into a few different creatures using a item.
-//Original Script Author: Aldaus
-//Author of this mod: Spartansp
-//Credits: Aldaus for the First Script
-
+//Original Script Author: Arotho
 #include "StdAfx.h"
 #include "Setup.h"
 

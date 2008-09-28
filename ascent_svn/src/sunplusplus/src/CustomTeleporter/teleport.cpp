@@ -1,7 +1,6 @@
 //Title of Script: Portable Teleporter
 //Description of Script: Teleports people to diferent locations.
-//Author: Spartansp
-//Credits: To Aldaus for original script changed by me though.
+//Original Script Author: Arotho
 
     #include "StdAfx.h"
     #include "Setup.h"

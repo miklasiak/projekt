@@ -1,8 +1,6 @@
-//Made by ???
-//Modified by WigSplitta whole code
-//Re-Modified by HalestormXV (Added More Features)
-//Random Dice Concept to Kuraria for Helping me
-
+//Title of Script: PVP System
+//Description of Script: PVP System
+//Original Script Author: Arotho
 
 #include "StdAfx.h"
 
