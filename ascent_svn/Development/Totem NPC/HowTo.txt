@@ -1,0 +1,10 @@
+COPYRIGht by Neo
+
+HowTo:
+
+das in Totems.lua umändern!
+
+Local NpcID = Id Eueres NpC's
+
+RegisterUnitGossipEvent(NpcID, 1, "Totem_ongossiptalk")
+RegisterUnitGossipEvent(NpcID, 2, "Totem_ongossipselect")
