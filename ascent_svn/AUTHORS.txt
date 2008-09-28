@@ -1,0 +1,5 @@
+List of Evolution-Core Developers:
+
+Nirual (Leader)
+Arotho (C++ Scripter and mySQL)
+Ivory (mySQL and VB Scripter)
