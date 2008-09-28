@@ -2484,7 +2484,7 @@ protected:
 void SetupZulAman(ScriptMgr * mgr)
 {
 	mgr->register_creature_script(CN_NALORAKK, &NalorakkAI::Create);
-	/*mgr->register_creature_script(CN_AKILZON, &AKILZONAI::Create);
+	mgr->register_creature_script(CN_AKILZON, &AKILZONAI::Create);
 	mgr->register_creature_script(CN_HALAZZI, &HALAZZIAI::Create);
 	mgr->register_creature_script(CN_JANALAI, &JANALAIAI::Create);
 	mgr->register_creature_script(CN_HEX_LORD_MALACRASS, &HEXLORDMALACRASSAI::Create);
@@ -2500,5 +2500,5 @@ void SetupZulAman(ScriptMgr * mgr)
 	mgr->register_creature_script(CN_FENSTALKER, &FENSTALKERAI::Create);
 	mgr->register_creature_script(CN_ALYSON_ANTILLE, &ALYSONANTILLEAI::Create);
 	mgr->register_creature_script(CN_KORAGG, &KORAGGAI::Create);
-	mgr->register_creature_script(CN_FEATHER_VORTEX, &FEATHERVORTEXAI::Create);*/
+	mgr->register_creature_script(CN_FEATHER_VORTEX, &FEATHERVORTEXAI::Create);
 }
