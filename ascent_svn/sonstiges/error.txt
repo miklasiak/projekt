@@ -1,0 +1,290 @@
+1>------ Build started: Project: WarpNPC, Configuration: Release Win32 ------
+2>------ Build started: Project: PVPSystem, Configuration: Release Win32 ------
+1>Compiling...
+2>Compiling...
+2>pvpsystem.cpp
+1>cl : Command line warning D9035 : option 'Wp64' has been deprecated and will be removed in a future release
+1>WarpNPC.cpp
+1>Setup.cpp
+2>Linking...
+2>LINK : warning LNK4224: /OPT:NOWIN98 is no longer supported;  ignored
+2>   Creating library ..\..\..\bin\debug\script_bin/CustomTeleporter.lib and object ..\..\..\bin\debug\script_bin/CustomTeleporter.exp
+2>Generating code
+2>Finished generating code
+2>Embedding manifest...
+2>Build log was saved at "file://d:\evo_svn\src\sunplusplus\projects\2008_int_release_PVPSystem\BuildLog.htm"
+2>PVPSystem - 0 error(s), 1 warning(s)
+3>------ Build started: Project: CustomTeleporter, Configuration: Release Win32 ------
+3>Compiling...
+3>teleport.cpp
+1>Generating Code...
+1>Linking...
+1>   Creating library ..\..\..\bin\Release\script_bin/WarpNPC.lib and object ..\..\..\bin\Release\script_bin/WarpNPC.exp
+1>Linking...
+1>   Creating library ..\..\..\bin\Release\script_bin/WarpNPC.lib and object ..\..\..\bin\Release\script_bin/WarpNPC.exp
+1>Embedding manifest...
+1>Build log was saved at "file://d:\evo_svn\src\sunplusplus\projects\Release\BuildLog.htm"
+1>WarpNPC - 0 error(s), 1 warning(s)
+4>------ Build started: Project: ExtraScripts, Configuration: Release Win32 ------
+4>Compiling...
+4>cl : Command line warning D9035 : option 'Wp64' has been deprecated and will be removed in a future release
+4>NeutralGuards.cpp
+3>..\src\CustomTeleporter\teleport.cpp(56) : warning C4101: 'Menu' : unreferenced local variable
+4>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+4>Setup.cpp
+3>skillnpc.cpp
+4>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+4>Generating Code...
+4>Build log was saved at "file://d:\evo_svn\src\sunplusplus\projects\2003_int_release\BuildLog.htm"
+4>ExtraScripts - 2 error(s), 1 warning(s)
+5>------ Build started: Project: LUAScripting, Configuration: Release Win32 ------
+5>Compiling...
+5>cl : Command line warning D9035 : option 'Wp64' has been deprecated and will be removed in a future release
+5>LUAEngine.cpp
+3>morph.cpp
+5>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+5>Build log was saved at "file://d:\evo_svn\src\sunplusplus\projects\2008_int_release_LUAScripting\BuildLog.htm"
+5>LUAScripting - 1 error(s), 1 warning(s)
+6>------ Build started: Project: SunMiscScripts, Configuration: Release Win32 ------
+6>Compiling...
+6>RandomScripts.cpp
+3>..\src\CustomTeleporter\morph.cpp(51) : warning C4101: 'Menu' : unreferenced local variable
+6>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+6>QuelDanasPortal.cpp
+3>Custom_Teleporters.cpp
+3>..\src\CustomTeleporter\Custom_Teleporters.cpp(132) : warning C4018: '<' : signed/unsigned mismatch
+3>..\src\CustomTeleporter\Custom_Teleporters.cpp(133) : warning C4018: '>' : signed/unsigned mismatch
+6>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+6>GameObjects.cpp
+3>Setup.cpp
+6>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+6>DarkmoonFaireObjects.cpp
+6>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+6>Creatures.cpp
+3>Linking...
+3>LINK : warning LNK4224: /OPT:NOWIN98 is no longer supported;  ignored
+6>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+6>Setup.cpp
+6>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+6>Generating Code...
+6>Build log was saved at "file://d:\evo_svn\src\sunplusplus\projects\2003_int_release_Sunmiscscripts\BuildLog.htm"
+6>SunMiscScripts - 6 error(s), 0 warning(s)
+7>------ Build started: Project: SunQuestScripts, Configuration: Release Win32 ------
+7>Compiling...
+7>Zenn_Foulhoof.cpp
+3>   Creating library ..\..\..\bin\debug\script_bin/CustomTeleporter.lib and object ..\..\..\bin\debug\script_bin/CustomTeleporter.exp
+3>Generating code
+3>d:\evo_svn\src\sunplusplus\src\customteleporter\custom_teleporters.cpp(180) : warning C4715: 'Warper::ProcessEntryData' : not all control paths return a value
+3>Finished generating code
+3>Embedding manifest...
+3>Build log was saved at "file://d:\evo_svn\src\sunplusplus\projects\2008_int_release_CustomTeleporter\BuildLog.htm"
+3>CustomTeleporter - 0 error(s), 6 warning(s)
+8>------ Build started: Project: ServerStatusPlugin, Configuration: Release Win32 ------
+8>Compiling...
+8>ServerStatusPlugin.cpp
+7>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+7>Zangarmarsh.cpp
+8>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+8>Build log was saved at "file://d:\evo_svn\src\sunplusplus\projects\2003_int_release_statusplugin\BuildLog.htm"
+8>ServerStatusPlugin - 1 error(s), 0 warning(s)
+9>------ Build started: Project: SunGossipScripts, Configuration: Release Win32 ------
+9>Compiling...
+9>Gossip_Trainer.cpp
+7>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+7>Westfall.cpp
+9>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+9>Gossip_Tanaris.cpp
+7>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+7>UnGoro.cpp
+9>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+9>Gossip_Stormwind.cpp
+7>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+7>Undercity.cpp
+9>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+9>Gossip_Shattrath.cpp
+7>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+7>TirisfalGlades.cpp
+9>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+9>Gossip_Mulgore.cpp
+7>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+7>ThousandNeedles.cpp
+9>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+9>Gossip_Moonglade.cpp
+7>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+7>The_Barrens.cpp
+9>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+9>Gossip_Innkeepers.cpp
+7>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+7>Terrokar_Forest.cpp
+9>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+9>Gossip_Guard.cpp
+7>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+7>Tanaris.cpp
+9>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+9>Gossip_DarkmoonFaire.cpp
+7>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+7>StranglethornVale.cpp
+9>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+9>Gossip_Battlemaster.cpp
+7>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+7>Stormwind.cpp
+9>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+9>Setup.cpp
+7>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+7>Silverpine_Forest.cpp
+9>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+9>Generating Code...
+9>Build log was saved at "file://d:\evo_svn\src\sunplusplus\projects\2003_int_release_Sungossipscripts\BuildLog.htm"
+9>SunGossipScripts - 11 error(s), 0 warning(s)
+10>------ Build started: Project: SunSpellHandlers, Configuration: Release Win32 ------
+10>Compiling...
+10>WarriorSpells.cpp
+7>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+7>SilvermoonCity.cpp
+10>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+10>WarlockSpells.cpp
+7>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+7>ShadowMoon.cpp
+10>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+10>ShamanSpells.cpp
+7>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+7>RedridgeMountains.cpp
+10>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+10>RogueSpells.cpp
+7>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+7>Old_Hillsbrad.cpp
+10>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+10>Raid_BlackTemple.cpp
+7>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+7>Netherstorm.cpp
+10>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+10>QIspells.cpp
+7>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+7>Nagrand.cpp
+10>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+10>PriestSpells.cpp
+7>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+7>Mulgore.cpp
+10>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+10>PaladinSpells.cpp
+7>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+7>Generating Code...
+7>Compiling...
+7>LochModan.cpp
+10>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+10>OldSpellCPPStuff.cpp
+7>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+7>Isle_of_QuelDanas.cpp
+10>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+10>MageSpells.cpp
+7>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+7>HillsbradFoothills.cpp
+10>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+10>ItemSpells_1.cpp
+7>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+7>Hellfire_Peninsula.cpp
+10>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+10>HunterSpells.cpp
+7>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+7>Ghostlands.cpp
+10>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+10>DruidSpells.cpp
+7>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+7>Eastern_Plaguelands.cpp
+10>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+10>Setup.cpp
+7>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+7>Dustwallow_Marsh.cpp
+10>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+10>Generating Code...
+10>Build log was saved at "file://d:\evo_svn\src\sunplusplus\projects\2003_int_release_Sunspellhandlers\BuildLog.htm"
+10>SunSpellHandlers - 14 error(s), 0 warning(s)
+11>------ Build started: Project: SunInstanceScripts, Configuration: Release Win32 ------
+11>Compiling...
+11>Raid_ZulGurub.cpp
+11>Raid_ZulAman.cpp
+7>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+7>Desolace.cpp
+11>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+11>Raid_WorldBosses.cpp
+11>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+11>Raid_TheEye.cpp
+7>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+7>Darkshore.cpp
+7>BloodmystIsle.cpp
+11>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+11>Raid_SunwellPlateau.cpp
+11>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+11>Raid_SerpentshrineCavern.cpp
+7>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+7>BlastedLands.cpp
+11>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+11>Raid_OnyxiasLair.cpp
+11>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+11>Raid_Naxxramas.cpp
+7>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+7>BladeEdge_Mountains.cpp
+11>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+11>Raid_MoltenCore.cpp
+11>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+11>Raid_Magtheridons_Lair.cpp
+11>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+11>Raid_Karazhan.cpp
+7>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+7>Azuremyst_Isle.cpp
+11>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+11>Raid_GruulsLair.cpp
+11>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+11>Raid_CoT_BattleOfMountHyjal.cpp
+7>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+7>Azshara.cpp
+11>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+11>Raid_BlackwingLair.cpp
+11>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+11>Raid_BlackTemple.cpp
+7>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+7>ArathiHighlands.cpp
+11>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+11>Instance_WailingCaverns.cpp
+11>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+11>Instance_Uldaman.cpp
+7>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+11>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+11>Instance_TheUnderbog.cpp
+7>FirstAid.cpp
+11>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+11>Instance_TheStockade.cpp
+11>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+11>Instance_TheSteamvault.cpp
+7>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+7>Warrior.cpp
+11>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+11>Instance_TheSlavePens.cpp
+11>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+11>Instance_TheShatteredHalls.cpp
+7>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+7>Paladin.cpp
+11>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+11>Instance_TheMechanar.cpp
+11>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+11>Instance_ShadowLabyrinth.cpp
+7>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+7>Mage.cpp
+11>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+11>Instance_ShadowfangKeep.cpp
+11>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+11>Instance_SethekkHalls.cpp
+7>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+7>Druid.cpp
+11>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+11>Instance_Scholomance.cpp
+11>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+11>Instance_ScarletMonastery.cpp
+7>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+7>Generating Code...
+7>Compiling...
+7>Unsorted.cpp
+11>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+11>Instance_RazorfenDowns.cpp
+11>d:\evo_svn\src\ascent-shared\vmap\AABSPTree.h(17) : fatal error C1083: Cannot open include file: 'G3D/platform.h': No such file or directory
+11>Instance_RagefireChasm.cpp
