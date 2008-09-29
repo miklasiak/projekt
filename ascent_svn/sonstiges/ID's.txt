@@ -1,0 +1,5 @@
+morphitem id: 200000
+skill npc: 200000
+teleport npc: 200001
+morph npc: 200002
+warp npc2: 200003

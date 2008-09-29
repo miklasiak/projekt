@@ -1,6 +1,5 @@
-
-r63
-- changed antipvp project
+r64
+- Added NPC and Item ID's
 ------------------------------------------------------------------------------------
 r62
 - made actuel changelog
