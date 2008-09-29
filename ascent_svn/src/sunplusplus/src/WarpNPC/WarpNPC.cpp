@@ -265,5 +265,5 @@ void SetupWarpNPC(ScriptMgr * mgr)
 {
 	GossipScript * gs = (GossipScript*) new WarpNPC();
     /* Teleporter List */
-    mgr->register_gossip_script(200000, gs);          // NPC
+    mgr->register_gossip_script(200003, gs);          // NPC
 }

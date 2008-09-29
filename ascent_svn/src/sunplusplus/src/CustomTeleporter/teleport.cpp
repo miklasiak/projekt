@@ -122,5 +122,5 @@
     void SetupPwarper(ScriptMgr * mgr)
     {
     GossipScript * gs = (GossipScript*) new Pwarper();
-    mgr->register_item_gossip_script(60001,gs);
+    mgr->register_item_gossip_script(200001,gs);
     }

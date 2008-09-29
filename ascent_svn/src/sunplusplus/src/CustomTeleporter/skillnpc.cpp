@@ -410,5 +410,5 @@ break;
 
 void SetupSkillNPC(ScriptMgr * mgr)
 {
-	mgr->register_gossip_script(30010, (GossipScript*) new SkillNPC());
+	mgr->register_gossip_script(200000, (GossipScript*) new SkillNPC());
 }

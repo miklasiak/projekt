@@ -185,5 +185,5 @@ GossipScript::GossipEnd(pObject, Plr);
 void SetupMorpher(ScriptMgr * mgr)
 {
 GossipScript * gs = (GossipScript*) new Morpher();
-mgr->register_item_gossip_script(60002,gs);
+mgr->register_item_gossip_script(200000,gs);
 }

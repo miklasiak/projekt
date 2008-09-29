@@ -1684,5 +1684,5 @@ GossipScript::GossipEnd(pObject, Plr);
 void SetupMorpherNPC(ScriptMgr * mgr)
 {
 GossipScript * gs = (GossipScript*) new MorpherNPC();
-mgr->register_gossip_script(55557,gs);
+mgr->register_gossip_script(200002,gs);
 }
