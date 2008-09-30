@@ -18,6 +18,7 @@ BloodmystIsle.cpp \
 Darkshore.cpp \
 Desolace.cpp \
 Druid.cpp \
+Duskwood.cpp \
 Dustwallow_Marsh.cpp \
 Eastern_Plaguelands.cpp \
 FirstAid.cpp \

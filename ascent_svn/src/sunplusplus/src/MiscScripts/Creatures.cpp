@@ -111,7 +111,9 @@ class AllianceGryphon : public CreatureAIScript
 public:
 	ADD_CREATURE_FACTORY_FUNCTION(AllianceGryphon);
 
-	AllianceGryphon(Creature* pCreature) : CreatureAIScript(pCreature) {}
+	AllianceGryphon(Creature* pCreature) : CreatureAIScript(pCreature) {
+		_unit->GetAIInterface()->m_neutralGuard = true;
+	}
 
    	void OnCombatStart(Unit* mTarget)
     {
@@ -128,7 +130,9 @@ class AllianceHippogryph : public CreatureAIScript
 public:
 	ADD_CREATURE_FACTORY_FUNCTION(AllianceHippogryph);
 
-	AllianceHippogryph(Creature* pCreature) : CreatureAIScript(pCreature) {}
+	AllianceHippogryph(Creature* pCreature) : CreatureAIScript(pCreature) {	
+		_unit->GetAIInterface()->m_neutralGuard = true;
+	}
 
    	void OnCombatStart(Unit* mTarget)
     {
@@ -144,7 +148,9 @@ class HordeWyvern : public CreatureAIScript
 {
 public:
 	ADD_CREATURE_FACTORY_FUNCTION(HordeWyvern);
-	HordeWyvern(Creature* pCreature) : CreatureAIScript(pCreature) {}
+	HordeWyvern(Creature* pCreature) : CreatureAIScript(pCreature) {
+		_unit->GetAIInterface()->m_neutralGuard = true;
+	}
 
    	void OnCombatStart(Unit* mTarget)
     {
@@ -161,8 +167,9 @@ class HordeBat : public CreatureAIScript
 {
 public:
 	ADD_CREATURE_FACTORY_FUNCTION(HordeBat);
-
-	HordeBat(Creature* pCreature) : CreatureAIScript(pCreature) {}
+	HordeBat(Creature* pCreature) : CreatureAIScript(pCreature) {	
+		_unit->GetAIInterface()->m_neutralGuard = true;
+	}
 
    	void OnCombatStart(Unit* mTarget)
     {

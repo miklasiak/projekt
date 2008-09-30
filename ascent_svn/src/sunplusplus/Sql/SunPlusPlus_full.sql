@@ -434,6 +434,9 @@ DELETE FROM `creature_proto` WHERE `entry` = '51000';
 INSERT INTO `creature_names` (`entry`,`name`,`subname`,`info_str`,`spelldataid`,`male_displayid`,`female_displayid`,`male_displayid2`,`civilian`,`leader`) VALUES ('51000','The Tale of Neltharaku Credit','','','0','0','0','0','0','0');
 INSERT INTO `creature_proto` (`entry`,`minlevel`,`maxlevel`,`faction`,`minhealth`,`maxhealth`,`auras`,`invisibility_type`,`death_state`) VALUES ('51000','1','1','35','1','1','','0','0');
 UPDATE `quests` SET `ObjectiveText1`='The Tale of Neltharaku',`ReqKillMobOrGOId1`='51000',`ReqKillMobOrGOCount1`='1' WHERE `entry`='10814';
+-- Eliza related
+UPDATE `quests` SET `IsRepeatable`='1' WHERE `entry`='254';
+DELETE FROM `creature_spawns` WHERE `entry` in ( 314, 1871 );
 
 -- [LUA] Kil'Jaeden Query.
 REPLACE INTO `creature_proto` (`entry`,`minlevel`,`maxlevel`,`faction`,`minhealth`,`maxhealth`,`mana`,`scale`,`attacktime`,`attacktype`,`mindamage`,`maxdamage`,`combat_reach`,`bounding_radius`,`auras`,`invisibility_type`,`death_state`) VALUES ('60000','71','71','14','10000','10000','32000','1','2000','0','1','1','1','1','','0','0');

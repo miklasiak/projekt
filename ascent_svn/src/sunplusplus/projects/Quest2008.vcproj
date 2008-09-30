@@ -454,6 +454,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\src\QuestScripts\Duskwood.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\src\QuestScripts\Dustwallow_Marsh.cpp"
 					>
 				</File>

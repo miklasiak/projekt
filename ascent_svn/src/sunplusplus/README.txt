@@ -21,11 +21,11 @@ Sun++ Team, July 2008
 
 How to install Sun++ scripts:
 
-1) Make sure to compile the LATEST ArcEmu revisions. Leave a copy of the
-compiled emulator in the ArcEmu/bin/release folder. The scripts will need
+1) Make sure to compile the LATEST Ascent revisions. Leave a copy of the
+compiled emulator in the Ascent/bin/release folder. The scripts will need
 these files to compile.
 
-2) Create a directory called SunScripts or Sun++ inside your ArcEmu/src folder. 
+2) Create a directory called SunScripts or Sun++ inside your Ascent/src folder. 
 
 3) Check out this folder (http://svn.assembla.com/svn/sunplusplus/Trunk) into the 
 newly created SunScripts folder.

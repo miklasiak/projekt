@@ -481,7 +481,10 @@ bool BurnItUp(uint32 i, Spell* pSpell)
 
 	if ( pQuest->GetMobCount( 0 ) < pQuest->GetQuest()->required_mobcount[0] )
 	{
-		GameObject *pEastern = pPlayer->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords( -300.0f, 2407.0f, 50.0f, 185122 );
+		GameObject *pEastern = pPlayer->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords( -300.0f, 2407.0f, 50.0f, 183122 );
+		if( pEastern == NULL )
+			pEastern = pPlayer->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords( -300.0f, 2407.0f, 50.0f, 185122 );
+
 		if ( pEastern != NULL && pPlayer->CalcDistance( pPlayer, pEastern ) < 30 )
 		{
 			pQuest->SetMobCount( 0, pQuest->GetMobCount( 0 ) + 1 );
@@ -500,7 +503,10 @@ bool BurnItUp(uint32 i, Spell* pSpell)
 
 	if ( pQuest->GetMobCount( 1 ) < pQuest->GetQuest()->required_mobcount[1] )
 	{
-		GameObject *pWestern = pPlayer->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords( -350.0f, 2708.0f, 35.0f, 185122 );
+		GameObject *pWestern = pPlayer->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords( -350.0f, 2708.0f, 35.0f, 183122 );
+		if( pWestern == NULL )
+			pWestern = pPlayer->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords( -300.0f, 2407.0f, 50.0f, 185122 );
+
 		if ( pWestern != NULL && pPlayer->CalcDistance( pPlayer, pWestern ) < 30 )
 		{
 			pQuest->SetMobCount( 1, pQuest->GetMobCount( 1 ) + 1 );

@@ -39,6 +39,7 @@ void SetupBlastedLands(ScriptMgr * mgr);
 void SetupBloodmystIsle(ScriptMgr * mgr);
 //void SetupDarkshore(ScriptMgr * mgr)
 void SetupDesolace(ScriptMgr * mgr);
+void SetupDuskwood(ScriptMgr * mgr);
 void SetupDustwallowMarsh(ScriptMgr * mgr);
 void SetupEasternPlaguelands(ScriptMgr * mgr);
 void SetupGhostlands(ScriptMgr * mgr);

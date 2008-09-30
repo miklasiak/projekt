@@ -47,6 +47,7 @@ extern "C" SCRIPT_DECL void _exp_script_register(ScriptMgr* mgr)
 	SetupBloodmystIsle(mgr);
 	//SetupDarkshore(mgr);
 	SetupDesolace(mgr);
+	SetupDuskwood(mgr);
 	SetupDustwallowMarsh(mgr);
 	SetupEasternPlaguelands(mgr);
 	SetupGhostlands(mgr);

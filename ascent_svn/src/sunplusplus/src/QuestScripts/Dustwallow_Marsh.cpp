@@ -138,7 +138,6 @@ public:
 
 	void OnLoad()
 	{
-		_unit->SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, 23);
 		_unit->SetStandState(STANDSTATE_STAND);
 	}
 

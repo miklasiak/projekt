@@ -1039,30 +1039,21 @@ public:
 
 /*--------------------------------------------------------------------------------------------------------*/
 
-class Kindness : public GameObjectAIScript
+class HealingTheLake : public GameObjectAIScript
 {
 public:
-	Kindness(GameObject* goinstance) : GameObjectAIScript(goinstance) {}
-	static GameObjectAIScript *Create(GameObject * GO) { return new Kindness(GO); }
+	HealingTheLake(GameObject* goinstance) : GameObjectAIScript(goinstance) {}
+	static GameObjectAIScript *Create(GameObject * GO) { return new HealingTheLake(GO); }
 
-	void OnSpawn()
+	void OnActivate(Player * pPlayer)
 	{
-		Player *plr = _gameobject->GetMapMgr()->GetInterface()->GetPlayerNearestCoords(_gameobject->GetPositionX(), _gameobject->GetPositionY(), _gameobject->GetPositionZ());
-
-		Creature * netherdrake = _gameobject->GetMapMgr()->GetInterface()->GetCreatureNearestCoords(_gameobject->GetPositionX(), _gameobject->GetPositionY(), _gameobject->GetPositionZ(), 21648);
-		if(netherdrake)
+		QuestLogEntry *pQuest = pPlayer->GetQuestLogForEntry(181433);
+		if(pQuest && pQuest->GetMobCount(0) < pQuest->GetQuest()->required_mobcount[0])
 		{
-			netherdrake->SetPosition(_gameobject->GetPositionX(), _gameobject->GetPositionY(), _gameobject->GetPositionZ(), _gameobject->GetOrientation(), false);
-			QuestLogEntry *qle = plr->GetQuestLogForEntry(10804);
-			if(qle && qle->GetMobCount(0) < qle->GetQuest()->required_mobcount[0])
-			{
-				qle->SetMobCount(0, qle->GetMobCount(0)+1);
-				qle->SendUpdateAddKill(0);
-				qle->UpdatePlayerFields();
-			}
+			pQuest->SetMobCount(0, 1);
+			pQuest->SendUpdateAddKill(0);
+			pQuest->UpdatePlayerFields();
 		}
-		sEAS.GameobjectDelete(_gameobject, 30*1000);
-
 	}
 };
 
@@ -1158,8 +1149,8 @@ void SetupGoHandlers(ScriptMgr * mgr)
 	mgr->register_gameobject_script(180672, &TheRootofAllEvil::Create);
 	mgr->register_gameobject_script(184729, &TheThunderspike::Create);
 	mgr->register_gameobject_script(181849, &StrengthofOne::Create);
-	mgr->register_gameobject_script(185155, &Kindness::Create);
 	mgr->register_gameobject_script(187428, &OrbOfTransLocQuelLower::Create);
 	mgr->register_gameobject_script(187431, &OrbOfTransLocQuelTop::Create);
 	mgr->register_gameobject_script(188173, &OrbSunwell::Create);
+	mgr->register_gameobject_script(181433, &HealingTheLake::Create);
 }
