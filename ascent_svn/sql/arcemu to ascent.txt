@@ -1,0 +1,57 @@
+-- Characters
+ALTER TABLE characters DROP COLUMN `finisheddailies`;
+
+-- Creature_proto
+ALTER TABLE creature_proto DROP COLUMN `spell1`;
+ALTER TABLE creature_proto DROP COLUMN `spell2`;
+ALTER TABLE creature_proto DROP COLUMN `spell3`;
+ALTER TABLE creature_proto DROP COLUMN `spell4`;
+ALTER TABLE creature_proto DROP COLUMN `spell_flags`;
+
+-- Creature_spawns
+ALTER TABLE creature_spawns DROP COLUMN `bytes2`;
+ALTER TABLE creature_spawns CHANGE `bytes0` `bytes` int(30) NOT NULL DEFAULT '0';
+ALTER TABLE creature_spawns CHANGE `bytes1` `bytes2` int(30) NOT NULL DEFAULT '0';
+
+-- Creature_staticspawns
+ALTER TABLE creature_staticspawns DROP COLUMN `bytes2`;
+ALTER TABLE creature_staticspawns CHANGE `bytes0` `bytes` int(30) NOT NULL DEFAULT '0';
+ALTER TABLE creature_staticspawns CHANGE `bytes1` `bytes2` int(30) NOT NULL DEFAULT '0';
+
+-- Gm_tickets
+ALTER TABLE gm_tickets DROP COLUMN `playerGuid`;
+ALTER TABLE gm_tickets DROP COLUMN `map`;
+ALTER TABLE gm_tickets DROP COLUMN `deleted`;
+ALTER TABLE gm_tickets DROP COLUMN `assignedto`;
+ALTER TABLE gm_tickets DROP COLUMN `comment`;
+ALTER TABLE gm_tickets ADD COLUMN `type` int(2) DEFAULT '0' AFTER `level`;
+
+-- Groups
+ALTER TABLE groups DROP COLUMN `instanceids`;
+
+-- Instances
+ALTER TABLE instances DROP COLUMN `persistent`;
+
+-- Playerpets
+ALTER TABLE playerpets DROP COLUMN `reset_time`;
+ALTER TABLE playerpets DROP COLUMN `reset_cost`;
+
+-- Spellfixes
+ALTER TABLE spellfixes DROP COLUMN `groupRelation0`;
+ALTER TABLE spellfixes DROP COLUMN `groupRelation1`;
+ALTER TABLE spellfixes DROP COLUMN `groupRelation2`;
+
+-- Vendors
+REPLACE INTO items_extendedcost ( `ItemId`, `CostId` ) (SELECT `item`, `extended_cost` FROM vendors WHERE extended_cost > 0);
+ALTER TABLE vendors DROP COLUMN `extended_cost`;
+
+-- Unneeded Tables
+DROP TABLE `instance_bosses`;
+DROP TABLE `instanceids`;
+DROP TABLE `creature_timed_emotes`;
+DROP TABLE `professiondiscoveries`;
+DROP TABLE `unit_display_sizes`;
+
+-- Silly Hasbro
+ALTER TABLE playerpets DROP COLUMN `spellid`;
+DROP TABLE `playersummons`;
