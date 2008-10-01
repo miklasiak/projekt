@@ -1,3 +1,7 @@
+r71
+- added Character tables
+- added Logon tables
+------------------------------------------------------------------------------------
 r70
 - added Lost DB for ascent
 - added converter for arcemu to ascent database
