@@ -50,6 +50,7 @@ extern "C" SCRIPT_DECL void _exp_script_register(ScriptMgr* mgr)
 	SetupDuskwood(mgr);
 	SetupDustwallowMarsh(mgr);
 	SetupEasternPlaguelands(mgr);
+	SetupEversongWoods(mgr);
 	SetupGhostlands(mgr);
 	SetupHellfirePeninsula(mgr);
 	SetupHillsbradFoothills(mgr);

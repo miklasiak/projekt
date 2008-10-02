@@ -888,7 +888,7 @@ void MoonScriptCreatureAI::AIUpdate()
 	}
 
 	//Check if we have a spell scheduled to be cast
-	for( SpellDescList::iterator SpellIter = mScheduledSpells.begin(); SpellIter != mScheduledSpells.end(); ++SpellIter )
+	for( SpellDescList::iterator SpellIter = mScheduledSpells.begin(); SpellIter != mScheduledSpells.end(); )
 	{
 		Spell = (*SpellIter);
 		if( CastSpellInternal(Spell, CurrentTime) )	//Can fail if we are already casting a spell, or if the spell is on cooldown
@@ -896,6 +896,8 @@ void MoonScriptCreatureAI::AIUpdate()
 			mScheduledSpells.erase(SpellIter);
 			break;
 		}
+		else
+			++SpellIter;
 	}
 
 	//Do not schedule spell if we are *currently* casting a non-instant cast spell

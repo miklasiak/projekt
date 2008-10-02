@@ -7646,7 +7646,8 @@ class IllidanStormrageAI : public MoonScriptBossAI
 			}
 		}
 
-		GameObject *pRightGate = _unit->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords(745.07f, 241.802f, 354.292f, 200000);
+		// commented - due to the creature not being in world when this is called, mapmgr == null -> access violation
+/*		GameObject *pRightGate = _unit->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords(745.07f, 241.802f, 354.292f, 200000);
 		GameObject *pLeftGate  = _unit->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords(744.829f, 369.276f, 354.324f, 200001);
 		if (pRightGate != NULL)
 		{
@@ -7655,7 +7656,7 @@ class IllidanStormrageAI : public MoonScriptBossAI
 		if (pLeftGate != NULL)
 		{
 			pLeftGate->SetUInt32Value(GAMEOBJECT_STATE, 0);
-		}
+		}*/
 
 		delete this;
 	}
