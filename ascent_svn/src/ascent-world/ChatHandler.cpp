@@ -550,13 +550,13 @@ void WorldSession::HandleTextEmoteOpcode( WorldPacket & recv_data )
 
 void WorldSession::HandleReportSpamOpcode(WorldPacket & recvPacket)
 {
-	CHECK_PACKET_SIZE(recvPacket, 29);
+	/*CHECK_PACKET_SIZE(recvPacket, 29);
 
     // the 0 in the out packet is unknown
     GetPlayer()->GetSession()->OutPacket(SMSG_REPORT_SPAM_RESPONSE, 1, 0 );
 
 	/* This whole thing is guess-work */
-	uint8 unk1;
+	/*uint8 unk1;
 	uint64 reportedGuid;
 	uint32 unk2;
 	uint32 messagetype;
@@ -567,6 +567,6 @@ void WorldSession::HandleReportSpamOpcode(WorldPacket & recvPacket)
 
 	Player * rPlayer = objmgr.GetPlayer((uint32)reportedGuid);
 	if(!rPlayer)
-		return;
+		return;*/
 
 }
