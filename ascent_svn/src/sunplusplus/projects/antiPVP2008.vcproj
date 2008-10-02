@@ -133,7 +133,7 @@
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="..\..\ascent-shared;..\..\ascent-world;..\..\..\dep\include;..\..\..\dep\src"
+				AdditionalIncludeDirectories="..\..\ascent-shared;..\..\ascent-shared\g3dlite;..\..\ascent-shared\vmap;..\..\ascent-world;..\..\..\dep\include;..\..\..\dep\src"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;SCRIPTLIB"
 				StringPooling="true"
 				RuntimeLibrary="2"

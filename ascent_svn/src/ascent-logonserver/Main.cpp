@@ -168,7 +168,7 @@ bool IsServerAllowedMod(unsigned int IP)
 bool Rehash()
 {
 #ifdef WIN32
-	char * config_file = "configs/ascent-logonserver.conf";
+	char * config_file = "ascent-logonserver.conf";
 #else
 	char * config_file = (char*)CONFDIR "/ascent-logonserver.conf";
 #endif
