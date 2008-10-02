@@ -37,31 +37,37 @@ void WSClient::OnRead()
 	{
 		if(!_cmd)
 		{
-			if(GetReadBufferSize() < 6)
+			if(GetReadBuffer().GetSize() < 6)
 				break;
 
-			Read(2, (uint8*)&_cmd);
-			Read(4, (uint8*)&_remaining);
+			GetReadBuffer().Read(&_cmd, 2);
+			GetReadBuffer().Read(&_remaining, 4);
 		}
 
-		if(_remaining && GetReadBufferSize() < _remaining)
+		if(_remaining && GetReadBuffer().GetSize() < _remaining)
 			break;
 
 		if(_cmd == ISMSG_WOW_PACKET)
 		{
 			/* optimized version for packet passing, to reduce latency! ;) */
-			uint32 sid = *(uint32*)&m_readBuffer[0];
-			uint16 op  = *(uint16*)&m_readBuffer[4];
-			uint32 sz  = *(uint32*)&m_readBuffer[6];			
+			uint32 sid = 0;
+			uint16 op = 0;
+			uint32 sz = 0;
+			GetReadBuffer().Read(&sid, 4);
+			GetReadBuffer().Read(&op, 2);
+			GetReadBuffer().Read(&sz, 4);
+			
 			WorldSession * session = sClusterInterface.GetSession(sid);
 			if(session != NULL)
 			{
 				WorldPacket * pck = new WorldPacket(op, sz);
-				pck->resize(sz);
-				memcpy((void*)pck->contents(), &m_readBuffer[10], sz);
+				if (sz > 0)
+				{
+					pck->resize(sz);
+					GetReadBuffer().Read((void*)pck->contents(), sz);
+				}
 				session->QueuePacket(pck);
 			}
-			RemoveReadBufferBytes(sz + 10/*header*/, false);
 			_cmd = 0;
 			continue;
 		}
@@ -69,18 +75,9 @@ void WSClient::OnRead()
 		WorldPacket * pck = new WorldPacket(_cmd, _remaining);
 		_cmd = 0;
 		pck->resize(_remaining);
-		Read(_remaining, (uint8*)pck->contents());
+		GetReadBuffer().Read((void*)pck->contents(), _remaining);
 
-		/* we could handle auth here */
-		switch(_cmd)
-		{
-		case ISMSG_AUTH_REQUEST:
-			sClusterInterface.HandleAuthRequest(*pck);
-			delete pck;
-			break;
-		default:
-			sClusterInterface.QueuePacket(pck);
-		}		
+		sClusterInterface.QueuePacket(pck);
 	}
 }
 
@@ -109,6 +106,12 @@ void WSClient::SendPacket(WorldPacket * data)
 
 	if(rv) BurstPush();
 	BurstEnd();
+}
+
+void WSClient::OnDisconnect()
+{
+	sClusterInterface.ConnectionDropped();
+	sSocketGarbageCollector.QueueSocket(this);
 }
 
 #endif

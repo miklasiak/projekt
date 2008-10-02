@@ -38,4 +38,8 @@ void replace(std::string &str, char* find, char* rep, uint32 limit = 0);
 volatile long Sync_Add(volatile long* value);
 volatile long Sync_Sub(volatile long* value);
 
+SERVER_DECL bool Rand(float chance);
+SERVER_DECL bool Rand(uint32 chance);
+SERVER_DECL bool Rand(int32 chance);
+
 #endif

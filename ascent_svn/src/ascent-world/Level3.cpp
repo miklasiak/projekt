@@ -604,12 +604,12 @@ bool ChatHandler::HandleNpcInfoCommand(const char *args, WorldSession *m_session
 	GreenSystemMessage(m_session, "Base Health: %d", crt->GetUInt32Value(UNIT_FIELD_BASE_HEALTH));
 	GreenSystemMessage(m_session, "Base Armor: %d", crt->GetUInt32Value(UNIT_FIELD_RESISTANCES));
 	GreenSystemMessage(m_session, "Base Mana: %d", crt->GetUInt32Value(UNIT_FIELD_MAXPOWER1));
-	GreenSystemMessage(m_session, "Base Holy: %d", crt->GetUInt32Value(UNIT_FIELD_RESISTANCES_01));
-	GreenSystemMessage(m_session, "Base Fire: %d", crt->GetUInt32Value(UNIT_FIELD_RESISTANCES_02));
-	GreenSystemMessage(m_session, "Base Nature: %d", crt->GetUInt32Value(UNIT_FIELD_RESISTANCES_03));
-	GreenSystemMessage(m_session, "Base Frost: %d", crt->GetUInt32Value(UNIT_FIELD_RESISTANCES_04));
-	GreenSystemMessage(m_session, "Base Shadow: %d", crt->GetUInt32Value(UNIT_FIELD_RESISTANCES_05));
-	GreenSystemMessage(m_session, "Base Arcane: %d", crt->GetUInt32Value(UNIT_FIELD_RESISTANCES_06));
+	GreenSystemMessage(m_session, "Base Holy: %d", crt->GetUInt32Value(UNIT_FIELD_RESISTANCES));
+	GreenSystemMessage(m_session, "Base Fire: %d", crt->GetUInt32Value(UNIT_FIELD_RESISTANCES_2));
+	GreenSystemMessage(m_session, "Base Nature: %d", crt->GetUInt32Value(UNIT_FIELD_RESISTANCES_3));
+	GreenSystemMessage(m_session, "Base Frost: %d", crt->GetUInt32Value(UNIT_FIELD_RESISTANCES_4));
+	GreenSystemMessage(m_session, "Base Shadow: %d", crt->GetUInt32Value(UNIT_FIELD_RESISTANCES_5));
+	GreenSystemMessage(m_session, "Base Arcane: %d", crt->GetUInt32Value(UNIT_FIELD_RESISTANCES_6));
 	GreenSystemMessage(m_session, "Damage min/max: %f/%f", crt->GetFloatValue(UNIT_FIELD_MINDAMAGE),crt->GetFloatValue(UNIT_FIELD_MAXDAMAGE));
 	
 	ColorSystemMessage(m_session, MSG_COLOR_RED, "Entry ID: %d", crt->GetUInt32Value(OBJECT_FIELD_ENTRY));
@@ -1203,7 +1203,7 @@ bool ChatHandler::HandleFlySpeedCheatCommand(const char* args, WorldSession* m_s
 	BlueSystemMessage(m_session, "Setting the fly speed of %s to %f.", plr->GetName(), Speed);
 	GreenSystemMessage(plr->GetSession(), "%s set your fly speed to %f.", m_session->GetPlayer()->GetName(), Speed);
 	
-	WorldPacket data(SMSG_FORCE_MOVE_SET_FLY_SPEED, 16);
+	WorldPacket data(SMSG_FORCE_FLIGHT_SPEED_CHANGE, 16);
 	data << plr->GetNewGUID();
 	data << uint32(0) << Speed;
 	plr->SendMessageToSet(&data, true);
@@ -2335,10 +2335,9 @@ bool ChatHandler::HandleGORotate(const char * args, WorldSession * m_session)
 	float rad = deg * (float(M_PI) / 180.0f);
 
 	// let's try rotation_0
-	go->ModFloatValue(GAMEOBJECT_ROTATION, rad);
-	go->ModFloatValue(GAMEOBJECT_ROTATION_01, rad);
-	go->ModFloatValue(GAMEOBJECT_ROTATION_02, rad);
-	go->ModFloatValue(GAMEOBJECT_ROTATION_03, rad);
+	go->ModFloatValue(GAMEOBJECT_PARENTROTATION, rad);
+	go->ModFloatValue(GAMEOBJECT_PARENTROTATION_2, rad);
+	go->ModFloatValue(GAMEOBJECT_PARENTROTATION_3, rad);
 	go->SaveToDB();
 
 	// despawn and respawn

@@ -221,7 +221,7 @@ void WorldSocket::OnConnect()
 void WorldSocket::_HandleAuthSession(WorldPacket* recvPacket)
 {
 	std::string account;
-	uint32 unk2;
+	uint32 unk2, unk3;
 	_latency = getMSTime() - _latency;
 
 	try
@@ -229,6 +229,7 @@ void WorldSocket::_HandleAuthSession(WorldPacket* recvPacket)
 		*recvPacket >> mClientBuild;
 		*recvPacket >> unk2;
 		*recvPacket >> account;
+		*recvPacket >> unk3;
 		*recvPacket >> mClientSeed;
 	}
 	catch(ByteBuffer::error &)
@@ -362,12 +363,10 @@ void WorldSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 req
 	else
 	{
 		sha.UpdateData(*m_fullAccountName);
-		
-		// this is unused now. we may as well free up the memory.
+
 		delete m_fullAccountName;
 		m_fullAccountName = NULL;
 	}
-
 	sha.UpdateData((uint8 *)&t, 4);
 	sha.UpdateData((uint8 *)&mClientSeed, 4);
 	sha.UpdateData((uint8 *)&mSeed, 4);
@@ -466,7 +465,9 @@ void WorldSocket::Authenticate()
 	//this is already aquired earlier in code
 	//pSession->deleteMutex.Acquire();
 
-	if(pSession->HasFlag(ACCOUNT_FLAG_XPACK_01))
+	if(pSession->HasFlag(ACCOUNT_FLAG_XPACK_02))
+		OutPacket(SMSG_AUTH_RESPONSE, 11, "\x0C\x30\x78\x00\x00\x00\x00\x00\x00\x00\x02");
+	else if(pSession->HasFlag(ACCOUNT_FLAG_XPACK_01))
 		OutPacket(SMSG_AUTH_RESPONSE, 11, "\x0C\x30\x78\x00\x00\x00\x00\x00\x00\x00\x01");
 	else
 		OutPacket(SMSG_AUTH_RESPONSE, 11, "\x0C\x30\x78\x00\x00\x00\x00\x00\x00\x00\x00");

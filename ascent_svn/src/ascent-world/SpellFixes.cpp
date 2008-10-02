@@ -19,6 +19,10 @@
 
 #include "StdAfx.h"
 
+/// externals for spell system
+extern pSpellEffect SpellEffectsHandler[TOTAL_SPELL_EFFECTS];
+extern pSpellAura SpellAuraHandler[TOTAL_SPELL_AURAS];
+
 void CreateDummySpell(uint32 id)
 {
 	const char * name = "Dummy Trigger";
@@ -10308,20 +10312,13 @@ void ApplyNormalFixes()
 				talentSpells.insert(make_pair(tal->RankID[j], tal->TalentTree));
 	}
 
+	//log spell errors to a file
+	FILE* fspellerrors = fopen("SpellErrors.txt", "w");
 
 	for(uint32 x=0; x < cnt; x++)
 	{
-		uint32 result = 0;
 		// SpellID
-		uint32 spellid = dbc.getRecord(x).getUInt(0);
-		// Description field
-		char* desc = (char*)dbc.getRecord(x).getString(161); 
-		const char* ranktext = dbc.getRecord(x).getString(144);
-		const char* nametext = dbc.getRecord(x).getString(127);
-
-		uint32 rank = 0;
-		uint32 type = 0;
-		uint32 namehash = 0;
+		uint32 spellid = dbc.getRecord(x).getInt(0);
 
 		// get spellentry
 		SpellEntry * sp = dbcSpell.LookupEntry(spellid);	
@@ -10330,6 +10327,42 @@ void ApplyNormalFixes()
 		sp->UniqueTargetBased = 0;
 		sp->apply_on_shapeshift_change = false;
 		sp->always_apply = false;
+
+		uint32 result = 0;
+
+		// Description field
+		char* desc = sp->Description;
+		const char* ranktext = sp->Rank;
+		const char* nametext = sp->Name;
+
+		uint32 rank = 0;
+		uint32 type = 0;
+		uint32 namehash = 0;
+
+		//test if its a null spell effect
+		for (uint8 i=0; i<3; ++i)
+		{
+			if (sp->Effect[i] == 0)
+				continue;
+			if (sp->Effect[i] < TOTAL_SPELL_EFFECTS)
+			{
+				if (SpellEffectsHandler[sp->Effect[i]] == &Spell::SpellEffectNULL)
+					fprintf(fspellerrors, "\n(%u)(%s) Unhandled spell effect %u on index %u", sp->Id, sp->Name, sp->Effect[i], i);
+			}
+			else
+				fprintf(fspellerrors, "\n(%u)(%s) Out of range spell effect %u on index %u", sp->Id, sp->Name, sp->Effect[i], i);
+
+			//do auras too!
+			if (sp->EffectApplyAuraName[i] == 0)
+				continue;
+			if (sp->EffectApplyAuraName[i] < TOTAL_SPELL_AURAS)
+			{
+				if (SpellAuraHandler[sp->EffectApplyAuraName[i]] == &Aura::SpellAuraNULL)
+					fprintf(fspellerrors, "\n(%u)(%s) Unhandled spell aura %u on index %u", sp->Id, sp->Name, sp->EffectApplyAuraName[i], i);
+			}
+			else
+				fprintf(fspellerrors, "\n(%u)(%s) Out of range spell aura %u on index %u", sp->Id, sp->Name, sp->EffectApplyAuraName[i], i);
+		}
 
 		// hash the name
 		//!!!!!!! representing all strings on 32 bits is dangerous. There is a chance to get same hash for a lot of strings ;)
@@ -10406,7 +10439,7 @@ void ApplyNormalFixes()
 		else if(sp->schoolMask & 64)
 			SET_SCHOOL(SCHOOL_ARCANE);
 		else
-			printf("UNKNOWN SCHOOL %u\n", sp->School);
+			Log.Error("SpellFixes", "Spell %u has unknown school %u", sp->Id, sp->schoolMask);
 #undef SET_SCHOOL
 
 		/*
@@ -10438,6 +10471,10 @@ void ApplyNormalFixes()
 
 			case 3:
 				sp->casterAuraState = AURASTATE_FLAG_BERSERK;
+				break;
+
+			case 4:
+				sp->casterAuraState = AURASTATE_FLAG_FROZEN;
 				break;
 
 			case 5:
@@ -10492,6 +10529,10 @@ void ApplyNormalFixes()
 
 			case 3:
 				sp->targetAuraState = AURASTATE_FLAG_BERSERK;
+				break;
+
+			case 4:
+				sp->targetAuraState = AURASTATE_FLAG_FROZEN;
 				break;
 
 			case 5:
@@ -10702,7 +10743,7 @@ void ApplyNormalFixes()
         // look for seal, etc in name
         if( strstr( nametext, "Seal"))
 		{
-			All_Seal_Groups_Combined |= sp->SpellGroupType;
+		//	All_Seal_Groups_Combined |= sp->SpellGroupType;
 		}
         else if( strstr( desc, "Battle Elixir"))
             type |= SPELL_TYPE_ELIXIR_BATTLE;
@@ -11208,16 +11249,7 @@ void ApplyNormalFixes()
 		{
 			sp->School = 5;
 		}
-#ifndef NEW_PROCFLAGS
-		// Shadow Weaving
-		else if( strstr( nametext, "Shadow Weaving"))
-		{
-			sp->School = 5;
-			sp->EffectApplyAuraName[0] = 42;
-			sp->procChance = sp->EffectBasePoints[0] + 1;
-			sp->procFlags = PROC_ON_CAST_SPECIFIC_SPELL;
-		}
-#endif
+
 		//more triggered spell ids are wrong. I think blizz is trying to outsmart us :S
 		else if( strstr( nametext, "Nature's Guardian"))
 		{
@@ -11302,38 +11334,28 @@ void ApplyNormalFixes()
 		//don't change to namehash since we are searching only a protion of the name
  		else if( strstr( nametext, "Crippling Poison"))
 		{
-			sp->SpellGroupType |= 16384; //some of them do have the flags but i's hard to write down those some from 130 spells
 			sp->c_is_flags |= SPELL_FLAG_IS_POISON;
 		}
 		else if( strstr( nametext, "Mind-Numbing Poison"))
 		{
-			sp->SpellGroupType |= 32768; //some of them do have the flags but i's hard to write down those some from 130 spells
 			sp->c_is_flags |= SPELL_FLAG_IS_POISON;
 		}
 		else if( strstr( nametext, "Instant Poison"))
 		{
-			sp->SpellGroupType |= 8192; //some of them do have the flags but i's hard to write down those some from 130 spells
 			sp->c_is_flags |= SPELL_FLAG_IS_POISON;
 		}
 		else if( strstr( nametext, "Deadly Poison"))
 		{
-			sp->SpellGroupType |= 65536; //some of them do have the flags but i's hard to write down those some from 130 spells
 			sp->c_is_flags |= SPELL_FLAG_IS_POISON;
 		}
 		else if( strstr( nametext, "Wound Poison"))
 		{
-			sp->SpellGroupType |= 268435456; //some of them do have the flags but i's hard to write down those some from 130 spells
 			sp->c_is_flags |= SPELL_FLAG_IS_POISON;
 		}
 		else if( strstr( nametext, "Scorpid Poison") )
 		{
-			// groups?
 			sp->c_is_flags |= SPELL_FLAG_IS_POISON;
 		}
-
-		//warlock - shadow bolt
-		if( sp->NameHash == SPELL_HASH_SHADOW_BOLT )
-			sp->SpellGroupType |= 1; //some of them do have the flags but i's hard to write down those some from 130 spells
 
 /*		else if( strstr( nametext, "Anesthetic Poison"))
 			sp->SpellGroupType |= 0; //not yet known ? 
@@ -11386,14 +11408,6 @@ void ApplyNormalFixes()
 		/* Decapitate */
 		if( sp->NameHash == SPELL_HASH_DECAPITATE )
 			sp->procChance = 30;
-
-		//shaman - shock, has no spellgroup.very dangerous move !
-		if( sp->NameHash == SPELL_HASH_SHOCK )
-			sp->SpellGroupType = 4;
-
-		//mage - fireball. Only some of the spell has the flags 
-		if( sp->NameHash == SPELL_HASH_FIREBALL )
-			sp->SpellGroupType |= 1;
 
 		if( sp->NameHash == SPELL_HASH_DIVINE_SHIELD || sp->NameHash == SPELL_HASH_DIVINE_PROTECTION || sp->NameHash == SPELL_HASH_BLESSING_OF_PROTECTION )
 			sp->mechanics = 25;
@@ -11554,7 +11568,6 @@ void ApplyNormalFixes()
 			case SPELL_EFFECT_POWER_BURN:
 			case SPELL_EFFECT_ATTACK:
 			case SPELL_EFFECT_HEAL:
-			case SPELL_EFFECT_HEALTH_FUNNEL:
 			case SPELL_EFFECT_HEAL_MAX_HEALTH:
 			case SPELL_EFFECT_DUMMY:
 				continue;
@@ -11948,12 +11961,6 @@ void ApplyNormalFixes()
 	if( sp != NULL )
 		sp->EffectMiscValue[0] = 2998;
 
-	/**********************************************************
-	 *	Wand Shoot
-	 **********************************************************/
-	sp = dbcSpell.LookupEntryForced( 5019 );
-	if( sp != NULL )
-		sp->SpellGroupType = 134217728;
 
 	/**********************************************************
 	 * Clearcasting
@@ -12867,43 +12874,6 @@ void ApplyNormalFixes()
 			sp->EffectImplicitTargetA[0] = EFF_TARGET_PET;
 		}
 
-		// Hunter - Endurance Training
-		sp = dbcSpell.LookupEntryForced( 19583 );
-		if( sp != NULL )
-		{
-			sp->c_is_flags |= SPELL_FLAG_IS_CASTED_ON_PET_SUMMON_PET_OWNER ;
-			sp->EffectApplyAuraName[0] = SPELL_AURA_MOD_INCREASE_HEALTH_PERCENT;
-			sp->EffectImplicitTargetA[0] = EFF_TARGET_PET;
-		}
-		sp = dbcSpell.LookupEntryForced( 19584 );
-		if( sp != NULL )
-		{
-			sp->c_is_flags |= SPELL_FLAG_IS_CASTED_ON_PET_SUMMON_PET_OWNER ;
-			sp->EffectApplyAuraName[0] = SPELL_AURA_MOD_INCREASE_HEALTH_PERCENT;
-			sp->EffectImplicitTargetA[0] = EFF_TARGET_PET;
-		}
-		sp = dbcSpell.LookupEntryForced( 19585 );
-		if( sp != NULL )
-		{
-			sp->c_is_flags |= SPELL_FLAG_IS_CASTED_ON_PET_SUMMON_PET_OWNER ;
-			sp->EffectApplyAuraName[0] = SPELL_AURA_MOD_INCREASE_HEALTH_PERCENT;
-			sp->EffectImplicitTargetA[0] = EFF_TARGET_PET;
-		}
-		sp = dbcSpell.LookupEntryForced( 19586 );
-		if( sp != NULL )
-		{
-			sp->c_is_flags |= SPELL_FLAG_IS_CASTED_ON_PET_SUMMON_PET_OWNER ;
-			sp->EffectApplyAuraName[0] = SPELL_AURA_MOD_INCREASE_HEALTH_PERCENT;
-			sp->EffectImplicitTargetA[0] = EFF_TARGET_PET;
-		}
-		sp = dbcSpell.LookupEntryForced( 19587 );
-		if( sp != NULL )
-		{
-			sp->c_is_flags |= SPELL_FLAG_IS_CASTED_ON_PET_SUMMON_PET_OWNER ;
-			sp->EffectApplyAuraName[0] = SPELL_AURA_MOD_INCREASE_HEALTH_PERCENT;
-			sp->EffectImplicitTargetA[0] = EFF_TARGET_PET;
-		}
-
 		// Hunter - Thrill of the Hunt
 		sp = dbcSpell.LookupEntryForced( 34497 );
 		if( sp != NULL )
@@ -13046,12 +13016,6 @@ void ApplyNormalFixes()
 		{
 			sp->EffectMiscValue[0] = SMT_SPELL_VALUE;
 		}
-		sp = dbcSpell.LookupEntryForced( 5131 );
-		if( sp != NULL )
-			sp->SpellGroupType = 2097152;
-		sp = dbcSpell.LookupEntryForced( 13160 );
-		if( sp != NULL )
-			sp->SpellGroupType = 2097152;
 
 		//Hunter : Rapid Killing - might need to add honor trigger too here. I'm guessing you receive Xp too so i'm avoiding double proc
 		sp = dbcSpell.LookupEntryForced( 34948 );
@@ -13065,10 +13029,6 @@ void ApplyNormalFixes()
 			sp->procFlags = PROC_ON_GAIN_EXPIERIENCE | PROC_TARGET_SELF;
 		}
 
-		//we need to adress this somehow : shot
-		sp = dbcSpell.LookupEntryForced( 3018 );
-		if( sp != NULL )
-			sp->SpellGroupType = 4;
 
 		/*
 		//Hunter : Entrapment
@@ -13252,21 +13212,7 @@ void ApplyNormalFixes()
 			sp->procFlags = PROC_ON_CRIT_ATTACK;
 			sp->procChance = 100;
 		}
-	#ifndef NEW_PROCFLAGS
-		//Improved Sprint
-		sp = dbcSpell.LookupEntryForced( 13743 );
-		if( sp != NULL )
-		{
-			sp->procFlags = PROC_ON_CAST_SPELL;
-			sp->procChance = 50;
-		}
-		sp = dbcSpell.LookupEntryForced( 13875 );
-		if( sp != NULL )
-		{
-			sp->procChance = 100;
-			sp->procFlags = PROC_ON_CAST_SPELL;
-		}
-	#endif
+
 		//rogue-shiv -> add 1 combo point
 		sp = dbcSpell.LookupEntryForced( 5938 );
 		if( sp != NULL )
@@ -13737,25 +13683,6 @@ void ApplyNormalFixes()
 		}
 
 		/**********************************************************
-		 *	Healing Way
-		 **********************************************************/
-		sp = dbcSpell.LookupEntryForced( 29202 ); 
-		if( sp != NULL )
-		{
-			sp->procFlags = PROC_ON_CAST_SPELL;
-		}
-		sp = dbcSpell.LookupEntryForced( 29205 ); 
-		if( sp != NULL )
-		{
-			sp->procFlags = PROC_ON_CAST_SPELL;
-		}
-		sp = dbcSpell.LookupEntryForced( 29206 ); 
-		if( sp != NULL )
-		{
-			sp->procFlags = PROC_ON_CAST_SPELL;
-		}
-
-		/**********************************************************
 		 *	Elemental Devastation
 		 **********************************************************/
 		sp = dbcSpell.LookupEntryForced( 29179 ); 
@@ -13999,14 +13926,7 @@ void ApplyNormalFixes()
 		sp = dbcSpell.LookupEntryForced( 12497 );
 		if( sp != NULL )
 			sp->EffectApplyAuraName[0] = SPELL_AURA_DUMMY;
-		//Mage - Improved Scorch
-		sp = dbcSpell.LookupEntryForced( 11095 );
-		if( sp != NULL )
-		{
-			sp->EffectApplyAuraName[0] = SPELL_AURA_PROC_TRIGGER_SPELL;
-			sp->procChance =33;
-			sp->procFlags = PROC_ON_CAST_SPELL;
-		}
+
 		sp = dbcSpell.LookupEntryForced( 12872 );
 		if( sp != NULL )
 		{
@@ -14160,12 +14080,6 @@ void ApplyNormalFixes()
 		sp = dbcSpell.LookupEntryForced( 19028 );
 		if( sp != NULL )
 		{
-			//this is for the extra 5% dmg for caster and pet
-			sp->Effect[1] = 6;
-			sp->EffectApplyAuraName[1] = 79;
-			sp->EffectBasePoints[1] = 4; //4+1=5
-			sp->EffectImplicitTargetA[1] = EFF_TARGET_SELF;
-			sp->EffectImplicitTargetB[1] = EFF_TARGET_PET;
 			sp->c_is_flags |= SPELL_FLAG_IS_EXPIREING_WITH_PET;
 		}
 
@@ -15649,4 +15563,6 @@ void ApplyNormalFixes()
 
 	//apply unique groups
 	ApplySpellUniques();
+
+	fclose(fspellerrors);
 }

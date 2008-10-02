@@ -41,7 +41,7 @@ void MapCell::Init(uint32 x, uint32 y, uint32 mapid, MapMgr *mapmgr)
 void MapCell::AddObject(Object *obj)
 {
 	if(obj->IsPlayer())
-		Sync_Add((volatile long*)&_playerCount);
+		++_playerCount;
 
 	_objects.insert(obj);
 }
@@ -49,7 +49,7 @@ void MapCell::AddObject(Object *obj)
 void MapCell::RemoveObject(Object *obj)
 {
 	if(obj->IsPlayer())
-		Sync_Add((volatile long*)&_playerCount);
+		--_playerCount;
 
 	_objects.erase(obj);
 }
@@ -204,13 +204,13 @@ void MapCell::LoadObjects(CellSpawns * sp)
 			GameObject * go=_mapmgr->CreateGameObject((*i)->entry);
 			if(go->Load(*i))
 			{
-				//uint32 state = go->GetUInt32Value(GAMEOBJECT_STATE);
+				//uint32 state = go->GetByte(GAMEOBJECT_BYTES_1, 0);
 
 				// FIXME - burlex
 				/*
 				if(pInstance && pInstance->FindObject((*i)->stateNpcLink))
 				{
-					go->SetUInt32Value(GAMEOBJECT_STATE, (state ? 0 : 1));
+					go->SetByte(GAMEOBJECT_BYTES_1, 0, (state ? 0 : 1));
 				}*/			   
 
 				go->m_loadedFromDB = true;

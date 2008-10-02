@@ -190,7 +190,7 @@ void VoiceChatHandler::SocketDisconnected()
 	m_client = NULL;
 	m_requests.clear();
 
-	WorldPacket data(SMSG_VOICE_SYSTEM_STATUS, 2);
+	WorldPacket data(SMSG_FEATURE_SYSTEM_STATUS, 2);
 	data << uint8(2);
 	data << uint8(0);
 	sWorld.SendGlobalMessage(&data, NULL);
@@ -370,7 +370,7 @@ void VoiceChatHandler::Update()
 				// connected!
 				m_client = s;
 				Log.Notice("VoiceChatHandler", "Connected to %s:%u.", ip_s.c_str(), port);
-				WorldPacket data(SMSG_VOICE_SYSTEM_STATUS, 2);
+				WorldPacket data(SMSG_FEATURE_SYSTEM_STATUS, 2);
 				data << uint8(2) << uint8(1);
 				sWorld.SendGlobalMessage(&data, NULL);
 

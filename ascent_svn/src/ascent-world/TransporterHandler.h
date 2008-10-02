@@ -107,6 +107,8 @@ public:
 	Transporter(uint64 guid);
 	~Transporter();
 
+	void EventClusterMapChange(uint32 mapid, LocationVector l);
+
 	bool CreateAsTransporter(uint32 EntryID, const char* Name, int32 Time);
 	void UpdatePosition();
 	void TransportPassengers(uint32 mapid, uint32 oldmap, float x, float y, float z);

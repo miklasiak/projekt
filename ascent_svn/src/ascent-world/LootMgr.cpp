@@ -27,27 +27,6 @@ struct loot_tb
 	float chance;
 };
 
-bool Rand(float chance)
-{
-	int32 val = RandomUInt(10000);
-	int32 p = int32(chance * 100.0f);
-	return p >= val;
-}
-
-bool Rand(uint32 chance)
-{
-	int32 val = RandomUInt(10000);
-	int32 p = int32(chance * 100);
-	return p >= val;
-}
-
-bool Rand(int32 chance)
-{
-	int32 val = RandomUInt(10000);
-	int32 p = chance * 100;
-	return p >= val;
-}
-
 template <class T>  // works for anything that has the field 'chance' and is stored in plain array
 const T& RandomChoice( const T* variant, int count )
 {

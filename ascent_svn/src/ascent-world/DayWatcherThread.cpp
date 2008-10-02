@@ -321,5 +321,4 @@ void DayWatcherThread::update_dailyquests()
 	last_dailyquest_time = UNIXTIME;
 	dupe_tm_pointer(localtime(&last_dailyquest_time), &local_last_dailyquest_time);
 	m_dirty = true;
-
 }

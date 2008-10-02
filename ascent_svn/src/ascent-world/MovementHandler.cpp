@@ -717,9 +717,9 @@ void MovementInfo::init(WorldPacket & data)
 
 	if (flags & MOVEFLAG_TAXI)
 	{
-		data >> transGuid >> transX >> transY >> transZ >> transO >> transUnk;
+		data >> transGuid >> transX >> transY >> transZ >> transO >> transUnk >> transUnk2;
 	}
-	if (flags & MOVEFLAG_SWIMMING)
+	if (flags & (MOVEFLAG_SWIMMING | MOVEFLAG_AIR_SWIMMING) || transUnk2 & 0x20)
 	{
 		data >> unk6;
 	}
@@ -750,7 +750,7 @@ void MovementInfo::write(WorldPacket & data)
 
 	if (flags & MOVEFLAG_TAXI)
 	{
-		data << transGuid << transX << transY << transZ << transO << transUnk;
+		data << transGuid << transX << transY << transZ << transO << transUnk << transUnk2;
 	}
 	if (flags & MOVEFLAG_SWIMMING)
 	{

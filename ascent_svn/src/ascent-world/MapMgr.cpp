@@ -518,12 +518,15 @@ void MapMgr::RemoveObject(Object *obj, bool free_guid)
 
 		// Setting an instance ID here will trigger the session to be removed
 		// by MapMgr::run(). :)
-		plObj->GetSession()->SetInstance(0);
+		if (plObj->GetSession() != NULL)
+		{
+			plObj->GetSession()->SetInstance(0);
 
-		// Add it to the global session set.
-		// Don't "re-add" to session if it is being deleted.
-		if(!plObj->GetSession()->bDeleted)
-			sWorld.AddGlobalSession(plObj->GetSession());
+			// Add it to the global session set.
+			// Don't "re-add" to session if it is being deleted.
+			if(!plObj->GetSession()->bDeleted)
+				sWorld.AddGlobalSession(plObj->GetSession());
+		}
 	}
 
 	if(!HasPlayers() && !InactiveMoveTime && !forced_expire && GetMapInfo()->type != INSTANCE_NULL)
@@ -573,7 +576,7 @@ void MapMgr::ChangeObjectLocation( Object *obj )
 			fRange = 0.0f;		\
 		else if((curObj->GetGUIDHigh() == HIGHGUID_TRANSPORTER || obj->GetGUIDHigh() == HIGHGUID_TRANSPORTER)) \
 			fRange = 0.0f;		\
-		else if((curObj->GetGUIDHigh() == HIGHGUID_GAMEOBJECT && curObj->GetUInt32Value(GAMEOBJECT_TYPE_ID) == GAMEOBJECT_TYPE_TRANSPORT || obj->GetGUIDHigh() == HIGHGUID_GAMEOBJECT && obj->GetUInt32Value(GAMEOBJECT_TYPE_ID) == GAMEOBJECT_TYPE_TRANSPORT)) \
+		else if((curObj->GetGUIDHigh() == HIGHGUID_GAMEOBJECT && curObj->GetUInt32Value(GAMEOBJECT_BYTES_1) == GAMEOBJECT_TYPE_TRANSPORT || obj->GetGUIDHigh() == HIGHGUID_GAMEOBJECT && obj->GetUInt32Value(GAMEOBJECT_BYTES_1) == GAMEOBJECT_TYPE_TRANSPORT)) \
 			fRange = 0.0f;		\
 		else \
 			fRange = m_UpdateDistance;	\
@@ -895,7 +898,7 @@ void MapMgr::UpdateInRangeSet( Object *obj, Player *plObj, MapCell* cell, ByteBu
 			fRange = 0.0f; \
 		else if((curObj->GetGUIDHigh() == HIGHGUID_TRANSPORTER ||obj->GetGUIDHigh() == HIGHGUID_TRANSPORTER)) \
 			fRange = 0.0f; \
-		else if((curObj->GetGUIDHigh() == HIGHGUID_GAMEOBJECT && curObj->GetUInt32Value(GAMEOBJECT_TYPE_ID) == GAMEOBJECT_TYPE_TRANSPORT || obj->GetGUIDHigh() == HIGHGUID_GAMEOBJECT && obj->GetUInt32Value(GAMEOBJECT_TYPE_ID) == GAMEOBJECT_TYPE_TRANSPORT)) \
+		else if((curObj->GetGUIDHigh() == HIGHGUID_GAMEOBJECT && curObj->GetUInt32Value(GAMEOBJECT_BYTES_1) == GAMEOBJECT_TYPE_TRANSPORT || obj->GetGUIDHigh() == HIGHGUID_GAMEOBJECT && obj->GetUInt32Value(GAMEOBJECT_BYTES_1) == GAMEOBJECT_TYPE_TRANSPORT)) \
 			fRange = 0.0f; \
 		else \
 			fRange = m_UpdateDistance; \
@@ -1828,9 +1831,9 @@ void MapMgr::HookOnAreaTrigger(Player * plr, uint32 id)
 	case 4591:
 		//Only opens when the first one steps in, if 669 if you find a way, put it in :P (else was used to increase the time the door stays opened when another one steps on it)
 		GameObject *door = GetInterface()->GetGameObjectNearestCoords(803.827f, 6869.38f, -38.5434f, 184212);
-		if (door && (door->GetUInt32Value(GAMEOBJECT_STATE) == 1))
+		if (door && (door->GetByte(GAMEOBJECT_BYTES_1, 0) == 1))
 		{
-			door->SetUInt32Value(GAMEOBJECT_STATE, 0);
+			door->SetByte(GAMEOBJECT_BYTES_1, 0, 0);
 			//sEventMgr.AddEvent(door, &GameObject::SetUInt32Value, GAMEOBJECT_STATE, 1, EVENT_SCRIPT_UPDATE_EVENT, 10000, 1, 0);
 		}
 		//else

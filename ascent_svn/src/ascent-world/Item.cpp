@@ -92,10 +92,10 @@ void Item::Create( uint32 itemid, Player* owner )
 	ASSERT( m_itemProto );
 	 
 	SetUInt32Value( ITEM_FIELD_SPELL_CHARGES, m_itemProto->Spells[0].Charges );
-	SetUInt32Value( ITEM_FIELD_SPELL_CHARGES_01, m_itemProto->Spells[1].Charges );
-	SetUInt32Value( ITEM_FIELD_SPELL_CHARGES_02, m_itemProto->Spells[2].Charges );
-	SetUInt32Value( ITEM_FIELD_SPELL_CHARGES_03, m_itemProto->Spells[3].Charges );
-	SetUInt32Value( ITEM_FIELD_SPELL_CHARGES_04, m_itemProto->Spells[4].Charges );
+	SetUInt32Value( ITEM_FIELD_SPELL_CHARGES_1, m_itemProto->Spells[1].Charges );
+	SetUInt32Value( ITEM_FIELD_SPELL_CHARGES_2, m_itemProto->Spells[2].Charges );
+	SetUInt32Value( ITEM_FIELD_SPELL_CHARGES_3, m_itemProto->Spells[3].Charges );
+	SetUInt32Value( ITEM_FIELD_SPELL_CHARGES_4, m_itemProto->Spells[4].Charges );
 	SetUInt32Value( ITEM_FIELD_MAXDURABILITY, m_itemProto->MaxDurability );
 	SetUInt32Value( ITEM_FIELD_DURABILITY, m_itemProto->MaxDurability );
 
@@ -198,7 +198,7 @@ void Item::LoadFromDB(Field* fields, Player* plr, bool light )
 		SetUInt32Value( ITEM_FIELD_STACK_COUNT, 1 );
 		SetUInt32Value( ITEM_FIELD_PROPERTY_SEED, 57813883 );
 		if( plr->m_charters[CHARTER_TYPE_GUILD] )
-			SetUInt32Value( ITEM_FIELD_ENCHANTMENT, plr->m_charters[CHARTER_TYPE_GUILD]->GetID() );
+			SetUInt32Value( ITEM_FIELD_ENCHANTMENT_1_1, plr->m_charters[CHARTER_TYPE_GUILD]->GetID() );
 	}
 
 	if( m_uint32Values[OBJECT_FIELD_ENTRY] == ARENA_TEAM_CHARTER_2v2 )
@@ -207,7 +207,7 @@ void Item::LoadFromDB(Field* fields, Player* plr, bool light )
 		SetUInt32Value( ITEM_FIELD_STACK_COUNT, 1 );
 		SetUInt32Value( ITEM_FIELD_PROPERTY_SEED, 57813883 );
 		if( plr->m_charters[CHARTER_TYPE_ARENA_2V2] )
-			SetUInt32Value( ITEM_FIELD_ENCHANTMENT, plr->m_charters[CHARTER_TYPE_ARENA_2V2]->GetID() );
+			SetUInt32Value( ITEM_FIELD_ENCHANTMENT_1_1, plr->m_charters[CHARTER_TYPE_ARENA_2V2]->GetID() );
 	}
 
 	if( m_uint32Values[OBJECT_FIELD_ENTRY] == ARENA_TEAM_CHARTER_3v3 )
@@ -216,7 +216,7 @@ void Item::LoadFromDB(Field* fields, Player* plr, bool light )
 		SetUInt32Value( ITEM_FIELD_STACK_COUNT, 1 );
 		SetUInt32Value( ITEM_FIELD_PROPERTY_SEED, 57813883 );
 		if( plr->m_charters[CHARTER_TYPE_ARENA_3V3] )
-			SetUInt32Value( ITEM_FIELD_ENCHANTMENT, plr->m_charters[CHARTER_TYPE_ARENA_3V3]->GetID() );
+			SetUInt32Value( ITEM_FIELD_ENCHANTMENT_1_1, plr->m_charters[CHARTER_TYPE_ARENA_3V3]->GetID() );
 	}
 
 	if( m_uint32Values[OBJECT_FIELD_ENTRY] == ARENA_TEAM_CHARTER_5v5 )
@@ -225,7 +225,7 @@ void Item::LoadFromDB(Field* fields, Player* plr, bool light )
 		SetUInt32Value( ITEM_FIELD_STACK_COUNT, 1 );
 		SetUInt32Value( ITEM_FIELD_PROPERTY_SEED, 57813883 );
 		if( plr->m_charters[CHARTER_TYPE_ARENA_5V5] )
-			SetUInt32Value( ITEM_FIELD_ENCHANTMENT, plr->m_charters[CHARTER_TYPE_ARENA_5V5]->GetID() );
+			SetUInt32Value( ITEM_FIELD_ENCHANTMENT_1_1, plr->m_charters[CHARTER_TYPE_ARENA_5V5]->GetID() );
 	}
 }
 
@@ -538,7 +538,7 @@ int32 Item::AddEnchantment( EnchantEntry* Enchantment, uint32 Duration, bool Per
 			/*
 			Slot = Enchantment->type ? 3 : 0;
 			 //that's 's code
-			for(uint32 Index = ITEM_FIELD_ENCHANTMENT_09; Index < ITEM_FIELD_ENCHANTMENT_32; Index += 3)
+			for(uint32 Index = ITEM_FIELD_ENCHANTMENT_1_1_09; Index < ITEM_FIELD_ENCHANTMENT_1_1_32; Index += 3)
 			{
 				if(m_uint32Values[Index] == 0) break;;	
 				++Slot;
@@ -563,7 +563,7 @@ int32 Item::AddEnchantment( EnchantEntry* Enchantment, uint32 Duration, bool Per
 	Instance.RandomSuffix = RandomSuffix;
 
 	// Set the enchantment in the item fields.
-	uint32 EnchantBase = ITEM_FIELD_ENCHANTMENT + Slot * 3;
+	uint32 EnchantBase = ITEM_FIELD_ENCHANTMENT_1_1 + Slot * 3;
 	SetUInt32Value( EnchantBase, Enchantment->Id );
 	SetUInt32Value( EnchantBase + 1, (uint32)Instance.ApplyTime );
 	SetUInt32Value( EnchantBase + 2, 0 ); // charges
@@ -621,7 +621,7 @@ void Item::RemoveEnchantment( uint32 EnchantmentSlot )
 		ApplyEnchantmentBonus( EnchantmentSlot, REMOVE );
 
 	// Unset the item fields.
-	uint32 EnchantBase = Slot * 3 + ITEM_FIELD_ENCHANTMENT;
+	uint32 EnchantBase = Slot * 3 + ITEM_FIELD_ENCHANTMENT_1_1;
 	SetUInt32Value( EnchantBase + 0, 0 );
 	SetUInt32Value( EnchantBase + 1, 0 );
 	SetUInt32Value( EnchantBase + 2, 0 );
@@ -658,7 +658,7 @@ void Item::ApplyEnchantmentBonus( uint32 Slot, bool Apply )
 
 	// Apply the visual on the player.
 	// SUPALOSA_: Not here
-	uint32 ItemSlot = m_owner->GetItemInterface()->GetInventorySlotByGuid( GetGUID() ) * 16;
+	uint32 ItemSlot = m_owner->GetItemInterface()->GetInventorySlotByGuid( GetGUID() ) * 18;
 	uint32 VisibleBase = PLAYER_VISIBLE_ITEM_1_0 + ItemSlot;
 	m_owner->SetUInt32Value( VisibleBase + 1 + Slot, Apply ? Entry->Id : 0 );
 	
@@ -878,7 +878,7 @@ int32 Item::FindFreeEnchantSlot( EnchantEntry* Enchantment, uint32 random_type )
 	//if(!Enchantment) return -1;
 
    /* uint32 Slot = Enchantment->type ? 3 : 0;
-	for(uint32 Index = ITEM_FIELD_ENCHANTMENT_09; Index < ITEM_FIELD_ENCHANTMENT_32; Index += 3)
+	for(uint32 Index = ITEM_FIELD_ENCHANTMENT_1_1_09; Index < ITEM_FIELD_ENCHANTMENT_1_1_32; Index += 3)
 	{
 		if(m_uint32Values[Index] == 0) return Slot;	
 		++Slot;
@@ -891,19 +891,19 @@ int32 Item::FindFreeEnchantSlot( EnchantEntry* Enchantment, uint32 random_type )
 	if( random_type == 1 )		// random prop
 	{
 		for( uint32 Slot = 8; Slot < 11; ++Slot )
-			if( m_uint32Values[ITEM_FIELD_ENCHANTMENT + Slot * 3] == 0 )
+			if( m_uint32Values[ITEM_FIELD_ENCHANTMENT_1_1 + Slot * 3] == 0 )
 				return Slot;
 	}
 	else if( random_type == 2 )	// random suffix
 	{
 		for( uint32 Slot = 6; Slot < 11; ++Slot )
-			if( m_uint32Values[ITEM_FIELD_ENCHANTMENT + Slot * 3] == 0 )
+			if( m_uint32Values[ITEM_FIELD_ENCHANTMENT_1_1 + Slot * 3] == 0 )
 				return Slot;
 	}
 	
 	for( uint32 Slot = GemSlotsReserve + 2; Slot < 11; Slot++ )
 	{
-		if( m_uint32Values[ITEM_FIELD_ENCHANTMENT + Slot * 3] == 0 )
+		if( m_uint32Values[ITEM_FIELD_ENCHANTMENT_1_1 + Slot * 3] == 0 )
 			return Slot;	
 	}
 
@@ -914,7 +914,7 @@ int32 Item::HasEnchantment( uint32 Id )
 {
 	for( uint32 Slot = 0; Slot < 11; Slot++ )
 	{
-		if( m_uint32Values[ITEM_FIELD_ENCHANTMENT + Slot * 3] == Id )
+		if( m_uint32Values[ITEM_FIELD_ENCHANTMENT_1_1 + Slot * 3] == Id )
 			return Slot;
 	}
 

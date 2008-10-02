@@ -595,6 +595,19 @@ void Creature::CalcResistance(uint32 type)
 	if(type == 0)
 		res += GetUInt32Value(UNIT_FIELD_STAT1) * 2;//fix armor from agi
 	SetUInt32Value(UNIT_FIELD_RESISTANCES + type, res > 0 ? res : 0);
+
+	//recall all auras
+	for (std::multimap<uint32, Aura*>::iterator itr=m_aurascast.begin(); itr!=m_aurascast.end(); ++itr)
+		if (!sEventMgr.HasEvent(itr->second, EVENT_AURA_UPDATE))
+			sEventMgr.AddEvent(itr->second, &Aura::HandleChange, EVENT_AURA_UPDATE, 1000, 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
+
+	if (IsPet() && isAlive() && IsInWorld())
+	{
+		Unit* owner = static_cast<Pet*>(this)->GetOwner();
+		for (std::multimap<uint32, Aura*>::iterator itr=owner->m_aurascast.begin(); itr!=owner->m_aurascast.end(); ++itr)
+			if (!sEventMgr.HasEvent(itr->second, EVENT_AURA_UPDATE))
+				sEventMgr.AddEvent(itr->second, &Aura::HandleChange, EVENT_AURA_UPDATE, 1000, 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
+	}
 }
 
 void Creature::CalcStat(uint32 type)
@@ -605,19 +618,19 @@ void Creature::CalcStat(uint32 type)
 	if(res<0)res=0;
 		
 	res+=(res*(TotalStatModPct[type]))/100;
-	SetUInt32Value(UNIT_FIELD_STAT0+type,res>0?res:0);
+	SetUInt32Value(UNIT_FIELD_STAT0 + type, res > 0 ?res : 0);
 
 	//recall all auras
 	for (std::multimap<uint32, Aura*>::iterator itr=m_aurascast.begin(); itr!=m_aurascast.end(); ++itr)
-		if (!sEventMgr.HasEvent(itr->second, EVENT_AURA_STAT_UPDATE))
-			sEventMgr.AddEvent(itr->second, &Aura::HandleStatChange, EVENT_AURA_STAT_UPDATE, 1000, 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
+		if (!sEventMgr.HasEvent(itr->second, EVENT_AURA_UPDATE))
+			sEventMgr.AddEvent(itr->second, &Aura::HandleChange, EVENT_AURA_UPDATE, 1000, 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
 
 	if (IsPet() && isAlive() && IsInWorld())
 	{
 		Unit* owner = static_cast<Pet*>(this)->GetOwner();
 		for (std::multimap<uint32, Aura*>::iterator itr=owner->m_aurascast.begin(); itr!=owner->m_aurascast.end(); ++itr)
-			if (!sEventMgr.HasEvent(itr->second, EVENT_AURA_STAT_UPDATE))
-				sEventMgr.AddEvent(itr->second, &Aura::HandleStatChange, EVENT_AURA_STAT_UPDATE, 1000, 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
+			if (!sEventMgr.HasEvent(itr->second, EVENT_AURA_UPDATE))
+				sEventMgr.AddEvent(itr->second, &Aura::HandleChange, EVENT_AURA_UPDATE, 1000, 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
 	}
 }
 
@@ -662,6 +675,8 @@ void Creature::RegenerateMana()
 	uint32 mm=GetUInt32Value(UNIT_FIELD_MAXPOWER1);
 	if(cur>=mm)return;
 	amt=(getLevel()+10)*PctPowerRegenModifier[POWER_TYPE_MANA];
+
+	amt = amt * m_ModInterrMRegenPCT /100.0f + m_ModInterrMRegen / 5.0f;
 	
 	//Apply shit from conf file
 	amt*=sWorld.getRate(RATE_POWER1);
@@ -669,7 +684,16 @@ void Creature::RegenerateMana()
 		cur++;
 	else
 		cur+=(uint32)amt;
-	SetUInt32Value(UNIT_FIELD_POWER1,(cur>=mm)?mm:cur);
+
+	uint32 power = cur > mm? mm : cur;
+
+	SetUInt32Value(UNIT_FIELD_POWER1, power);
+
+	WorldPacket data(SMSG_POWER_UPDATE, 9);
+	FastGUIDPack(data, GetGUID());
+	data << uint8(0);
+	data << power;
+	SendMessageToSet(&data, true);
 }
 
 void Creature::RegenerateFocus()
@@ -679,10 +703,19 @@ void Creature::RegenerateFocus()
 
 	uint32 cur=GetUInt32Value(UNIT_FIELD_POWER3);
 	uint32 mm=GetUInt32Value(UNIT_FIELD_MAXPOWER3);
-	if(cur>=mm)return;
+
 	float amt = 25.0f * PctPowerRegenModifier[POWER_TYPE_FOCUS];
 	cur+=(uint32)amt;
-	SetUInt32Value(UNIT_FIELD_POWER3,(cur>=mm)?mm:cur);
+
+	uint32 power = cur > mm? mm : cur;
+
+	SetUInt32Value(UNIT_FIELD_POWER3, power);
+
+	WorldPacket data(SMSG_POWER_UPDATE, 9);
+	FastGUIDPack(data, GetGUID());
+	data << uint8(2);
+	data << power;
+	SendMessageToSet(&data, true);
 }
 
 void Creature::CallScriptUpdate()
@@ -928,15 +961,18 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 	SetFloatValue(UNIT_FIELD_MINRANGEDDAMAGE,proto->RangedMinDamage);
 	SetFloatValue(UNIT_FIELD_MAXRANGEDDAMAGE,proto->RangedMaxDamage);
 
-	SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, proto->Item1SlotDisplay);
-	SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY_01, proto->Item2SlotDisplay);
-	SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY_02, proto->Item3SlotDisplay);
-	SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO, proto->Item1Info1);
+	SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID, proto->Item1SlotDisplay);
+	SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID_1, proto->Item2SlotDisplay);
+	SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID_2, proto->Item3SlotDisplay);
+
+	//Removed in 3.0.2, WTF
+
+	/*SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO, proto->Item1Info1);
 	SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO_01, proto->Item1Info2);
 	SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO_02, proto->Item2Info1);
 	SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO_03, proto->Item2Info2);
 	SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO_04, proto->Item3Info1);
-	SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO_05, proto->Item3Info2);
+	SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO_05, proto->Item3Info2);*/
 
 	SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, spawn->factionid);
 	SetUInt32Value(UNIT_FIELD_FLAGS, spawn->flags);
@@ -1131,15 +1167,15 @@ void Creature::Load(CreatureProto * proto_, float x, float y, float z)
 	SetFloatValue(UNIT_FIELD_MINRANGEDDAMAGE,proto->RangedMinDamage);
 	SetFloatValue(UNIT_FIELD_MAXRANGEDDAMAGE,proto->RangedMaxDamage);
 
-	SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, proto->Item1SlotDisplay);
-	SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY_01, proto->Item2SlotDisplay);
-	SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY_02, proto->Item3SlotDisplay);
-	SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO, proto->Item1Info1);
+	SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID, proto->Item1SlotDisplay);
+	SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID_1, proto->Item2SlotDisplay);
+	SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID_2, proto->Item3SlotDisplay);
+	/*SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO, proto->Item1Info1);
 	SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO_01, proto->Item1Info2);
 	SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO_02, proto->Item2Info1);
 	SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO_03, proto->Item2Info2);
 	SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO_04, proto->Item3Info1);
-	SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO_05, proto->Item3Info2);
+	SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO_05, proto->Item3Info2);*/
 
 	SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, proto->Faction);
 	SetFloatValue(UNIT_FIELD_BOUNDINGRADIUS, proto->BoundingRadius);

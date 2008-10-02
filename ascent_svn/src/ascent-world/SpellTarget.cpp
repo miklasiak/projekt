@@ -233,7 +233,7 @@ void Spell::AddChainTargets(uint32 i, uint32 TargetType, float r, uint32 maxtarg
 	range /= jumps; //hacky, needs better implementation!
 
 	if(m_spellInfo->SpellGroupType && u_caster != NULL)
-		SM_FIValue(u_caster->SM_FAdditionalTargets, (int32*)&jumps, m_spellInfo->SpellGroupType);
+		SM_FIValue(u_caster->SM_FAdditionalTargets, (int32*)&jumps, m_spellInfo);
 
 	AddTarget(i, TargetType, firstTarget);
 
@@ -276,7 +276,7 @@ void Spell::AddPartyTargets(uint32 i, uint32 TargetType, float r, uint32 maxtarg
 	std::set<Object*>::iterator itr;
 	for(itr = u->GetInRangeSetBegin(); itr != u->GetInRangeSetEnd(); itr++)
 	{
-		if (!(*itr)->IsUnit() || static_cast<Unit*>(*itr)->isAlive())
+		if (!(*itr)->IsUnit() || !static_cast<Unit*>(*itr)->isAlive())
 			continue;
 
 		//only affect players and pets
@@ -306,7 +306,7 @@ void Spell::AddRaidTargets(uint32 i, uint32 TargetType, float r, uint32 maxtarge
 	std::set<Object*>::iterator itr;
 	for(itr = u->GetInRangeSetBegin(); itr != u->GetInRangeSetEnd(); itr++)
 	{
-		if (!(*itr)->IsUnit() || static_cast<Unit*>(*itr)->isAlive())
+		if (!(*itr)->IsUnit() || !static_cast<Unit*>(*itr)->isAlive())
 			continue;
 
 		//only affect players and pets
@@ -529,7 +529,7 @@ uint32 Spell::GetTargetType(uint32 value, uint32 i)
 		case 52: type |= SPELL_TARGET_SELF; break;
 		case 53: type |= SPELL_TARGET_AOE_CURRENT_TARGET | SPELL_TARGET_HOSTILE; break;
 		case 54: type |= SPELL_TARGET_CONE | SPELL_TARGET_HOSTILE; break;
-		case 56: type |= SPELL_TARGET_SELF; break;
+		case 56: type |= SPELL_TARGET_AOE_SELF | SPELL_TARGET_RAID_MEMBERS; break; //used by commanding shout, targets raid now
 		case 57: type |= SPELL_TARGET_FRIENDLY | SPELL_TARGET_PARTY_MEMBERS; break;
 		case 61: type |= SPELL_TARGET_AOE_SELF | SPELL_TARGET_RAID_MEMBERS | SPELL_TARGET_CLASS_OF_TARGET | SPELL_TARGET_FRIENDLY; break;
 		case 63: type |= SPELL_TARGET_SELF; break;
@@ -549,7 +549,7 @@ uint32 Spell::GetTargetType(uint32 value, uint32 i)
 	//CHAIN SPELLS ALWAYS CHAIN!
 	uint32 jumps = m_spellInfo->EffectChainTarget[i];
 	if (u_caster != NULL)
-		SM_FIValue(u_caster->SM_FAdditionalTargets,(int32*)&jumps,m_spellInfo->SpellGroupType);
+		SM_FIValue(u_caster->SM_FAdditionalTargets,(int32*)&jumps,m_spellInfo);
 	if (jumps != 0)
 		type |= SPELL_TARGET_CHAINED_OBJECT;
 

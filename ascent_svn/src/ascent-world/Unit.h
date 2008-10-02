@@ -26,11 +26,9 @@ class DynamicObject;
 #define MAX_POSITIVE_AURAS 40 // ?
 #define MAX_PASSIVE_AURAS 192   // grep: i mananged to break this.. :p seems we need more
 
-bool SERVER_DECL Rand(float);
-
 #define UF_TARGET_DIED  1
 #define UF_ATTACKING	2 // this unit is attacking it's selection
-#define SPELL_GROUPS	64//This is actually on 64 bits !
+#define SPELL_GROUPS	96//96bits as of 3.0.2 8926, fucking hell
 
 #define UNIT_TYPE_HUMANOID_BIT (1 << (HUMANOID-1)) //should get computed by precompiler ;)
 
@@ -679,6 +677,27 @@ public:
 	// a lua script cannot create a unit.
 	Unit(lua_State * L) { ASSERT(false); }*/
 
+	uint64 m_redirectedThreat;
+
+	void UpdateStats();
+
+	//new callback hooks, experimental
+	std::multimap<uint32, ProcFnc*> m_procfuncs;
+
+	ASCENT_INLINE void AddProcFnc(uint32 type, ProcFnc* p) { m_procfuncs.insert(std::make_pair<uint32, ProcFnc*>(type, p)); }
+	/*
+	all optional, no creator or proctype will erase all,
+	creator will erase by creator, proctype will erase by proctype,
+	no creator and proctype will erase all of that type,
+	creator and no proctype will erase by creator, but will be slower
+	please use all arguments if possible, find/upper_bounds
+	is quicker then iterating the entire set
+	*/
+	void DeleteProcFnc(void* creator = NULL, uint32 proctype = 0xFFFFFFFF);
+
+	//Handle a proc function
+	void HandleProcFnc(uint32 proctype, std::vector<void*>* data);
+
 	std::multimap<uint32, Aura*> m_aurascast;
 	std::set<Creature*> m_guardians; //needed to get angle for new ones
 	bool m_duelImmunity;
@@ -693,9 +712,6 @@ public:
 
 	bool InParty(Unit* u);
 	bool InRaid(Unit* u);
-
-	//new callback hooks, experimental
-	std::map<void*, CallbackBase*> OnTakeDamageCallback;
 
 	ASCENT_INLINE void	SetSummon(Pet *pet) { m_Summon = pet; }
 	ASCENT_INLINE Pet*	GetSummon() { return m_Summon; }
@@ -745,6 +761,9 @@ public:
 	uint32 FlatStatMod[5];
 	uint32 StatModPct[5];
 	uint32 TotalStatModPct[5];
+
+	uint32 m_ModInterrMRegenPCT;
+	int32 m_ModInterrMRegen;
 
 
  
@@ -828,6 +847,7 @@ public:
 	bool RemoveAuraPosByNameHash(uint32 namehash);//required to remove weaker instances of a spell
 	bool RemoveAuraNegByNameHash(uint32 namehash);//required to remove weaker instances of a spell
 	bool RemoveAuras(uint32 * SpellIds);
+	bool RemoveAuras(uint32 amount, ...);
 
 	void EventRemoveAura(uint32 SpellId)
 	{
@@ -989,6 +1009,12 @@ public:
 	int32 * SM_PRezist_dispell;
 	int32 * SM_PThreat_Reduction; //pct
 	int32 * SM_FThreat_Reduction; //flat
+	int32 * SM_FEffect1_Bonus;
+	int32 * SM_FEffect2_Bonus;
+	int32 * SM_FEffect3_Bonus;
+	int32 * SM_PEffect1_Bonus;
+	int32 * SM_PEffect2_Bonus;
+	int32 * SM_PEffect3_Bonus;
 	void InheritSMMods(Unit* inherited_from);
 
 	//Events
@@ -1034,8 +1060,12 @@ public:
 	uint32 m_CombatUpdateTimer;
 
 	ASCENT_INLINE void setcanperry(bool newstatus){can_parry=newstatus;}
-		
-	std::map<uint32,Aura*> tmpAura;
+
+	std::map<uint32, Aura*> tmpAura;
+
+	//stats mods
+	uint32 m_healthfromspell;
+	uint32 m_manafromspell;
 
 	uint32 BaseResistance[7]; //there are resistances for silence, fear, mechanics ....
 	uint32 BaseStats[5];
@@ -1067,7 +1097,7 @@ public:
 	int32 m_extrastriketargets;
 	//std::set<SpellEntry*> m_onStrikeSpells;
 
-	uint16 m_auracount[241]; //would use TOTAL_SPELL_AURAS, header orders suck :P
+	uint16 m_auracount[TOTAL_SPELL_AURAS]; //would use TOTAL_SPELL_AURAS, header orders suck :P
 
 	int32 m_noInterrupt;
 	bool disarmed;

@@ -188,9 +188,22 @@ enum SpellCastError
 	SPELL_FAILED_PARTIAL_PLAYTIME                                = 163,
 	SPELL_FAILED_NO_PLAYTIME                                     = 164,
 	SPELL_FAILED_NOT_IN_BATTLEGROUND                             = 165,
-	SPELL_FAILED_ONLY_IN_ARENA                                   = 166,
-	SPELL_FAILED_TARGET_LOCKED_TO_RAID_INSTANCE                  = 167,
-	SPELL_FAILED_UNKNOWN                                         = 168,
+	SPELL_FAILED_NOT_IN_RAID_INSTANCE							 = 166,
+	SPELL_FAILED_ONLY_IN_ARENA                                   = 167,
+	SPELL_FAILED_TARGET_LOCKED_TO_RAID_INSTANCE                  = 168,
+	//New failures for 3.0.2
+	/*SPELL_FAILED_ON_USE_ENCHANT								 = 169,
+	SPELL_FAILED_NOT_ON_GROUND									 = 170,
+	SPELL_FAILED_CUSTOM_ERROR									 = 171,
+	SPELL_FAILED_CANT_DO_THAT_RIGHT_NOW							 = 172,
+	SPELL_FAILED_TOO_MANY_SOCKETS								 = 173,
+	SPELL_FAILED_INVALID_GLYPH									 = 174,
+	SPELL_FAILED_UNIQUE_GLYPH									 = 175,
+	SPELL_FAILED_GLYPH_SOCKET_LOCKED							 = 176,
+	SPELL_FAILED_NO_VALID_TARGETS								 = 177,
+	SPELL_FAILED_ITEM_AT_MAX_CHARGES							 = 178,
+	SPELL_FAILED_NOT_IN_BARBERSHOP								 = 179,*/
+	SPELL_FAILED_UNKNOWN                                         = 169, //180 in next patch
 	SPELL_CANCAST_OK                                             = 255,
 };
 

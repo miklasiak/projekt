@@ -29,7 +29,7 @@ bool Transporter::CreateAsTransporter(uint32 EntryID, const char* Name, int32 Ti
 	
 	// Override these flags to avoid mistakes in proto
 	SetUInt32Value(GAMEOBJECT_FLAGS,40);
-	SetUInt32Value(GAMEOBJECT_ANIMPROGRESS, 100);
+	SetByte(GAMEOBJECT_BYTES_1, 3, 100);
 	
 	
 	// Set period
@@ -369,6 +369,12 @@ void Transporter::TransportPassengers(uint32 mapid, uint32 oldmap, float x, floa
 {
 	sEventMgr.RemoveEvents(this, EVENT_TRANSPORTER_NEXT_WAYPOINT);
 
+#ifdef CLUSTERING
+	WorldPacket data(ICMSG_TRANSPORTER_MAP_CHANGE);
+	data << GetEntry() << mapid << oldmap << x << y << z;
+	sClusterInterface.SendPacket(&data);
+#endif
+
 	if(mPassengers.size() > 0)
 	{
 		PassengerIterator itr = mPassengers.begin();
@@ -410,7 +416,6 @@ void Transporter::TransportPassengers(uint32 mapid, uint32 oldmap, float x, floa
 			}
 
 			plr->GetSession()->SendPacket(&Pending);
-			plr->_Relocate(mapid, v, false, true, 0);
 
 			// Lucky bitch. Do it like on official.
 			if(plr->isDead())
@@ -537,4 +542,18 @@ uint32 Transporter::BuildCreateUpdateBlockForPlayer(ByteBuffer *data, Player *ta
 	}
 
 	return cnt;
+}
+
+void Transporter::EventClusterMapChange(uint32 mapid, LocationVector l)
+{
+	m_WayPoints.clear();
+	
+	if (!GenerateWaypoints())
+		return;
+
+	SetMapId(m_WayPoints[0].mapid);
+	SetPosition(m_WayPoints[0].x, m_WayPoints[0].y, m_WayPoints[0].z, 0);
+
+	if (!IsInWorld())
+		AddToWorld();
 }

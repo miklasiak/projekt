@@ -212,7 +212,7 @@ public:
 
 	ASCENT_INLINE bool isQuestGiver()
 	{
-		if(m_uint32Values[GAMEOBJECT_TYPE_ID] == 2)
+		if(m_uint32Values[GAMEOBJECT_BYTES_1] == 2)
 			return true;
 		else
 			return false;

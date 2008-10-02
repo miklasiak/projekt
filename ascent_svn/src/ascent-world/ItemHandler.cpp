@@ -342,7 +342,12 @@ void WorldSession::HandleSwapItemOpcode(WorldPacket& recv_data)
 			if(!result)
 			{
 				printf("HandleSwapItem: Error while adding item to dstslot\n");
-				delete SrcItem;
+				//put items back if we can!
+				if (!_player->GetItemInterface()->SafeAddItem(SrcItem, SrcInvSlot, SrcSlot))
+					delete SrcItem;
+				if (!_player->GetItemInterface()->SafeAddItem(DstItem, DstInvSlot, DstSlot))
+					delete DstItem;
+				return;
 			}
 		}
 
@@ -352,7 +357,12 @@ void WorldSession::HandleSwapItemOpcode(WorldPacket& recv_data)
 			if(!result)
 			{
 				printf("HandleSwapItem: Error while adding item to srcslot\n");
-				delete DstItem;
+				//put items back if we can!
+				if (SrcItem != NULL && !_player->GetItemInterface()->SafeAddItem(SrcItem, SrcInvSlot, SrcSlot))
+					delete SrcItem;
+				if (DstItem != NULL && !_player->GetItemInterface()->SafeAddItem(DstItem, DstInvSlot, DstSlot))
+					delete DstItem;
+				return;
 			}
 		}
 	}
@@ -821,11 +831,13 @@ void WorldSession::HandleItemQuerySingleOpcode( WorldPacket & recv_data )
 	data << itemProto->Unique;
 	data << itemProto->MaxCount;
 	data << itemProto->ContainerSlots;
+	data << uint32(10);
 	for(i = 0; i < 10; i++)
 	{
 		data << itemProto->Stats[i].Type;
 		data << itemProto->Stats[i].Value;
 	}
+	data << uint64(0);
 	for(i = 0; i < 5; i++)
 	{
 		data << itemProto->Damage[i].Min;
@@ -1413,9 +1425,13 @@ void WorldSession::HandleBuyItemOpcode( WorldPacket & recv_data ) // right-click
 	}
 	else
 	{
-		add->ModUnsigned32Value(ITEM_FIELD_STACK_COUNT, amount*item.amount);
+		if (amount * item.amount > add->GetProto()->MaxCount)
+			add->SetUInt32Value(ITEM_FIELD_STACK_COUNT, add->GetProto()->MaxCount);
+		else
+			add->SetUInt32Value(ITEM_FIELD_STACK_COUNT, amount * item.amount);
+
 		add->m_isDirty = true;
-		SendItemPushResult(add, false, true, false, false, _player->GetItemInterface()->GetBagSlotByGuid(add->GetGUID()), 1, amount*item.amount);
+		SendItemPushResult(add, false, true, false, false, _player->GetItemInterface()->GetBagSlotByGuid(add->GetGUID()), 1, (amount * item.amount > add->GetProto()->MaxCount)? add->GetProto()->MaxCount : amount*item.amount);
 	}
 
 	 data.Initialize( SMSG_BUY_ITEM );
@@ -1426,7 +1442,7 @@ void WorldSession::HandleBuyItemOpcode( WorldPacket & recv_data ) // right-click
 	 _player->GetItemInterface()->BuyItem(it,amount,unit);
 	 if(item.max_amount)
 	 {
-		 unit->ModAvItemAmount(item.itemid,item.amount*amount);
+		 unit->ModAvItemAmount(item.itemid, item.amount*amount);
 		
 		 // there is probably a proper opcode for this. - burlex
 		 SendInventoryList(unit);

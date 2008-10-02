@@ -373,8 +373,9 @@ bool ChatHandler::HandleSummonCommand(const char* args, WorldSession *m_session)
 
 		Player * plr = m_session->GetPlayer();
 
-		if(plr->GetMapMgr()==chr->GetMapMgr())
-			chr->_Relocate(plr->GetMapId(),plr->GetPosition(),false,false,plr->GetInstanceID());
+		if(plr->GetMapMgr() == chr->GetMapMgr())
+			chr->SafeTeleport(plr->GetMapId(), plr->GetInstanceID(), plr->GetPosition());
+			//chr->_Relocate(plr->GetMapId(),plr->GetPosition(),false,false,plr->GetInstanceID());
 		else
 		{
 			sEventMgr.AddEvent(chr,&Player::EventPortToGM,plr,0,1,1,0);
@@ -409,6 +410,18 @@ bool ChatHandler::HandleAppearCommand(const char* args, WorldSession *m_session)
 	if(!*args)
 		return false;
 
+#ifdef CLUSTERING
+	if (m_session == NULL || m_session->GetSocket() == NULL)
+		return false;
+
+	WorldPacket data(ICMSG_PLAYER_TELEPORT);
+	data << uint8(1) << uint8(0) << m_session->GetSocket()->GetSessionId();
+	data << m_session->GetPlayer()->GetMapId();
+	data << m_session->GetPlayer()->GetInstanceID();
+	data << m_session->GetPlayer()->GetPosition();
+	data << args;
+	sClusterInterface.SendPacket(&data);
+#else
 	Player *chr = objmgr.GetPlayer(args, false);
 	if (chr)
 	{
@@ -442,6 +455,7 @@ bool ChatHandler::HandleAppearCommand(const char* args, WorldSession *m_session)
 		snprintf((char*)buf,256, "Player (%s) does not exist or is not logged in.", args);
 		SystemMessage(m_session, buf);
 	}
+#endif
 
 	return true;
 }

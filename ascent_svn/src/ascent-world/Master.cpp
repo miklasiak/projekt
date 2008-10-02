@@ -19,7 +19,7 @@
 
 #include "StdAfx.h"
 
-#define BANNER "Ascent %s r%u/%s-%s-%s powered by Evolution Cores :: World Server"
+#define BANNER "Ascent %s r%u/%s-%s-%s :: World Server"
 
 #ifndef WIN32
 #include <sched.h>
@@ -524,6 +524,11 @@ bool Master::Run(int argc, char ** argv)
 	CloseConsoleListener();
 	sWorld.SaveAllPlayers();
 
+#ifdef CLUSTERING
+		//push players back to char list with clustering
+		sWorld.LogoutPlayers();
+#endif
+
 	Log.Notice( "Network", "Shutting down network subsystem." );
 #ifdef WIN32
 	sSocketMgr.ShutdownThreads();
@@ -531,9 +536,12 @@ bool Master::Run(int argc, char ** argv)
 	sSocketMgr.CloseAll();
 
 	bServerShutdown = true;
+	Log.Notice("ThreadPool", "Shutting down thread pool");
 	ThreadPool.Shutdown();
 
+#ifndef CLUSTERING
 	delete ls;
+#endif
 
 	sWorld.LogoutPlayers();
 	sLog.outString( "" );
@@ -710,6 +718,10 @@ void OnCrash( bool Terminate )
 			CharacterDatabase.EndThreads();
 			Log.Notice( "sql","All pending database operations cleared.\n" );
 			sWorld.SaveAllPlayers();
+#ifdef CLUSTERING
+			//push players back to char list with clustering
+			sWorld.LogoutPlayers();
+#endif
 			Log.Notice( "sql","Data saved." );
 		}
 	}

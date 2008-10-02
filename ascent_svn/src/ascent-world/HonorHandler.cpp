@@ -63,7 +63,7 @@ int32 HonorHandler::CalculateHonorPointsForKill( Player *pPlayer, Unit* pVictim 
 		return 0;
 
 	// How dishonorable, you fiend!
-	if( pVictim->HasActiveAura( PLAYER_HONORLESS_TARGET_SPELL ) )
+	if(pVictim->m_auracount[SPELL_AURA_NO_PVP_CREDIT] > 0)
 		return 0;
 
 	uint32 k_level = pPlayer->GetUInt32Value( UNIT_FIELD_LEVEL );

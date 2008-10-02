@@ -55,6 +55,7 @@ enum Classes
 	HUNTER = 3,
 	ROGUE = 4,
 	PRIEST = 5,
+	DEATHKNIGHT = 6,
 	SHAMAN = 7,
 	MAGE = 8,
 	WARLOCK = 9,
@@ -648,30 +649,30 @@ enum SPELL_INDEX
 	NUM_SPELL_TYPE_INDEX			= 11,
 };
 
-#define PLAYER_RATING_MODIFIER_RANGED_SKILL						PLAYER_FIELD_COMBAT_RATING_1
-#define PLAYER_RATING_MODIFIER_DEFENCE							PLAYER_FIELD_COMBAT_RATING_01
-#define PLAYER_RATING_MODIFIER_DODGE							PLAYER_FIELD_COMBAT_RATING_02
-#define PLAYER_RATING_MODIFIER_PARRY							PLAYER_FIELD_COMBAT_RATING_03
-#define PLAYER_RATING_MODIFIER_BLOCK							PLAYER_FIELD_COMBAT_RATING_04
-#define PLAYER_RATING_MODIFIER_MELEE_HIT						PLAYER_FIELD_COMBAT_RATING_05
-#define PLAYER_RATING_MODIFIER_RANGED_HIT						PLAYER_FIELD_COMBAT_RATING_06
-#define PLAYER_RATING_MODIFIER_SPELL_HIT						PLAYER_FIELD_COMBAT_RATING_07
-#define PLAYER_RATING_MODIFIER_MELEE_CRIT						PLAYER_FIELD_COMBAT_RATING_08
-#define PLAYER_RATING_MODIFIER_RANGED_CRIT						PLAYER_FIELD_COMBAT_RATING_09
-#define PLAYER_RATING_MODIFIER_SPELL_CRIT						PLAYER_FIELD_COMBAT_RATING_10
-#define PLAYER_RATING_MODIFIER_MELEE_HIT_AVOIDANCE				PLAYER_FIELD_COMBAT_RATING_11 // GUESSED
-#define PLAYER_RATING_MODIFIER_RANGED_HIT_AVOIDANCE				PLAYER_FIELD_COMBAT_RATING_12 // GUESSED
-#define PLAYER_RATING_MODIFIER_SPELL_HIT_AVOIDANCE				PLAYER_FIELD_COMBAT_RATING_13 // GUESSED
-#define PLAYER_RATING_MODIFIER_MELEE_CRIT_RESILIENCE			PLAYER_FIELD_COMBAT_RATING_14
-#define PLAYER_RATING_MODIFIER_RANGED_CRIT_RESILIENCE			PLAYER_FIELD_COMBAT_RATING_15
-#define PLAYER_RATING_MODIFIER_SPELL_CRIT_RESILIENCE			PLAYER_FIELD_COMBAT_RATING_16
-#define PLAYER_RATING_MODIFIER_MELEE_HASTE						PLAYER_FIELD_COMBAT_RATING_17
-#define PLAYER_RATING_MODIFIER_RANGED_HASTE						PLAYER_FIELD_COMBAT_RATING_18
-#define PLAYER_RATING_MODIFIER_SPELL_HASTE						PLAYER_FIELD_COMBAT_RATING_19
-#define PLAYER_RATING_MODIFIER_MELEE_MAIN_HAND_SKILL			PLAYER_FIELD_COMBAT_RATING_20
-#define PLAYER_RATING_MODIFIER_MELEE_OFF_HAND_SKILL				PLAYER_FIELD_COMBAT_RATING_21
-// #define UNKNOWN												PLAYER_FIELD_COMBAT_RATING_22
-#define PLAYER_RATING_MODIFIER_EXPERTISE						PLAYER_FIELD_COMBAT_RATING_23
+#define PLAYER_RATING_MODIFIER_RANGED_SKILL						PLAYER_FIELD_COMBAT_RATING_1_1
+#define PLAYER_RATING_MODIFIER_DEFENCE							PLAYER_FIELD_COMBAT_RATING_1_2
+#define PLAYER_RATING_MODIFIER_DODGE							PLAYER_FIELD_COMBAT_RATING_1_3
+#define PLAYER_RATING_MODIFIER_PARRY							PLAYER_FIELD_COMBAT_RATING_1_4
+#define PLAYER_RATING_MODIFIER_BLOCK							PLAYER_FIELD_COMBAT_RATING_1_5
+#define PLAYER_RATING_MODIFIER_MELEE_HIT						PLAYER_FIELD_COMBAT_RATING_1_6
+#define PLAYER_RATING_MODIFIER_RANGED_HIT						PLAYER_FIELD_COMBAT_RATING_1_7
+#define PLAYER_RATING_MODIFIER_SPELL_HIT						PLAYER_FIELD_COMBAT_RATING_1_8
+#define PLAYER_RATING_MODIFIER_MELEE_CRIT						PLAYER_FIELD_COMBAT_RATING_1_9
+#define PLAYER_RATING_MODIFIER_RANGED_CRIT						PLAYER_FIELD_COMBAT_RATING_1_10
+#define PLAYER_RATING_MODIFIER_SPELL_CRIT						PLAYER_FIELD_COMBAT_RATING_1_11
+#define PLAYER_RATING_MODIFIER_MELEE_HIT_AVOIDANCE				PLAYER_FIELD_COMBAT_RATING_1_12 // GUESSED
+#define PLAYER_RATING_MODIFIER_RANGED_HIT_AVOIDANCE				PLAYER_FIELD_COMBAT_RATING_1_13 // GUESSED
+#define PLAYER_RATING_MODIFIER_SPELL_HIT_AVOIDANCE				PLAYER_FIELD_COMBAT_RATING_1_14 // GUESSED
+#define PLAYER_RATING_MODIFIER_MELEE_CRIT_RESILIENCE			PLAYER_FIELD_COMBAT_RATING_1_15
+#define PLAYER_RATING_MODIFIER_RANGED_CRIT_RESILIENCE			PLAYER_FIELD_COMBAT_RATING_1_16
+#define PLAYER_RATING_MODIFIER_SPELL_CRIT_RESILIENCE			PLAYER_FIELD_COMBAT_RATING_1_17
+#define PLAYER_RATING_MODIFIER_MELEE_HASTE						PLAYER_FIELD_COMBAT_RATING_1_18
+#define PLAYER_RATING_MODIFIER_RANGED_HASTE						PLAYER_FIELD_COMBAT_RATING_1_19
+#define PLAYER_RATING_MODIFIER_SPELL_HASTE						PLAYER_FIELD_COMBAT_RATING_1_20
+#define PLAYER_RATING_MODIFIER_MELEE_MAIN_HAND_SKILL			PLAYER_FIELD_COMBAT_RATING_1_21
+#define PLAYER_RATING_MODIFIER_MELEE_OFF_HAND_SKILL				PLAYER_FIELD_COMBAT_RATING_1_22
+// #define UNKNOWN												PLAYER_FIELD_COMBAT_RATING_1_23
+#define PLAYER_RATING_MODIFIER_EXPERTISE						PLAYER_FIELD_COMBAT_RATING_1_24
 
 class ArenaTeam;
 struct PlayerCooldown
@@ -713,6 +714,9 @@ public:
 
 	Player ( uint32 guid );
 	~Player ( );
+
+	void HandleClusterRemove();
+	void EventClusterMapChange(uint32 mapid, uint32 instanceid, LocationVector location);
 
 	ASCENT_INLINE Guild * GetGuild() { return m_playerInfo->guild; }
 	ASCENT_INLINE GuildMember * GetGuildMember() { return m_playerInfo->guildMember; }
@@ -882,18 +886,7 @@ public:
     uint32              timed_quest_slot;
 	std::set<uint32>    quest_spells;
 	std::set<uint32>    quest_mobs;
-
-    /************************************************************************/
-    /* Stun Immobilize                                                      */
-    /************************************************************************/
-    void SetTriggerStunOrImmobilize(uint32 newtrigger,uint32 new_chance)
-    {
-        trigger_on_stun = newtrigger;
-        trigger_on_stun_chance = new_chance;
-    }
-    void EventStunOrImmobilize(Unit *proc_target);
-
-    
+   
     void EventPortToGM(Player *p);
 	ASCENT_INLINE uint32 GetTeam() { return m_team; }
 	ASCENT_INLINE void SetTeam(uint32 t) { m_team = t; m_bgTeam=t; }
@@ -1408,13 +1401,9 @@ public:
 	uint32 ResistanceModPctNeg[7];
 	float m_resist_critical[2];//when we are a victim we can have talents to decrease chance for critical hit. This is a negative value and it's added to critchances
 	float m_resist_hit[3]; // 0 = melee; 1= ranged; 2=spells
-	float SpellDmgDoneByAttribute[5][7];
-	float SpellHealDoneByAttribute[5][7];
 	uint32 m_modphyscritdmgPCT;
 	uint32 m_RootedCritChanceBonus; // Class Script Override: Shatter
 
-	uint32 m_ModInterrMRegenPCT;
-	int32 m_ModInterrMRegen;
 	float m_RegenManaOnSpellResist;
 	uint32 m_casted_amount[7]; //Last casted spells amounts. Need for some spells. Like Ignite etc. DOesn't count HoTs and DoTs. Only directs
 	
@@ -1438,6 +1427,7 @@ public:
 	void RegenerateHealth(bool inCombat);
 	void RegenerateEnergy();
 	void LooseRage(int32 value);
+	void SetRage(int32 value);
 	
     uint32 SoulStone;
 	uint32 SoulStoneReceiver;
@@ -1880,9 +1870,6 @@ protected:
 	float m_hitfromspell;
 	float m_hitfrommeleespell;
 public:
-	//stats mods
-	uint32 m_healthfromspell;
-	uint32 m_manafromspell;
 	uint32 m_healthfromitems;
 	uint32 m_manafromitems;
 

@@ -26,12 +26,12 @@ Container::Container(uint32 high,uint32 low) : Item()
 	m_uint32Values = __fields;
 	memset(m_uint32Values, 0,(CONTAINER_END)*sizeof(uint32));
 	m_updateMask.SetCount(CONTAINER_END);
-	SetUInt32Value( OBJECT_FIELD_TYPE,TYPE_CONTAINER|TYPE_ITEM|TYPE_OBJECT);
-	SetUInt32Value( OBJECT_FIELD_GUID,low);
-	SetUInt32Value( OBJECT_FIELD_GUID+1,high);
+	SetUInt32Value(OBJECT_FIELD_TYPE, TYPE_CONTAINER | TYPE_ITEM | TYPE_OBJECT);
+	SetUInt32Value(OBJECT_FIELD_GUID,low);
+	SetUInt32Value(OBJECT_FIELD_GUID+1,high);
 	m_wowGuid.Init(GetGUID());
 
-	SetFloatValue( OBJECT_FIELD_SCALE_X, 1 );//always 1
+	SetFloatValue(OBJECT_FIELD_SCALE_X, 1);//always 1
 
 
 	m_Slot = NULL;
@@ -163,7 +163,7 @@ bool Container::AddItem(int8 slot, Item *item)
 		//item->AddToWorld();
 		item->PushToWorld(m_owner->GetMapMgr());
 
-		ByteBuffer buf(2500);
+		ByteBuffer buf(3000);
 		uint32 count = item->BuildCreateUpdateBlockForPlayer(&buf, m_owner);
 		m_owner->PushCreationData(&buf, count);
 	}

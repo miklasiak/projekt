@@ -119,6 +119,7 @@ public:
 	}
 
 	uint32 PreTeleport(uint32 mapid, Player * plr, uint32 instanceid);
+	MapMgr * GetInstance(uint32 mapid, uint32 instanceid);
 	MapMgr * GetInstance(Object* obj);
 	uint32 GenerateInstanceID();
 	void BuildXMLStats(char * m_file);
@@ -170,6 +171,7 @@ public:
 	// packets, w000t! we all love packets!
 	void BuildRaidSavedInstancesForPlayer(Player * plr);
 	void BuildSavedInstancesForPlayer(Player * plr);
+	MapMgr * CreateNewMapInstance(uint32 mapid, uint32 instanceid = 0);
 	MapMgr * CreateBattlegroundInstance(uint32 mapid);
 
 	// this only frees the instance pointer, not the mapmgr itself

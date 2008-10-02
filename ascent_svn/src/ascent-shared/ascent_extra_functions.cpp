@@ -132,3 +132,24 @@ volatile long Sync_Sub(volatile long* value)
 	return __sync_sub_and_fetch(value, 1);
 #endif
 }
+
+bool Rand(float chance)
+{
+	int32 val = RandomUInt(10000);
+	int32 p = int32(chance * 100.0f);
+	return p >= val;
+}
+
+bool Rand(uint32 chance)
+{
+	int32 val = RandomUInt(10000);
+	int32 p = int32(chance * 100);
+	return p >= val;
+}
+
+bool Rand(int32 chance)
+{
+	int32 val = RandomUInt(10000);
+	int32 p = chance * 100;
+	return p >= val;
+}

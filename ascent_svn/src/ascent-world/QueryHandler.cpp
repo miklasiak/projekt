@@ -40,7 +40,8 @@ void WorldSession::HandleNameQueryOpcode( WorldPacket & recv_data )
 	data << pn->name;
 	data << uint8(0);	   // this probably is "different realm" or something flag.
 	data << pn->race << pn->gender << pn->cl;
-	data << uint8(0);			// 2.4.0, why do i get the feeling blizz is adding custom classes or custom titles? (same thing in who list)
+	//Removed 3.0.2
+	//data << uint8(0);			// 2.4.0, why do i get the feeling blizz is adding custom classes or custom titles? (same thing in who list)
 	SendPacket( &data );
 }
 
@@ -294,7 +295,7 @@ void WorldSession::HandleInrangeQuestgiverQuery(WorldPacket & recv_data)
 {
 	CHECK_INWORLD_RETURN;
 
-	WorldPacket data(SMSG_INRANGE_QUESTGIVER_STATUS_QUERY_RESPONSE, 1000);
+	WorldPacket data(SMSG_QUESTGIVER_STATUS_MULTIPLE, 1000);
 	Object::InRangeSet::iterator itr;
 	Creature * pCreature;
 	uint32 count = 0;

@@ -26,12 +26,12 @@ Corpse::Corpse(uint32 high, uint32 low)
 	m_uint32Values = _fields;
 	memset(m_uint32Values, 0,(CORPSE_END)*sizeof(uint32));
 	m_updateMask.SetCount(CORPSE_END);
-	SetUInt32Value( OBJECT_FIELD_TYPE,TYPE_CORPSE|TYPE_OBJECT);
-	SetUInt32Value( OBJECT_FIELD_GUID,low);
-	SetUInt32Value( OBJECT_FIELD_GUID+1,high);
+	SetUInt32Value(OBJECT_FIELD_TYPE, TYPE_CORPSE|TYPE_OBJECT);
+	SetUInt32Value(OBJECT_FIELD_GUID,low);
+	SetUInt32Value(OBJECT_FIELD_GUID+1,high);
 	m_wowGuid.Init(GetGUID());
 
-	SetFloatValue( OBJECT_FIELD_SCALE_X, 1 );//always 1
+	SetFloatValue(OBJECT_FIELD_SCALE_X, 1);//always 1
 	  
 
 	m_state = CORPSE_STATE_BODY;

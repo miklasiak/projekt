@@ -104,8 +104,23 @@ void WorldSession::HandleBattleMasterHelloOpcode(WorldPacket &recv_data)
 
 void WorldSession::HandleLeaveBattlefieldOpcode(WorldPacket &recv_data)
 {
-	if(_player->m_bg && _player->IsInWorld())
-		_player->m_bg->RemovePlayer(_player, false);
+	if (_player->m_bg == NULL || !_player->IsInWorld())
+		return;
+
+	if (!_player->m_bg->HasEnded())
+	{
+		//cast deserter
+		SpellEntry* sp = dbcSpell.LookupEntry(26013);
+
+		if (sp != NULL)
+		{
+			Spell* s=new Spell(_player, sp, true, NULL);
+			SpellCastTargets t(_player);
+			s->prepare(&t);
+		}
+	}
+	
+	_player->m_bg->RemovePlayer(_player, false);
 }
 
 void WorldSession::HandleAreaSpiritHealerQueryOpcode(WorldPacket &recv_data)
@@ -268,7 +283,7 @@ void WorldSession::HandleInspectArenaStatsOpcode( WorldPacket & recv_data )
             ArenaTeam* team = objmgr.GetArenaTeamById( id );
             if( team != NULL )
 			{
-				WorldPacket data( MSG_INSPECT_ARENA_STATS, 8 + 1 + 4 * 5 );
+				WorldPacket data( MSG_INSPECT_ARENA_TEAMS, 8 + 1 + 4 * 5 );
 				data << player->GetGUID();
 				data << team->m_type;
 				data << team->m_id;
