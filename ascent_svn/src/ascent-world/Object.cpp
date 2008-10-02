@@ -1595,7 +1595,7 @@ void Object::DealDamage(Unit *pVictim, uint32 damage, uint32 targetEvent, uint32
 		std::vector<void*> data;
 		data.push_back((void*)this);
 		data.push_back((void*)pVictim);
-		data.push_back((void*)damage);
+		data.push_back((void*)&damage);
 
 		if (IsUnit())
 			static_cast<Unit*>(this)->HandleProcFnc(SPELLFNC_PROC_ON_DEAL_DAMAGE, &data);

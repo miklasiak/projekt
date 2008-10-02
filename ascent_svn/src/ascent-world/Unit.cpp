@@ -3772,6 +3772,11 @@ void Unit::AddAura(Aura *aur, SpellScript* script)
 		}
 	}
 
+	ProcData data;
+	data.push_back((void*)aur);
+
+	HandleProcFnc(SPELLFNC_PROC_ON_AURA_ADD, &data);
+
 	aur->SetTimeLeft(aur->GetDuration());
 
 	aur->RelocateEvents();

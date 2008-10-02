@@ -8267,7 +8267,12 @@ void Aura::HandleStackAdd()
 
 	m_target->ModAuraStackCount(m_visualSlot, m_stackcount-current);
 
+	//reapply old mods (for talents and shit)
 	ReapplyModifiers();
+
+	//add modifiers for new stacks
+	for (uint32 i=0; i<m_stackcount - current; ++i)
+		ApplyModifiers(true);
 
 	//mark the aura to recalc bonus damge
 	m_recalcbonus = true;
@@ -8280,26 +8285,6 @@ void Aura::HandleStackAdd()
 
 void Aura::UpdateDurations()
 {
-	/*if (m_target->IsPlayer())
-	{
-		WorldPacket data(SMSG_UPDATE_AURA_DURATION, 5);
-		data << m_visualSlot << GetTimeLeft();
-		static_cast<Player*>(m_target)->GetSession()->SendPacket(&data);
-	}
-
-	WorldPacket data2(SMSG_SET_EXTRA_AURA_INFO_NEED_UPDATE, 22);
-	data2 << m_target->GetNewGUID() << m_visualSlot << m_spellProto->Id << int32(-1) << int32(-1);
-	m_target->SendMessageToSet(&data2, false, false, m_casterGuid);
-
-	//try and send info update to caster
-	Unit* caster=m_target->GetMapMgr()->GetUnit(m_casterGuid);
-	if (caster != NULL && caster->IsPlayer())
-	{
-		WorldPacket data3(SMSG_SET_EXTRA_AURA_INFO_NEED_UPDATE, 22);
-		data3 << m_target->GetNewGUID() << m_visualSlot << m_spellProto->Id << GetTimeLeft() << GetDuration();
-		static_cast<Player*>(caster)->GetSession()->SendPacket(&data3);
-}*/
-
 	if (IsPassive())
 		return;
 
@@ -8312,9 +8297,9 @@ void Aura::UpdateDurations()
 	WorldPacket data(SMSG_AURA_DATA, 20);
 
 	FastGUIDPack(data, m_target->GetGUID());
-	data << uint8(m_visualSlot); //flags unknown
+	data << uint8(m_visualSlot);
 	data << m_spellProto->Id;
-	data << uint8(flags); //flags2, unknown, contains positive/negative data :(
+	data << flags; //flags, unknown, contains positive/negative, and whether aura has a duration
 	data << uint8(caster != NULL? caster->getLevel() : 0);
 	data << uint8(m_stackcount);
 	if (flags & 0x20)
@@ -8332,7 +8317,7 @@ void Aura::UpdateDurations()
 
 void Aura::HandleStackRemove()
 {
-	m_stackcount-=1;
+	m_stackcount--;
 
 	//remove next update, not now, for iterators used for procs
 	if (m_stackcount == 0)
@@ -8346,7 +8331,6 @@ void Aura::HandleStackRemove()
 	//if were using cumulativeaura, we unapply mods
 	if (m_spellProto->cumulativeAura)
 		ApplyModifiers(false);
-
 
 	m_target->ModAuraStackCount(m_visualSlot, -1);
 }

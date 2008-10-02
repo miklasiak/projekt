@@ -41,6 +41,8 @@ struct CreatureInfo;
 struct FactionTemplateDBC;
 struct FactionDBC;
 
+//function procs
+typedef std::vector<void*> ProcData;
 
 typedef struct
 { 

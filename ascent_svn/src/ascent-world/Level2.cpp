@@ -66,12 +66,26 @@ bool ChatHandler::HandleInvisibleCommand(const char *args, WorldSession *m_sessi
 		pChar->m_isGmInvisible = false;
 		pChar->m_auracount[SPELL_AURA_MOD_INVISIBILITY]--;
 		pChar->bInvincible = false;
+		pChar->RemoveAura(32754);
+
 		pChar->Social_TellFriendsOnline();
 		snprintf(msg, 256, "%s OFF.", msg);
 	} else {
 		pChar->m_isGmInvisible = true;
 		pChar->m_auracount[SPELL_AURA_MOD_INVISIBILITY]++;
 		pChar->bInvincible = true;
+		if(pChar->bGMTagOn)
+		{
+			pChar->bGMTagOn = false;
+			pChar->RemoveFlag(PLAYER_FLAGS, PLAYER_FLAG_GM);
+			pChar->CastSpell(pChar, 32754, false);
+			pChar->bGMTagOn = true;
+			pChar->SetFlag(PLAYER_FLAGS, PLAYER_FLAG_GM);
+		}
+		else
+		{
+			pChar->CastSpell(pChar, 32754, false);
+		}
 		pChar->Social_TellFriendsOffline();		
 		snprintf(msg, 256, "%s ON.", msg);
 	}

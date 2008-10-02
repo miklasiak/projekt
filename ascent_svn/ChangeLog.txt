@@ -1,3 +1,11 @@
+r78
+- actual ascent rev 5092
+- bounty hunter added
+- changed commands for more flexibility
+- updated ivorydb
+- updated lostdb
+- full lostdb support will be as actual as for arcemu!!!!
+------------------------------------------------------------------------------------
 r77
 - actual sun++ rev 328
 ------------------------------------------------------------------------------------

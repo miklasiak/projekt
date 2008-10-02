@@ -26,6 +26,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WarpNPC", "projects\WarpNPC
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GlobalNPC", "projects\GlobalNPC2008.vcproj", "{6129C5C5-86F0-4726-A54C-AD1DADA1B702}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BountyHunter", "projects\BountyHunter2008.vcproj", "{BEC7DA86-0176-4B15-A208-DA85C4F8EE16}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -126,6 +128,12 @@ Global
 		{6129C5C5-86F0-4726-A54C-AD1DADA1B702}.Release|Win32.ActiveCfg = Release|Win32
 		{6129C5C5-86F0-4726-A54C-AD1DADA1B702}.Release|Win32.Build.0 = Release|Win32
 		{6129C5C5-86F0-4726-A54C-AD1DADA1B702}.Release|x64.ActiveCfg = Release|Win32
+		{BEC7DA86-0176-4B15-A208-DA85C4F8EE16}.Debug|Win32.ActiveCfg = Debug|Win32
+		{BEC7DA86-0176-4B15-A208-DA85C4F8EE16}.Debug|Win32.Build.0 = Debug|Win32
+		{BEC7DA86-0176-4B15-A208-DA85C4F8EE16}.Debug|x64.ActiveCfg = Debug|Win32
+		{BEC7DA86-0176-4B15-A208-DA85C4F8EE16}.Release|Win32.ActiveCfg = Release|Win32
+		{BEC7DA86-0176-4B15-A208-DA85C4F8EE16}.Release|Win32.Build.0 = Release|Win32
+		{BEC7DA86-0176-4B15-A208-DA85C4F8EE16}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
