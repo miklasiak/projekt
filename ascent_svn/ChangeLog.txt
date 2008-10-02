@@ -1,3 +1,9 @@
+r75 pre milestone 1
+- changed Login News
+- fixed chardb
+- added IvoryDB for ascent
+- changed configs
+------------------------------------------------------------------------------------
 r74
 - crashfix for server
 ------------------------------------------------------------------------------------

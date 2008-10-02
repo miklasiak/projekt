@@ -884,11 +884,11 @@ void WorldSession::FullLogin(Player * plr)
 
 	// Send revision (if enabled)
 #ifdef WIN32
-	_player->BroadcastMessage("Server: %sAscent %s r%u/%s-Win-%s %s(www.ascentcommunity.com)", MSG_COLOR_WHITE, BUILD_TAG,
-		BUILD_REVISION, CONFIG, ARCH, MSG_COLOR_LIGHTBLUE);		
+	_player->BroadcastMessage("Server: %sAscent %s r%u powered by Evolution-Core %s(http://evolution-cores.bplaced.net/)", MSG_COLOR_WHITE, BUILD_REVISION, 
+		MSG_COLOR_LIGHTBLUE);		
 #else
-	_player->BroadcastMessage("Server: %sAscent %s r%u/%s-%s %s(www.ascentcommunity.com)", MSG_COLOR_WHITE, BUILD_TAG,
-		BUILD_REVISION, PLATFORM_TEXT, ARCH, MSG_COLOR_LIGHTBLUE);
+	_player->BroadcastMessage("Server: %sAscent %s r%u powered by Evolution-Core %s(http://evolution-cores.bplaced.net/)", MSG_COLOR_WHITE, BUILD_REVISION, 
+		MSG_COLOR_LIGHTBLUE);
 #endif
 
 	if(sWorld.SendStatsOnJoin)
