@@ -141,7 +141,6 @@ Spell::Spell(Object* Caster, SpellEntry *info, bool triggered, Aura* aur)
 	POINTERLOGNEW(this);
 	ASSERT( Caster != NULL && info != NULL );
 
-	ProcData = 0;
 	amp = 1.0f;
 	triggered_id=0;
 	forced_modifier=NULL;
@@ -283,8 +282,8 @@ uint64 Spell::GetSinglePossibleEnemy(uint32 i,float prange)
 		r = m_spellInfo->base_range_or_radius_sqr;
 		if( m_spellInfo->SpellGroupType && u_caster)
 		{
-			SM_FFValue(u_caster->SM_FRadius,&r,m_spellInfo);
-			SM_PFValue(u_caster->SM_PRadius,&r,m_spellInfo);
+			SM_FFValue(u_caster->SM_FRadius,&r,m_spellInfo->SpellGroupType);
+			SM_PFValue(u_caster->SM_PRadius,&r,m_spellInfo->SpellGroupType);
 		}
 	}
 	float srcx = m_caster->GetPositionX(), srcy = m_caster->GetPositionY(), srcz = m_caster->GetPositionZ();
@@ -332,8 +331,8 @@ uint64 Spell::GetSinglePossibleFriend(uint32 i,float prange)
 		r = m_spellInfo->base_range_or_radius_sqr;
 		if( m_spellInfo->SpellGroupType && u_caster)
 		{
-			SM_FFValue(u_caster->SM_FRadius,&r,m_spellInfo);
-			SM_PFValue(u_caster->SM_PRadius,&r,m_spellInfo);
+			SM_FFValue(u_caster->SM_FRadius,&r,m_spellInfo->SpellGroupType);
+			SM_PFValue(u_caster->SM_PRadius,&r,m_spellInfo->SpellGroupType);
 		}
 	}
 	float srcx=m_caster->GetPositionX(),srcy=m_caster->GetPositionY(),srcz=m_caster->GetPositionZ();
@@ -520,8 +519,8 @@ uint8 Spell::DidHit(uint32 effindex,Unit* target)
 
 	if( this->m_spellInfo->Effect[effindex] == SPELL_EFFECT_DISPEL && m_spellInfo->SpellGroupType && u_caster)
 	{
-		SM_FFValue(u_caster->SM_FRezist_dispell,&resistchance,m_spellInfo);
-		SM_PFValue(u_caster->SM_PRezist_dispell,&resistchance,m_spellInfo);
+		SM_FFValue(u_caster->SM_FRezist_dispell,&resistchance,m_spellInfo->SpellGroupType);
+		SM_PFValue(u_caster->SM_PRezist_dispell,&resistchance,m_spellInfo->SpellGroupType);
 #ifdef COLLECTION_OF_UNTESTED_STUFF_AND_TESTERS
 		int spell_flat_modifers=0;
 		int spell_pct_modifers=0;
@@ -535,7 +534,7 @@ uint8 Spell::DidHit(uint32 effindex,Unit* target)
 	if(m_spellInfo->SpellGroupType && u_caster)
 	{
 		float hitchance=0;
-		SM_FFValue(u_caster->SM_FHitchance,&hitchance,m_spellInfo);
+		SM_FFValue(u_caster->SM_FHitchance,&hitchance,m_spellInfo->SpellGroupType);
 		resistchance -= hitchance;
 #ifdef COLLECTION_OF_UNTESTED_STUFF_AND_TESTERS
 		float spell_flat_modifers=0;
@@ -588,8 +587,8 @@ uint8 Spell::prepare( SpellCastTargets * targets )
 
 		if( m_castTime && m_spellInfo->SpellGroupType && u_caster != NULL )
 		{
-			SM_FIValue( u_caster->SM_FCastTime, (int32*)&m_castTime, m_spellInfo );
-			SM_PIValue( u_caster->SM_PCastTime, (int32*)&m_castTime, m_spellInfo );
+			SM_FIValue( u_caster->SM_FCastTime, (int32*)&m_castTime, m_spellInfo->SpellGroupType );
+			SM_PIValue( u_caster->SM_PCastTime, (int32*)&m_castTime, m_spellInfo->SpellGroupType );
 #ifdef COLLECTION_OF_UNTESTED_STUFF_AND_TESTERS
 			int spell_flat_modifers=0;
 			int spell_pct_modifers=0;
@@ -972,14 +971,6 @@ void Spell::cast(bool check)
 			if (m_spellScript != NULL)
 				m_spellScript->OnCast();
 
-			//procfncs :D
-			std::vector<void*> data;
-			data.push_back((void*)this);
-
-			if (u_caster != NULL)
-				u_caster->HandleProcFnc(SPELLFNC_PROC_ON_CAST_SPELL, &data);
-
-
             // cant reflect if its a dest location
 			if (m_targets.m_targetMask & TARGET_FLAG_DEST_LOCATION)
 			{
@@ -1146,7 +1137,7 @@ void Spell::AddTime(uint32 type)
 		if( m_spellInfo->SpellGroupType && u_caster)
 		{
 			float ch=0;
-			SM_FFValue(u_caster->SM_PNonInterrupt,&ch,m_spellInfo);
+			SM_FFValue(u_caster->SM_PNonInterrupt,&ch,m_spellInfo->SpellGroupType);
 #ifdef COLLECTION_OF_UNTESTED_STUFF_AND_TESTERS
 			float spell_pct_modifers=0;
 			SM_FFValue(u_caster->SM_PNonInterrupt,&spell_pct_modifers,m_spellInfo->SpellGroupType);
@@ -1437,7 +1428,7 @@ void Spell::SendCastResult(uint8 result)
 		pe.ErrorMessage = result;
 		pe.MultiCast = extra_cast_number;
 		pe.Extra = Extra;
-		plr->GetSession()->OutPacket( SMSG_CAST_FAILED, sizeof( packetSMSG_CASTRESULT_EXTRA ), &pe );
+		plr->GetSession()->OutPacket( SMSG_CAST_RESULT, sizeof( packetSMSG_CASTRESULT_EXTRA ), &pe );
 	}
 	else
 	{
@@ -1445,7 +1436,7 @@ void Spell::SendCastResult(uint8 result)
 		pe.SpellId = m_spellInfo->Id;
 		pe.ErrorMessage = result;
 		pe.MultiCast = extra_cast_number;
-		plr->GetSession()->OutPacket( SMSG_CAST_FAILED, sizeof( packetSMSG_CASTRESULT ), &pe );
+		plr->GetSession()->OutPacket( SMSG_CAST_RESULT, sizeof( packetSMSG_CASTRESULT ), &pe );
 	}
 }
 
@@ -1478,7 +1469,7 @@ void Spell::SendSpellStart()
 
 	WorldPacket data( 150 );
 
-	uint32 cast_flags = 2;
+	uint16 cast_flags = 2;
 
 	if( GetType() == DEFENSE_TYPE_RANGED )
 		cast_flags |= 0x20;
@@ -1493,8 +1484,8 @@ void Spell::SendSpellStart()
 	else
 		data << m_caster->GetNewGUID() << m_caster->GetNewGUID();
 
-	data << extra_cast_number;
 	data << m_spellInfo->Id;
+	data << extra_cast_number;
 	data << cast_flags;
 	data << (uint32)m_castTime;
 		
@@ -1591,8 +1582,7 @@ void Spell::SendSpellGo()
 	// Start Spell
 	WorldPacket data(200);
 	data.SetOpcode(SMSG_SPELL_GO);
-	//32 bits in 3.0.2 i think, from packet logs it seems that way
-	uint32 flags = 0;
+	uint16 flags = 0;
 
 	if (GetType() == DEFENSE_TYPE_RANGED)
 		flags |= 0x20; // 0x20 RANGED
@@ -1617,7 +1607,6 @@ void Spell::SendSpellGo()
 		data << m_caster->GetNewGUID() << m_caster->GetNewGUID();
 	}
 
-	data << extra_cast_number;
 	data << m_spellInfo->Id;
 	data << flags;
 	data << getMSTime();
@@ -1898,8 +1887,8 @@ bool Spell::HasPower()
 	//apply modifiers
 	if( m_spellInfo->SpellGroupType && u_caster)
 	{
-		SM_FIValue(u_caster->SM_FCost,&cost,m_spellInfo);
-		SM_PIValue(u_caster->SM_PCost,&cost,m_spellInfo);
+		SM_FIValue(u_caster->SM_FCost,&cost,m_spellInfo->SpellGroupType);
+		SM_PIValue(u_caster->SM_PCost,&cost,m_spellInfo->SpellGroupType);
 	}
 
 	if (cost <=0)
@@ -1996,8 +1985,8 @@ bool Spell::TakePower()
 	//apply modifiers
 	if( m_spellInfo->SpellGroupType && u_caster)
 	{
-		  SM_FIValue(u_caster->SM_FCost,&cost,m_spellInfo);
-		  SM_PIValue(u_caster->SM_PCost,&cost,m_spellInfo);
+		  SM_FIValue(u_caster->SM_FCost,&cost,m_spellInfo->SpellGroupType);
+		  SM_PIValue(u_caster->SM_PCost,&cost,m_spellInfo->SpellGroupType);
 	}
 		 
 #ifdef COLLECTION_OF_UNTESTED_STUFF_AND_TESTERS
@@ -2023,17 +2012,6 @@ bool Spell::TakePower()
 		if(cost <= currentPower) // Unit has enough power (needed for creatures)
 		{
 			m_caster->SetUInt32Value(powerField, currentPower - cost);
-
-			if (u_caster != NULL)
-			{
-				WorldPacket data(SMSG_POWER_UPDATE, 9);
-				FastGUIDPack(data, m_caster->GetGUID());
-				data << uint8(powerField - UNIT_FIELD_POWER1); //update correct field :)
-				data << uint32(currentPower - cost);
-				u_caster->SendMessageToSet(&data, true);
-			}
-				
-
 			return true;
 		}
 		else
@@ -2134,10 +2112,6 @@ void Spell::HandleEffects(Object* obj, uint32 i, bool reflected)
 		}
 		else if (obj != NULL)
 		{
-			//players changing maps won't be hit by old spell projectiles
-			if (obj->event_GetInstanceID() != event_GetInstanceID())
-				return;
-
 			unitTarget = NULL;
 			switch(GET_TYPE_FROM_GUID(obj->GetGUID()))
 			{
@@ -2167,22 +2141,6 @@ void Spell::HandleEffects(Object* obj, uint32 i, bool reflected)
 	damage = CalculateEffect(i,unitTarget);  
 	sLog.outDebug( "WORLD: Spell effect id = %u, damage = %d", m_spellInfo->Effect[i], damage);
 
-	if (u_caster != NULL && unitTarget != NULL)
-	{
-		if (!(ProcData & PROC_ON_SPELL_HIT))
-		{
-			ProcData |= PROC_ON_SPELL_HIT;
-			u_caster->HandleProc(PROC_ON_SPELL_HIT, unitTarget, m_spellInfo, damage);
-		}
-
-		SpellTargetMap::iterator itr = m_spellTargets.find(unitTarget);
-		if (itr != m_spellTargets.end() && !(itr->second.ProcData & PROC_ON_SPELL_HIT_VICTIM))
-		{
-			itr->second.ProcData |= PROC_ON_SPELL_HIT_VICTIM;
-			u_caster->HandleProc(PROC_ON_SPELL_HIT_VICTIM, unitTarget, m_spellInfo, damage);
-		}
-	}
-
 	//reflected spells :P
 	if (reflected)
 	{
@@ -2193,6 +2151,7 @@ void Spell::HandleEffects(Object* obj, uint32 i, bool reflected)
 		unitTarget = u_caster;
 	}
 
+	
 	if( m_spellInfo->Effect[i]<TOTAL_SPELL_EFFECTS)
 	{
 		/*if(unitTarget && p_caster && isAttackable(p_caster,unitTarget))
@@ -2382,37 +2341,6 @@ uint8 Spell::CanCast(bool tolerate)
 		//	return scriptresult;
 	}
 
-	Unit* target = NULL;
-	if (m_targets.m_target != NULL && m_targets.m_target->IsUnit())
-		target = static_cast<Unit*>(m_targets.m_target);
-	else
-		target = u_caster;
-
-	bool hasrequiredaura = false;
-	if (m_spellInfo->casterAura == 0)
-		hasrequiredaura = true;
-
-	if (u_caster != NULL)
-	{
-		for(uint32 x=0;x<MAX_AURAS+MAX_PASSIVE_AURAS;x++)
-		{
-			if(u_caster->m_auras[x] != NULL)
-			{
-				if (m_spellInfo->casterAura == u_caster->m_auras[x]->m_spellProto->Id)
-					hasrequiredaura = true;
-				if (m_spellInfo->excludeCasterAuraId == u_caster->m_auras[x]->m_spellProto->Id)
-					return SPELL_FAILED_BAD_TARGETS;
-			}
-		}
-	}
-
-	//and check target excluded auras
-	if (target->FindAura(m_spellInfo->excludeTargetAuraId) != NULL)
-		return SPELL_FAILED_BAD_TARGETS;
-
-	if (!hasrequiredaura)
-		return SPELL_FAILED_BAD_TARGETS;
-
 	if( p_caster != NULL )
 	{
 		//blizzard while moving, looks really sexy
@@ -2585,7 +2513,7 @@ uint8 Spell::CanCast(bool tolerate)
 				if((*itr)->GetTypeId() != TYPEID_GAMEOBJECT)
 					continue;
 
-				if((*itr)->GetByte(GAMEOBJECT_BYTES_1, 1) != GAMEOBJECT_TYPE_SPELL_FOCUS)
+				if((*itr)->GetUInt32Value(GAMEOBJECT_TYPE_ID) != GAMEOBJECT_TYPE_SPELL_FOCUS)
 					continue;
 
 				GameObjectInfo *info = ((GameObject*)(*itr))->GetInfo();
@@ -2795,10 +2723,10 @@ uint8 Spell::CanCast(bool tolerate)
 			// calculate the added distance
 			maxRange += ( u_caster->m_runSpeed * 0.001f ) * float( lat );
 		}
-	if( u_caster != NULL )
+	if( m_spellInfo->SpellGroupType && u_caster != NULL )
 	{
-		SM_FFValue( u_caster->SM_FRange, &maxRange, m_spellInfo );
-		SM_PFValue( u_caster->SM_PRange, &maxRange, m_spellInfo );
+		SM_FFValue( u_caster->SM_FRange, &maxRange, m_spellInfo->SpellGroupType );
+		SM_PFValue( u_caster->SM_PRange, &maxRange, m_spellInfo->SpellGroupType );
 #ifdef COLLECTION_OF_UNTESTED_STUFF_AND_TESTERS
 		float spell_flat_modifers=0;
 		float spell_pct_modifers=0;
@@ -2816,7 +2744,7 @@ uint8 Spell::CanCast(bool tolerate)
 			return SPELL_FAILED_OUT_OF_RANGE;
 	}
 
-	target = NULL;
+	Unit *target = NULL;
 
 	// Targeted Unit Checks
 	if(m_targets.m_target != NULL && m_targets.m_target->IsUnit())
@@ -3412,28 +3340,11 @@ exit:
 		int32 spell_pct_modifers=0;
 		int32 spell_pct_modifers2=0;//separated from the other for debugging purpuses
 
-		SM_FIValue(u_caster->SM_FSPELL_VALUE,&spell_flat_modifers, m_spellInfo);
-		SM_FIValue(u_caster->SM_PSPELL_VALUE,&spell_pct_modifers, m_spellInfo);
+		SM_FIValue(u_caster->SM_FSPELL_VALUE,&spell_flat_modifers,m_spellInfo->SpellGroupType);
+		SM_FIValue(u_caster->SM_PSPELL_VALUE,&spell_pct_modifers,m_spellInfo->SpellGroupType);
 
-		SM_FIValue(u_caster->SM_FEffectBonus,&spell_flat_modifers, m_spellInfo);
-		SM_FIValue(u_caster->SM_PEffectBonus,&spell_pct_modifers, m_spellInfo);
-
-		//wee
-		switch (i)
-		{
-		case 0:
-			SM_FIValue(u_caster->SM_FEffect1_Bonus, &spell_flat_modifers, m_spellInfo);
-			SM_FIValue(u_caster->SM_PEffect1_Bonus, &spell_pct_modifers, m_spellInfo);
-			break;
-		case 1:
-			SM_FIValue(u_caster->SM_FEffect2_Bonus, &spell_flat_modifers, m_spellInfo);
-			SM_FIValue(u_caster->SM_PEffect2_Bonus, &spell_pct_modifers, m_spellInfo);
-			break;
-		case 2:
-			SM_FIValue(u_caster->SM_FEffect3_Bonus, &spell_flat_modifers, m_spellInfo);
-			SM_FIValue(u_caster->SM_PEffect3_Bonus, &spell_pct_modifers, m_spellInfo);
-			break;
-		}
+		SM_FIValue(u_caster->SM_FEffectBonus,&spell_flat_modifers,m_spellInfo->SpellGroupType);
+		SM_FIValue(u_caster->SM_PEffectBonus,&spell_pct_modifers,m_spellInfo->SpellGroupType);
 
 		value = value + value*(spell_pct_modifers+spell_pct_modifers2)/100 + spell_flat_modifers;
 
@@ -3448,11 +3359,11 @@ exit:
 			int32 spell_pct_modifers=0;
 			int32 spell_pct_modifers2=0;//separated from the other for debugging purpuses
 
-			SM_FIValue(item_creator->SM_FSPELL_VALUE,&spell_flat_modifers,m_spellInfo);
-			SM_FIValue(item_creator->SM_PSPELL_VALUE,&spell_pct_modifers,m_spellInfo);
+			SM_FIValue(item_creator->SM_FSPELL_VALUE,&spell_flat_modifers,m_spellInfo->SpellGroupType);
+			SM_FIValue(item_creator->SM_PSPELL_VALUE,&spell_pct_modifers,m_spellInfo->SpellGroupType);
 
-			SM_FIValue(item_creator->SM_FEffectBonus,&spell_flat_modifers,m_spellInfo);
-			SM_FIValue(item_creator->SM_PEffectBonus,&spell_pct_modifers,m_spellInfo);
+			SM_FIValue(item_creator->SM_FEffectBonus,&spell_flat_modifers,m_spellInfo->SpellGroupType);
+			SM_FIValue(item_creator->SM_PEffectBonus,&spell_pct_modifers,m_spellInfo->SpellGroupType);
 #ifdef COLLECTION_OF_UNTESTED_STUFF_AND_TESTERS
 			if(spell_flat_modifers!=0 || spell_pct_modifers!=0 || spell_pct_modifers2!=0)
 				printf("!!!!ITEMCASTER ! : spell value mod flat %d , spell value mod pct %d, spell value mod pct2 %d , spell dmg %d, spell group %u\n",spell_flat_modifers,spell_pct_modifers,spell_pct_modifers2,value,m_spellInfo->SpellGroupType);
@@ -3460,10 +3371,6 @@ exit:
 			value = value + value*(spell_pct_modifers+spell_pct_modifers2)/100 + spell_flat_modifers;
 		}
 	}
-
-	if (m_spellScript != NULL)
-		m_spellScript->CalculatePostEffect(i, target, &value);
-
 	return value;
 }
 
@@ -3608,7 +3515,7 @@ void Spell::SendHealSpellOnPlayer(Object* caster, Object* target, uint32 dmg,boo
 {
 	//if(!caster || !target || !target->IsPlayer())
 	//	return;
-	WorldPacket data(SMSG_SPELLHEALLOG, 27);
+	WorldPacket data(SMSG_HEALSPELL_ON_PLAYER, 27);
 	// Bur: I know it says obsolete, but I just logged this tonight and got this packet.
 	
 	data << target->GetNewGUID();
@@ -3622,7 +3529,7 @@ void Spell::SendHealSpellOnPlayer(Object* caster, Object* target, uint32 dmg,boo
 
 void Spell::SendHealManaSpellOnPlayer(Object * caster, Object * target, uint32 dmg, uint32 powertype)
 {
-	WorldPacket data(SMSG_SPELLENERGIZELOG, 30);
+	WorldPacket data(SMSG_HEALMANASPELL_ON_PLAYER, 30);
 
 	data << target->GetNewGUID();
 	data << caster->GetNewGUID();
@@ -3688,6 +3595,13 @@ void Spell::Heal(int32 amount, bool ForceCrit)
 		bonus += u_caster->HealDoneMod[m_spellInfo->School];
 		bonus += unitTarget->HealTakenMod[m_spellInfo->School];
 
+		//Bonus from Intellect & Spirit
+		if( p_caster != NULL )  
+		{
+			for(uint32 a = 0; a < 6; a++)
+				bonus += float2int32(p_caster->SpellHealDoneByAttribute[a][m_spellInfo->School] * p_caster->GetUInt32Value(UNIT_FIELD_STAT0 + a));
+		}
+
 		//Spell Coefficient
 		if(  m_spellInfo->Dspell_coef_override >= 0 ) //In case we have forced coefficients
 			bonus = float2int32( float( bonus ) * m_spellInfo->Dspell_coef_override );
@@ -3700,21 +3614,31 @@ void Spell::Heal(int32 amount, bool ForceCrit)
 
 		critchance = float2int32(u_caster->spellcritperc + u_caster->SpellCritChanceSchool[m_spellInfo->School]);
 
-		int penalty_pct = 0;
-		int penalty_flt = 0;
-		SM_FIValue( u_caster->SM_PPenalty, &penalty_pct, m_spellInfo );
-		bonus += amount*penalty_pct/100;
-		SM_FIValue( u_caster->SM_FPenalty, &penalty_flt, m_spellInfo );
-		bonus += penalty_flt;
-		SM_FIValue( u_caster->SM_CriticalChance, &critchance, m_spellInfo);
-
+		if(m_spellInfo->SpellGroupType)
+		{
+			int penalty_pct = 0;
+			int penalty_flt = 0;
+			SM_FIValue( u_caster->SM_PPenalty, &penalty_pct, m_spellInfo->SpellGroupType );
+			bonus += amount*penalty_pct/100;
+			SM_FIValue( u_caster->SM_FPenalty, &penalty_flt, m_spellInfo->SpellGroupType );
+			bonus += penalty_flt;
+			SM_FIValue( u_caster->SM_CriticalChance,&critchance,m_spellInfo->SpellGroupType);
+#ifdef COLLECTION_OF_UNTESTED_STUFF_AND_TESTERS
+			int spell_flat_modifers=0;
+			int spell_pct_modifers=0;
+			SM_FIValue(u_caster->SM_FPenalty,&spell_flat_modifers,m_spellInfo->SpellGroupType);
+			SM_FIValue(u_caster->SM_PPenalty,&spell_pct_modifers,m_spellInfo->SpellGroupType);
+			if(spell_flat_modifers!=0 || spell_pct_modifers!=0)
+				printf("!!!!!HEAL : spell dmg bonus(p=24) mod flat %d , spell dmg bonus(p=24) pct %d , spell dmg bonus %d, spell group %u\n",spell_flat_modifers,spell_pct_modifers,bonus,m_spellInfo->SpellGroupType);
+#endif
+		}
 		
 		amount += float2int32( float( bonus ) * healdoneaffectperc ); //apply downranking on final value ?
 		amount += amount*u_caster->HealDonePctMod[m_spellInfo->School]/100;
 		amount += float2int32( float( amount ) * unitTarget->HealTakenPctMod[m_spellInfo->School] );
 
 		if (m_spellInfo->SpellGroupType)
-			SM_FIValue(u_caster->SM_PDamageBonus, &amount, m_spellInfo);
+			SM_FIValue(u_caster->SM_PDamageBonus,&amount,m_spellInfo->SpellGroupType);
 		
 		if( critical = Rand(critchance) || ForceCrit )
 		{
@@ -3725,7 +3649,7 @@ void Spell::Heal(int32 amount, bool ForceCrit)
 
 			int32 critical_bonus = 100;
 			if( m_spellInfo->SpellGroupType )
-				SM_FIValue( u_caster->SM_PCriticalDamage, &critical_bonus, m_spellInfo );
+				SM_FIValue( u_caster->SM_PCriticalDamage, &critical_bonus, m_spellInfo->SpellGroupType );
 
 			if( critical_bonus > 0 )
 			{
@@ -4167,7 +4091,7 @@ void Spell::SendCastSuccess(Object * target)
 	if(!plr||!plr->IsPlayer())
 		return;
 
-	WorldPacket data(SMSG_CLEAR_EXTRA_AURA_INFO, 13);
+	WorldPacket data(SMSG_TARGET_CAST_RESULT, 13);
 	data << ((target != 0) ? target->GetNewGUID() : uint8(0));
 	data << m_spellInfo->Id;
 	
@@ -4191,7 +4115,7 @@ void Spell::SendCastSuccess(const uint64& guid)
 	*(uint32*)&buffer[c] = m_spellInfo->Id;                 c += 4;
 #endif
 
-	plr->GetSession()->OutPacket(SMSG_CLEAR_EXTRA_AURA_INFO, c, buffer);
+	plr->GetSession()->OutPacket(SMSG_TARGET_CAST_RESULT, c, buffer);
 }
 /*
 bool IsBeneficSpell(SpellEntry *sp)

@@ -54,7 +54,7 @@ struct ppacket_packed_guid
 
 // PPackets are packets with packed guids in them
 // this still has more work to do though (The actual sending)
-struct ppacketSMSG_SET_EXTRA_AURA_INFO
+struct ppacketSMSG_SET_AURA_SINGLE
 {
 	ppacket_packed_guid target;
 	uint8 visual_slot;

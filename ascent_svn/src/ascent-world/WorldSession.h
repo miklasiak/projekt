@@ -123,17 +123,15 @@ public:
 	float unk6;//pitch
 	//on slip 8 is zero, on jump some other number
 	//9,10 changes if you are not on foot
-	uint32 unk8, unk9, unk10, unk11, unk12;
-	uint8 unk13;
+	uint32 unk8, unk9, unk10, unk11, unk12, unk13;
 	uint32 unklast;//something related to collision
-	uint16 unk_230;
+	uint8 unk_230;
 
 	float x, y, z, orientation;
 	uint32 flags;
 	uint32 FallTime;
 	uint64 transGuid;
 	float transX, transY, transZ, transO, transUnk;
-	uint8 transUnk2;
 
 	void init(WorldPacket & data);
 	void write(WorldPacket & data);
@@ -158,10 +156,6 @@ class SERVER_DECL WorldSession
 public:
 	WorldSession(uint32 id, string Name, WorldSocket *sock);
 	~WorldSession();
-
-	bool m_forceddelete;
-
-	bool AttemptPlayerLogin(uint32 guid, uint32 mapid, uint32 instance);
 
 	Player * m_loggingInPlayer;
 	ASCENT_INLINE void SendPacket(WorldPacket* packet)
@@ -201,8 +195,6 @@ public:
 	void SetSecurity(std::string securitystring);
 	ASCENT_INLINE char* GetPermissions() { return permissions; }
 	ASCENT_INLINE int GetPermissionCount() { return permissioncount; }
-	ASCENT_INLINE void SetPermissions(std::string s) { permissions = strdup(s.c_str()); }
-	ASCENT_INLINE void SetPermissionCount(int i) { permissioncount = i; }
 	ASCENT_INLINE bool HasPermissions() { return (permissioncount > 0) ? true : false; }
 	ASCENT_INLINE bool HasGMPermissions()
 	{

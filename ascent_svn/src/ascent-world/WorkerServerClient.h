@@ -33,7 +33,6 @@ public:
 	void SendPacket(WorldPacket * data);
 	void OnRead();
 	void OnConnect();
-	void OnDisconnect();
 };
 
 #endif

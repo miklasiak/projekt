@@ -182,9 +182,9 @@ void WorldSession::HandleCastSpellOpcode(WorldPacket& recvPacket)
 		return;
 
 	uint32 spellId;
-	uint8 cn, unk;
+	uint8 cn;
 
-	recvPacket >> cn >> spellId >> unk;
+	recvPacket >> spellId >> cn;
 	// check for spell id
 	SpellEntry *spellInfo = dbcSpell.LookupEntryForced(spellId );
 

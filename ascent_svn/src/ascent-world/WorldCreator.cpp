@@ -264,65 +264,6 @@ MapMgr* InstanceMgr::GetMapMgr(uint32 mapId)
 {
 	return m_singleMaps[mapId];
 }
-MapMgr * InstanceMgr::GetInstance(uint32 mapid, uint32 instanceid)
-{
-	Instance * in;
-	InstanceMap::iterator itr;
-	InstanceMap * instancemap;
-	MapInfo * inf = WorldMapInfoStorage.LookupEntry(mapid);
-
-	// we can *never* teleport to maps without a mapinfo.
-	if( inf == NULL || mapid >= NUM_MAPS )
-		return NULL;
-
-
-	// single-instance maps never go into the instance set.
-	if( inf->type == INSTANCE_NULL )
-		return m_singleMaps[mapid];
-
-	m_mapLock.Acquire();
-	instancemap = m_instances[mapid];
-	if(instancemap != NULL)
-	{
-		// check our saved instance id. see if its valid, and if we can join before trying to find one.
-		itr = instancemap->find(instanceid);
-		if(itr != instancemap->end())
-		{
-			if(itr->second->m_mapMgr)
-			{
-				m_mapLock.Release();
-				return itr->second->m_mapMgr;
-			}
-		}
-
-		// iterate over our instances, and see if any of them are owned/joinable by him.
-		for(itr = instancemap->begin(); itr != instancemap->end();)
-		{
-			in = itr->second;
-			++itr;
-
-			// this is our instance.
-			if(in->m_mapMgr == NULL)
-			{	
-				// create the actual instance.
-				in->m_mapMgr = _CreateInstance(in);
-				m_mapLock.Release();
-				return in->m_mapMgr;
-			}
-			else
-			{
-				// instance is already created.
-				m_mapLock.Release();
-				return in->m_mapMgr;
-			}
-		}
-	}
-
-	// if we're here, it means there are no instances on that map, or none of the instances on that map are joinable
-	// by this player.
-	m_mapLock.Release();
-	return NULL;
-}
 
 MapMgr * InstanceMgr::GetInstance(Object* obj)
 {
@@ -422,7 +363,6 @@ MapMgr * InstanceMgr::GetInstance(Object* obj)
 	}
 }
 
-
 MapMgr * InstanceMgr::_CreateInstance(uint32 mapid, uint32 instanceid)
 {
 	MapInfo * inf = WorldMapInfoStorage.LookupEntry(mapid);
@@ -470,11 +410,6 @@ void InstanceMgr::_CreateMap(uint32 mapid)
 		return;
 	if(m_maps[mapid]!=NULL)
 		return;
-
-#ifdef CLUSTERING
-	if (!inf->clustering_handled)
-		return;
-#endif
 
 	m_maps[mapid] = new Map(mapid, inf);
 	if(inf->type == INSTANCE_NULL)
@@ -659,7 +594,7 @@ void Instance::LoadFromDB(Field * fields)
 
 void InstanceMgr::ResetSavedInstances(Player * plr)
 {
-	WorldPacket data(SMSG_INSTANCE_RESET, 4);
+	WorldPacket data(SMSG_RESET_INSTANCE, 4);
 	Instance * in;
 	InstanceMap::iterator itr;
 	InstanceMap * instancemap;
@@ -834,11 +769,11 @@ void InstanceMgr::BuildSavedInstancesForPlayer(Player * plr)
 					{
 						m_mapLock.Release();
 
-						data.SetOpcode(SMSG_UPDATE_LAST_INSTANCE);
+						data.SetOpcode(SMSG_INSTANCE_SAVE);
 						data << uint32(in->m_mapId);
 						plr->GetSession()->SendPacket(&data);
 
-						data.Initialize(SMSG_UPDATE_INSTANCE_OWNERSHIP);
+						data.Initialize(SMSG_INSTANCE_RESET_ACTIVATE);
 						data << uint32(0x01);
 						plr->GetSession()->SendPacket(&data);
 					
@@ -850,7 +785,7 @@ void InstanceMgr::BuildSavedInstancesForPlayer(Player * plr)
 		m_mapLock.Release();
 	}
 
-	data.SetOpcode(SMSG_UPDATE_INSTANCE_OWNERSHIP);
+	data.SetOpcode(SMSG_INSTANCE_RESET_ACTIVATE);
 	data << uint32(0x00);
 	plr->GetSession()->SendPacket(&data);
 }
@@ -961,42 +896,6 @@ void InstanceMgr::PlayerLeftGroup(Group * pGroup, Player * pPlayer)
 		}
 	}
 	m_mapLock.Release();
-}
-
-MapMgr* InstanceMgr::CreateNewMapInstance(uint32 mapid, uint32 instanceid)
-{
-	if (mapid >= NUM_MAPS)
-		return NULL;
-
-	if (m_maps[mapid] == NULL)
-	{
-		_CreateMap(mapid);
-		if (m_maps[mapid] == NULL)
-			return NULL; //can't create map for some reason
-	}
-
-	MapMgr* mgr = new MapMgr(m_maps[mapid], mapid, instanceid? instanceid : GenerateInstanceID());
-	Instance* i=new Instance();
-	i->m_creation = UNIXTIME;
-	i->m_creatorGroup = 0;
-	i->m_creatorGuid = 0;
-	i->m_difficulty = 0;
-	i->m_expiration = 0;
-	i->m_instanceId = mgr->GetInstanceID();
-	i->m_isBattleground = false;
-	i->m_mapId = mapid;
-	i->m_mapInfo = WorldMapInfoStorage.LookupEntry(mapid);
-	i->m_mapMgr = mgr;
-	m_mapLock.Acquire();
-	if(m_instances[mapid] == NULL)
-		m_instances[mapid] = new InstanceMap;
-
-	m_instances[mapid]->insert(std::make_pair(i->m_instanceId, i));
-	m_mapLock.Release();
-
-	//run the map in a thread :P
-	ThreadPool.ExecuteTask(mgr);
-	return mgr;
 }
 
 MapMgr * InstanceMgr::CreateBattlegroundInstance(uint32 mapid)

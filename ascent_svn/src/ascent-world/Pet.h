@@ -118,7 +118,6 @@ public:
 	Pet(uint64 guid);
 	~Pet();
 
-	void ApplyPassiveAuras();
 	ASCENT_INLINE Unit* GetOwner() { return m_Owner; }
 
 	void LoadFromDB(Player* owner, PlayerPet * pi);

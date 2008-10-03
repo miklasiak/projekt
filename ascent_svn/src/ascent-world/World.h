@@ -20,7 +20,7 @@
 #ifndef __WORLD_H
 #define __WORLD_H
 
-#define IS_INSTANCE(a) (((a)>1)&&((a)!=530)&&((a)!=571))
+#define IS_INSTANCE(a) (((a)>1)&&((a)!=530))
 
 class Object;
 class WorldPacket;
@@ -192,7 +192,6 @@ enum AccountFlags
 	ACCOUNT_FLAG_NO_AUTOJOIN = 0x2,
 	//ACCOUNT_FLAG_XTEND_INFO  = 0x4,
 	ACCOUNT_FLAG_XPACK_01	= 0x8,
-	ACCOUNT_FLAG_XPACK_02	= 0x8,
 };
 
 #pragma pack(push,1)
@@ -217,8 +216,7 @@ struct MapInfo
 	uint32 heroic_key_2;
 	float update_distance;
 	uint32 checkpoint_id;
-	uint32 collision;
-	uint32 clustering_handled;
+	uint8 collision;
 
 	bool HasFlag(uint32 flag)
 	{

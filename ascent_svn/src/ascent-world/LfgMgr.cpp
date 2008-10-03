@@ -241,7 +241,7 @@ void LfgMgr::UpdateLfgQueue(uint32 LfgDungeonId)
 		{
 			pMatch->PendingPlayers.insert(possibleMembers.front());
 			possibleMembers.front()->SendMeetingStoneQueue(LfgDungeonId, 0);
-			possibleMembers.front()->GetSession()->OutPacket(SMSG_LFG_PENDING_INVITE, 4, &LfgDungeonId);
+			possibleMembers.front()->GetSession()->OutPacket(SMSG_LFG_INVITE, 4, &LfgDungeonId);
 			possibleMembers.front()->m_lfgMatch = pMatch;
 			possibleMembers.pop_front();
 		}

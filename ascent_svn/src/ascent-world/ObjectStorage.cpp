@@ -34,7 +34,7 @@ const char * gGraveyardFormat							= "uffffuuuux";
 const char * gTeleportCoordFormat						= "uxufffx";
 const char * gPvPAreaFormat								= "ush";
 const char * gFishingFormat								= "uuu";
-const char * gWorldMapInfoFormat						= "uuuuufffusuuuuuuufuuu";
+const char * gWorldMapInfoFormat						= "uuuuufffusuuuuuuufuc";
 const char * gZoneGuardsFormat							= "uuu";
 
 /** SQLStorage symbols

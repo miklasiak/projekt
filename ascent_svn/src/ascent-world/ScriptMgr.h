@@ -282,7 +282,6 @@ public:
 	virtual SpellCastError CanCast(bool tolerate=false) { return SPELL_CANCAST_OK; }
 	virtual void OnCast() {}
 	virtual void CalculateEffect(uint32 EffectIndex, Unit* target, int32* value) {}
-	virtual void CalculatePostEffect(uint32 EffectIndex, Unit* target, int32* value) {}
 	virtual void OnEffect(uint32 EffectIndex) {}
 	virtual void SpellUpdate() {}
 	virtual void OnDispel(Aura* pDispelledAura, Spell* pDispellingSpell) {}

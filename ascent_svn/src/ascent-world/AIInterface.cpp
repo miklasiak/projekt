@@ -365,12 +365,13 @@ void AIInterface::HandleEvent(uint32 event, Unit* pUnit, uint32 misc1)
 					if(m_Unit->isAlive() && m_Unit->IsCreature())
 					{
 						if(m_returnX != 0.0f && m_returnY != 0.0f && m_returnZ != 0.0f && hasWaypoints())
-						{
-							MoveTo(m_returnX, m_returnY, m_returnZ, 0);
-						}
+							MoveTo(m_returnX,m_returnY,m_returnZ,m_Unit->GetOrientation());
 						else
 						{
-							MoveTo(m_Unit->GetSpawnX(), m_Unit->GetSpawnY(), m_Unit->GetSpawnZ(), m_Unit->GetSpawnO());
+							MoveTo(m_Unit->GetSpawnX(),m_Unit->GetSpawnY(),m_Unit->GetSpawnZ(),m_Unit->GetSpawnO());
+							m_returnX=m_Unit->GetSpawnX();
+							m_returnY=m_Unit->GetSpawnY();
+							m_returnZ=m_Unit->GetSpawnZ();
 						}
 
 						Creature *aiowner = static_cast<Creature*>(m_Unit);
@@ -2493,14 +2494,14 @@ bool AIInterface::showWayPoints(Player* pPlayer, bool Backwards)
 			}
 			pWayPoint->SetUInt32Value(UNIT_FIELD_LEVEL, wp->id);
 			pWayPoint->SetUInt32Value(UNIT_NPC_FLAGS, 0);
-			//pWayPoint->SetUInt32Value(UNIT_FIELD_AURA+32, 8326); //invisable & deathworld look
+			pWayPoint->SetUInt32Value(UNIT_FIELD_AURA+32, 8326); //invisable & deathworld look
 			pWayPoint->SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE , pPlayer->GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE));
 			pWayPoint->SetUInt32Value(UNIT_FIELD_HEALTH, 1);
 			pWayPoint->SetUInt32Value(UNIT_FIELD_MAXHEALTH, 1);
 			pWayPoint->SetUInt32Value(UNIT_FIELD_STAT0, wp->flags);
 
 			//Create on client
-			ByteBuffer buf(3000);
+			ByteBuffer buf(2500);
 			uint32 count = pWayPoint->BuildCreateUpdateBlockForPlayer(&buf, pPlayer);
 			pPlayer->PushCreationData(&buf, count);
 
@@ -3688,8 +3689,8 @@ uint32 AIInterface::_CalcThreat(uint32 damage, SpellEntry * sp, Unit* Attacker)
 	// modify mod by Affects
 	mod += (mod * Attacker->GetGeneratedThreatModifyer() / 100);
 
-	if (sp != NULL)
-		SM_PIValue(Attacker->SM_PThreat_Reduction, &mod, sp);
+	if (sp != NULL && sp->SpellGroupType != 0)
+		SM_PIValue(Attacker->SM_PThreat_Reduction, &mod, sp->SpellGroupType);
 
 	return mod;
 }

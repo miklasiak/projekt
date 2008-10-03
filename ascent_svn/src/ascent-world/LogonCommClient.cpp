@@ -411,6 +411,15 @@ void LogonCommClientSocket::HandleConsoleAuthResult(WorldPacket & recvData)
 }
 
 #else
+void LogonCommHandler::LogonDatabaseReloadAccounts()
+{
+
+}
+
+void LogonCommHandler::LogonDatabaseSQLExecute(const char* str, ...)
+{
+
+}
 
 void LogonCommHandler::Startup()
 {
@@ -435,30 +444,6 @@ LogonCommHandler::LogonCommHandler()
 LogonCommHandler::~LogonCommHandler()
 {
 
-}
-
-void LogonCommHandler::IPBan_Add(const char * ip, uint32 duration)
-{
-}
-
-void LogonCommHandler::IPBan_Remove(const char * ip)
-{
-}
-
-void LogonCommHandler::Account_SetBanned(const char * account, uint32 banned)
-{
-}
-
-void LogonCommHandler::Account_SetGM(const char * account, const char * flags)
-{
-}
-
-void LogonCommHandler::Account_SetMute(const char * account, uint32 muted)
-{
-}
-
-void LogonCommHandler::TestConsoleLogon(string& username, string& password, uint32 requestnum)
-{
 }
 
 #endif

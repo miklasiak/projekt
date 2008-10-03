@@ -199,12 +199,12 @@ void CommandTableStorage::Init()
 		{ "energy",	 'm', NULL,	"Energy Points",	   NULL, UNIT_FIELD_POWER4,	UNIT_FIELD_MAXPOWER4, 1 },
 		{ "level",	  'm', &ChatHandler::HandleModifyLevelCommand,"Level", NULL, 0, 0, 0 },
 		{ "armor",	  'm', NULL,	"Armor",			   NULL, UNIT_FIELD_STAT1,			  0,		   1 },
-		{ "holy",	   'm', NULL,	"Holy Resistance",	 NULL, UNIT_FIELD_RESISTANCES,	 0,		   1 },
-		{ "fire",	   'm', NULL,	"Fire Resistance",	 NULL, UNIT_FIELD_RESISTANCES_2,	 0,		   1 },
-		{ "nature",	 'm', NULL,	"Nature Resistance",   NULL, UNIT_FIELD_RESISTANCES_3,	 0,		   1 },
-		{ "frost",	  'm', NULL,	"Frost Resistance",	NULL, UNIT_FIELD_RESISTANCES_4,	 0,		   1 },
-		{ "shadow",	 'm', NULL,	"Shadow Resistance",   NULL, UNIT_FIELD_RESISTANCES_5,	 0,		   1 },
-		{ "arcane",	 'm', NULL,	"Arcane Resistance",   NULL, UNIT_FIELD_RESISTANCES_6,	 0,		   1 },
+		{ "holy",	   'm', NULL,	"Holy Resistance",	 NULL, UNIT_FIELD_RESISTANCES_01,	 0,		   1 },
+		{ "fire",	   'm', NULL,	"Fire Resistance",	 NULL, UNIT_FIELD_RESISTANCES_02,	 0,		   1 },
+		{ "nature",	 'm', NULL,	"Nature Resistance",   NULL, UNIT_FIELD_RESISTANCES_03,	 0,		   1 },
+		{ "frost",	  'm', NULL,	"Frost Resistance",	NULL, UNIT_FIELD_RESISTANCES_04,	 0,		   1 },
+		{ "shadow",	 'm', NULL,	"Shadow Resistance",   NULL, UNIT_FIELD_RESISTANCES_05,	 0,		   1 },
+		{ "arcane",	 'm', NULL,	"Arcane Resistance",   NULL, UNIT_FIELD_RESISTANCES_06,	 0,		   1 },
 		{ "damage",	 'm', NULL,	"Unit Damage Min/Max", NULL, UNIT_FIELD_MINDAMAGE,  UNIT_FIELD_MAXDAMAGE,2 },
 		{ "scale",	  'm', NULL,	"Size/Scale",		  NULL, OBJECT_FIELD_SCALE_X, 0,					2 },
 		{ "gold",	   'm', &ChatHandler::HandleModifyGoldCommand,  "Gold/Money/Copper",	  NULL,   0,  0,  0 },
@@ -216,7 +216,7 @@ void CommandTableStorage::Init()
 		{ "dynamicflags",'m',NULL,	"Dynamic Flags",	   NULL, UNIT_DYNAMIC_FLAGS,		 0,			  1 },
 		{ "talentpoints",'m',NULL,	"Talent Points",	   NULL, PLAYER_CHARACTER_POINTS1,   0,			  1 },
 		{ "happiness",	'm', NULL,	"Happiness",			 NULL, UNIT_FIELD_POWER5,	UNIT_FIELD_MAXPOWER5, 1 },
-		{ "spirit",	 'm', NULL,	"Spirit",			  NULL, UNIT_FIELD_STAT4,		   0,			  1 },
+		{ "spirit",	 'm', NULL,	"Spirit",			  NULL, UNIT_FIELD_STAT0,		   0,			  1 },
 		{ "boundingraidius",'m',NULL,  "Bounding Radius",	 NULL, UNIT_FIELD_BOUNDINGRADIUS,		 0,			  2 },
 		{ "combatreach",'m',NULL,	 "Combat Reach",		NULL, UNIT_FIELD_COMBATREACH, 0, 2 },
 		{ "emotestate",'m', NULL,	 "NPC Emote State",	 NULL, UNIT_NPC_EMOTESTATE, 0, 1 },
@@ -1171,6 +1171,6 @@ bool ChatHandler::HandleGetPosCommand(const char* args, WorldSession *m_session)
 	uint32 spell = atol(args);
 	SpellEntry *se = dbcSpell.LookupEntry(spell);
 	if(se)
-		BlueSystemMessage(m_session, "SpellIcon for %d is %d", se->Id, se->unused_field);
+		BlueSystemMessage(m_session, "SpellIcon for %d is %d", se->Id, se->field114);
 	return true;
 }

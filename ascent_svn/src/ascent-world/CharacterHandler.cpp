@@ -180,8 +180,6 @@ void WorldSession::CharacterEnumProc(QueryResult * result)
 				else
 					data << uint32(1);		// alive
 			}
-
-			data << uint32(0); //new 3.0.2
 			
 			data << fields[14].GetUInt8();		// Rest State
 
@@ -507,7 +505,7 @@ void WorldSession::HandleCharDeleteOpcode( WorldPacket & recv_data )
 	uint64 guid;
 	recv_data >> guid;
 
-		if(objmgr.GetPlayer((uint32)guid) != NULL)
+	if(objmgr.GetPlayer((uint32)guid) != NULL)
 	{
 		// "Char deletion failed"
 		fail = 0x3C;
@@ -649,29 +647,6 @@ void WorldSession::HandleCharRenameOpcode(WorldPacket & recv_data)
 	SendPacket(&data);
 }
 
-bool WorldSession::AttemptPlayerLogin(uint32 guid, uint32 mapid, uint32 instance)
-{
-	sLog.outDebug("WORLD: Recvd Player Logon Message" );
-
-	if(objmgr.GetPlayer(guid) != NULL || m_loggingInPlayer || _player)
-	{
-		// A character with that name already exists 0x3E
-		uint8 respons = CHAR_LOGIN_DUPLICATE_CHARACTER;
-		OutPacket(SMSG_CHARACTER_LOGIN_FAILED, 1, &respons);
-		return false;
-	}
-
-	Player* plr = new Player(guid);
-	ASSERT(plr);
-	plr->SetSession(this);
-	m_bIsWLevelSet = false;
-	
-	Log.Debug("WorldSession", "Async loading player %u", guid);
-	m_loggingInPlayer = plr;
-	plr->LoadFromDB(guid);
-	return true;
-}
-
 
 void WorldSession::HandlePlayerLoginOpcode( WorldPacket & recv_data )
 {
@@ -710,9 +685,9 @@ void WorldSession::FullLogin(Player * plr)
 	memcpy(&movement_packet[1], m_MoverWoWGuid.GetNewGuid(), m_MoverWoWGuid.GetNewGuidLen());
 
 #ifndef USING_BIG_ENDIAN
-	StackWorldPacket<20> datab(MSG_SET_DUNGEON_DIFFICULTY);
+	StackWorldPacket<20> datab(CMSG_DUNGEON_DIFFICULTY);
 #else
-	WorldPacket datab(MSG_SET_DUNGEON_DIFFICULTY, 20);
+	WorldPacket datab(CMSG_DUNGEON_DIFFICULTY, 20);
 #endif
 	datab << plr->iInstanceType;
 	datab << uint32(0x01);
@@ -739,11 +714,11 @@ void WorldSession::FullLogin(Player * plr)
 	*/
 
 #ifdef VOICE_CHAT
-	datab.Initialize(SMSG_FEATURE_SYSTEM_STATUS);
+	datab.Initialize(SMSG_VOICE_SYSTEM_STATUS);
 	datab << uint8(2) << uint8(sVoiceChatHandler.CanUseVoiceChat() ? 1 : 0);
 	SendPacket(&datab);
 #else
-	datab.Initialize(SMSG_FEATURE_SYSTEM_STATUS);
+	datab.Initialize(SMSG_VOICE_SYSTEM_STATUS);
 	datab << uint8(2) << uint8(0);
 #endif
 
@@ -786,9 +761,9 @@ void WorldSession::FullLogin(Player * plr)
 
 	// account data == UI config
 #ifndef USING_BIG_ENDIAN
-	StackWorldPacket<128> data(SMSG_ACCOUNT_DATA_TIMES);
+	StackWorldPacket<128> data(SMSG_ACCOUNT_DATA_MD5);
 #else
-	WorldPacket data(SMSG_ACCOUNT_DATA_TIMES, 128);
+	WorldPacket data(SMSG_ACCOUNT_DATA_MD5, 128);
 #endif
 
 	MD5Hash md5hash;
@@ -909,10 +884,10 @@ void WorldSession::FullLogin(Player * plr)
 
 	// Send revision (if enabled)
 #ifdef WIN32
-	_player->BroadcastMessage("Server: %sAscent %s r%u powered by Evolution-Core %s(http://evolution-cores.bplaced.net/)", MSG_COLOR_WHITE, BUILD_REVISION, 
-		MSG_COLOR_LIGHTBLUE);	
+	_player->BroadcastMessage("Server: %sAscent %s r%u powered by Evolution-Core %s(http://evolution-cores.ath.cx)", MSG_COLOR_WHITE, BUILD_REVISION, 
+		MSG_COLOR_LIGHTBLUE);		
 #else
-	_player->BroadcastMessage("Server: %sAscent %s r%u powered by Evolution-Core %s(http://evolution-cores.bplaced.net/)", MSG_COLOR_WHITE, BUILD_REVISION, 
+	_player->BroadcastMessage("Server: %sAscent %s r%u powered by Evolution-Core %s(http://evolution-cores.ath.cx)", MSG_COLOR_WHITE, BUILD_REVISION, 
 		MSG_COLOR_LIGHTBLUE);
 #endif
 
@@ -937,7 +912,12 @@ void WorldSession::FullLogin(Player * plr)
 			plr->AddCalculatedRestXP(timediff);
 	}
 
+#ifdef CLUSTERING
+	plr->SetInstanceID(forced_instance_id);
+	plr->SetMapId(forced_map_id);
+#else
 	sHookInterface.OnEnterWorld2(_player);
+#endif
 
 	if(info->m_Group)
 		info->m_Group->Update();

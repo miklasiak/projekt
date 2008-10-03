@@ -263,12 +263,4 @@ enum SummonTypes //only used with SummonProperties.dbc
 	SUMMON_TYPE_CRITTERPET = 5,
 };
 
-enum SpellProcFncs
-{
-	SPELLFNC_PROC_ON_TAKE_DAMAGE,
-	SPELLFNC_PROC_ON_DEAL_DAMAGE,
-	SPELLFNC_PROC_ON_CAST_SPELL,
-	SPELLFNC_PROC_ON_AURA_ADD,
-};
-
 #endif

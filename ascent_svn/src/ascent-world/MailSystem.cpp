@@ -148,9 +148,9 @@ bool MailMessage::AddMessageDataToPacket(WorldPacket& data)
 
 			for( j = 0; j < 6; ++j )
 			{
-				data << pItem->GetUInt32Value( ITEM_FIELD_ENCHANTMENT_1_1 + 0 + ( j * 3 ) );
-				data << pItem->GetUInt32Value( ITEM_FIELD_ENCHANTMENT_1_1 + 1 + ( j * 3 ) );
-				data << pItem->GetUInt32Value( ITEM_FIELD_ENCHANTMENT_1_1 + 2 + ( j * 3 ) );
+				data << pItem->GetUInt32Value( ITEM_FIELD_ENCHANTMENT + ( j * 3 ) );
+				data << pItem->GetUInt32Value( ITEM_FIELD_ENCHANTMENT_01 + ( j * 3 ) );
+				data << pItem->GetUInt32Value( ITEM_FIELD_ENCHANTMENT_02 + ( j * 3 ) );
 			}
 
 			data << pItem->GetUInt32Value( ITEM_FIELD_RANDOM_PROPERTIES_ID );

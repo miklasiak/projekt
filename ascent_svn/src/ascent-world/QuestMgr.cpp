@@ -1057,7 +1057,7 @@ void QuestMgr::OnQuestFinished(Player* plr, Quest* qst, Object *qst_giver, uint3
 
 		if (qst->is_repeatable == 2)
 		{
-			plr->SetUInt32Value(PLAYER_FIELD_DAILY_QUESTS_1 + plr->m_finisheddailyQuests.size(), qst->id);
+			plr->SetUInt32Value(PLAYER_FIELD_DAILY_QUESTS_00 + plr->m_finisheddailyQuests.size(), qst->id);
 			plr->m_finisheddailyQuests.insert(qst->id);
 			//handled by client
 			//sChatHandler.SystemMessage(plr->GetSession(), "You can only complete %u more daily quests today.", 25 - plr->m_finisheddailyQuests.size());

@@ -109,6 +109,7 @@ void Pet::CreateAsSummon(uint32 entry, CreatureInfo *ci, Creature* created_from_
 	if (owner->GetSummon() != NULL)
 		sEventMgr.AddEvent(static_cast<Creature*>(owner->GetSummon()), &Creature::SafeDelete, EVENT_UNK, 1, 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
 
+
 	if(!ci) return;
 	m_Owner = owner;
 	m_OwnerGuid = m_Owner->GetGUID();
@@ -118,7 +119,7 @@ void Pet::CreateAsSummon(uint32 entry, CreatureInfo *ci, Creature* created_from_
 	if( myFamily->name == NULL )
 		m_name = "Pet";
 	else
-		m_name.assign(myFamily->name);
+		m_name.assign( myFamily->name );
 
 	// Create ourself
 	if (spell_callback != NULL && spell_callback->m_targets.m_targetMask & TARGET_FLAG_DEST_LOCATION)
@@ -149,7 +150,7 @@ void Pet::CreateAsSummon(uint32 entry, CreatureInfo *ci, Creature* created_from_
 		SetUInt32Value(UNIT_FIELD_BYTES_0, 2048 | (0 << 24));
 		SetUInt32Value(UNIT_FIELD_FLAGS, UNIT_FLAG_PLAYER_CONTROLLED);
 		SetUInt32Value(UNIT_FIELD_BASEATTACKTIME, 2000);
-		SetUInt32Value(UNIT_FIELD_RANGEDATTACKTIME, 2000);
+		SetUInt32Value(UNIT_FIELD_BASEATTACKTIME_01, 2000);
 		SetFloatValue(UNIT_FIELD_BOUNDINGRADIUS, 0.5f);
 		SetFloatValue(UNIT_FIELD_COMBATREACH, 0.75f);
 		SetUInt32Value(UNIT_FIELD_BYTES_2, (0x01 | (0x28 << 8) | (0x2 << 24)));
@@ -162,16 +163,10 @@ void Pet::CreateAsSummon(uint32 entry, CreatureInfo *ci, Creature* created_from_
 		else
 			m_name = sWorld.GenerateName();
 
-	}
-	else
-	{
-		//3.0.2: Pet is leveled up to your level - 5 if its lower
-		if (m_Owner != NULL && getLevel() < m_Owner->getLevel() - 5)
-			SetUInt32Value(UNIT_FIELD_LEVEL, m_Owner->getLevel() - 5);
-
+	} else {
 		SetUInt32Value(UNIT_FIELD_BYTES_0, 2048 | (0 << 24));
 		SetUInt32Value(UNIT_FIELD_BASEATTACKTIME, 2000);
-		SetUInt32Value(UNIT_FIELD_RANGEDATTACKTIME, 2000); // Supalosa: 2.00 normalised attack speed
+		SetUInt32Value(UNIT_FIELD_BASEATTACKTIME_01, 2000); // Supalosa: 2.00 normalised attack speed
 		SetFloatValue(UNIT_FIELD_BOUNDINGRADIUS, created_from_creature->GetFloatValue(UNIT_FIELD_BOUNDINGRADIUS));
 		SetFloatValue(UNIT_FIELD_COMBATREACH, created_from_creature->GetFloatValue(UNIT_FIELD_COMBATREACH));
 
@@ -182,6 +177,7 @@ void Pet::CreateAsSummon(uint32 entry, CreatureInfo *ci, Creature* created_from_
 		SetUInt32Value(UNIT_FIELD_PETEXPERIENCE, 0);
 		SetUInt32Value(UNIT_FIELD_PETNEXTLEVELEXP, GetNextLevelXP(getLevel()));
 		SetUInt32Value(UNIT_FIELD_BYTES_1, 0 | (REBELIOUS << 8));//loyalty level
+		SetUInt32Value(UNIT_TRAINING_POINTS, 0);				//training points
 
 		// Focus
 		SetUInt32Value(UNIT_FIELD_POWER3, 100);
@@ -199,7 +195,6 @@ void Pet::CreateAsSummon(uint32 entry, CreatureInfo *ci, Creature* created_from_
 
 	// Apply stats.
 	ApplyStatsForLevel();
-
 
 	BaseDamage[0]=GetFloatValue(UNIT_FIELD_MINDAMAGE);
 	BaseDamage[1]=GetFloatValue(UNIT_FIELD_MAXDAMAGE);
@@ -340,9 +335,8 @@ void Pet::SendSpellsToOwner()
 	int packetsize = (m_uint32Values[OBJECT_FIELD_ENTRY] != WATER_ELEMENTAL) ? ((int)mSpells.size() * 4 + 20) : 64;
 	WorldPacket * data = new WorldPacket(SMSG_PET_SPELLS, packetsize);
 	*data << GetGUID();
-	*data << uint32(0x00000017);//unk1
+	*data << uint32(0x00000000);//unk1
 	*data << uint32(0x00000101);//unk2
-	*data << uint32(0x00000100);//unk3
 
 	// Send the actionbar
 	for(uint32 i = 0; i < 10; ++i)
@@ -510,10 +504,9 @@ void Pet::LoadFromDB(Player* owner, PlayerPet * pi)
 	}
 	
 	// Nuke auras
-	// Aura: Update
-	//for(uint32 x = UNIT_FIELD_AURA_01; x <= UNIT_FIELD_AURA_55; x++)
-	//	SetUInt32Value(x, 0);
-	ApplyPassiveAuras();
+	for(uint32 x = UNIT_FIELD_AURA_01; x <= UNIT_FIELD_AURA_55; x++)
+		SetUInt32Value(x, 0);
+
 }
 
 void Pet::OnPushToWorld()
@@ -530,8 +523,6 @@ void Pet::OnPushToWorld()
 
 void Pet::InitializeMe(bool first)
 {
-	InheritSMMods(m_Owner);
-
 	// set up ai and shit
 	GetAIInterface()->Init(this,AITYPE_PET,MOVEMENTTYPE_NONE,m_Owner);
 	GetAIInterface()->SetUnitToFollow(m_Owner);
@@ -615,7 +606,10 @@ void Pet::UpdatePetInfo(bool bSetToOffline)
 	std::stringstream ss;
 	for( uint32 index = 0; index < UNIT_END; index ++ )
 	{
-		ss << GetUInt32Value(index) << " ";
+		if(index >= UNIT_FIELD_AURA_01 && index <= UNIT_FIELD_AURA_55)
+			ss << "0 ";
+		else
+			ss << GetUInt32Value(index) << " ";
 	}
 	pi->fields = ss.str();
 	pi->name = GetName();
@@ -1333,15 +1327,20 @@ void Pet::ApplySummonLevelAbilities()
 	double pet_sta = base_sta + pet_level * mod_sta;
 	double pet_int = base_int + pet_level * mod_int;
 	double pet_spr = base_spr + pet_level * mod_spr;
-	double pet_pwr = base_pwr + pet_level * mod_pwr;
+	double pet_pwr = base_pwr + pet_level * mod_pwr + GetUInt32Value(UNIT_FIELD_ATTACK_POWER_MODS);
 	double pet_arm = base_armor + pet_level;
+	pet_arm *= mod_armor;
+	pet_arm *= (100 + BaseResistanceModPct[0]) / 100;
+	pet_arm += FlatResistanceMod[0];
+	pet_arm *= ResistanceModPct[0] / 100;
+
 
 	// Calculate values
-	BaseStats[STAT_STRENGTH] = float2int32(pet_str);
-	BaseStats[STAT_AGILITY] = float2int32(pet_agi);
-	BaseStats[STAT_STAMINA] = float2int32(pet_sta);
-	BaseStats[STAT_INTELLECT] = float2int32(pet_int);
-	BaseStats[STAT_SPIRIT] = float2int32(pet_spr);
+	BaseStats[STAT_STRENGTH] = FL2UINT(pet_str);
+	BaseStats[STAT_AGILITY] = FL2UINT(pet_agi);
+	BaseStats[STAT_STAMINA] = FL2UINT(pet_sta);
+	BaseStats[STAT_INTELLECT] = FL2UINT(pet_int);
+	BaseStats[STAT_SPIRIT] = FL2UINT(pet_spr);
 
 	double pet_min_dmg = base_min_dmg + pet_level * mod_min_dmg;
 	double pet_max_dmg = base_max_dmg + pet_level * mod_max_dmg;
@@ -1351,24 +1350,22 @@ void Pet::ApplySummonLevelAbilities()
 	for(uint32 x = 0; x < 5; ++x)
 		CalcStat(x);
 
-	BaseResistance[0] = float2int32(pet_arm);
+	// Apply armor and attack power.
+	SetUInt32Value(UNIT_FIELD_ATTACK_POWER, FL2UINT(pet_pwr));
+	BaseResistance[0] = FL2UINT(pet_arm);
 	CalcResistance(0);
 	// Priest's Shadowfiend
-	if (m_uint32Values[OBJECT_FIELD_ENTRY]==19668)
-	{
+	if (m_uint32Values[OBJECT_FIELD_ENTRY]==19668) {
 	    SetUInt32Value(UNIT_FIELD_BASEATTACKTIME, 1500);
-		if (m_Owner->IsPlayer())
-			SetUInt32Value(UNIT_FIELD_ATTACK_POWER,((uint32)(350+0.57*m_Owner->GetUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_POS_5)))/2);
-		else
-			SetUInt32Value(UNIT_FIELD_ATTACK_POWER, 1000);
+	    SetUInt32Value(UNIT_FIELD_ATTACK_POWER,((uint32)(350+0.57*m_Owner->GetUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_POS_05)))/2);
 	}
 	CalcDamage();
 
 	// Calculate health / mana
 	double health = GetUInt32Value(UNIT_FIELD_STAT2) * pet_sta_to_hp;
 	double mana = has_mana ? (GetUInt32Value(UNIT_FIELD_STAT3) * 15) : 0.0;
-	SetUInt32Value(UNIT_FIELD_BASE_HEALTH, float2int32(health));
-	SetUInt32Value(UNIT_FIELD_BASE_MANA, float2int32(mana));
+	SetUInt32Value(UNIT_FIELD_BASE_HEALTH, FL2UINT(health));
+	SetUInt32Value(UNIT_FIELD_BASE_MANA, FL2UINT(mana));
 }
 
 void Pet::ApplyPetLevelAbilities()
@@ -1376,35 +1373,125 @@ void Pet::ApplyPetLevelAbilities()
 	uint32 level = m_uint32Values[UNIT_FIELD_LEVEL];
 	double dlevel = (double)level;
 
-	BaseStats[0] = float2int32(20+getLevel()*1.55);
-	BaseStats[1] = float2int32(20+getLevel()*0.64);
-	BaseStats[3] = float2int32(20+getLevel()*0.18);
-	BaseStats[4] = float2int32(20+getLevel()*0.36);
+	
+	BaseStats[0] = uint32(20+getLevel()*1.55);
+	BaseStats[1] = uint32(20+getLevel()*0.64);
+	BaseStats[3] = uint32(20+getLevel()*0.18);
+	BaseStats[4] = uint32(20+getLevel()*0.36);
+
+
+	uint32 BonusStats[5];
+	for (uint8 i=0; i<5; ++i)
+	{
+		BonusStats[i] = BaseStats[i] + FlatStatMod[i];
+		BonusStats[i] *= (100 + StatModPct[i]) / 100;
+		BonusStats[i] *= (100 + TotalStatModPct[i]) / 100;
+
+		//so we have our real bonus now :)
+		BonusStats[i] -= BaseStats[i];
+	}
+
+	/*
+	----------[Pets]----------
+		Family		 pet_mod_sta			 pet_mod_arm		   pet_mod_dps
+	(1)	Wolf			 1.00				  1.05				  1.00
+	(2)	 Cat			 0.98				1.00				1.10
+	(3)	 Spider			 1.00				  1.00				 1.07
+	(4)	 Bear			 1.08				 1.05				 0.91
+	(5)	 Boar			 1.04				1.09				0.90
+	(6)	 Crocolisk	   0.95				1.10				1.00
+	(7)	 Carrion Bird	1.00				 1.05				 1.00
+	(8)	 Crab			0.96				1.13				0.95
+	(9)	 Gorilla		 1.04				1.00				1.02
+	(10)
+	(11)	Raptor			  0.95				  1.03				  1.10	 
+	(12)	Tallstrider	 1.05				  1.00				  1.00
+	(13)
+	(14)
+	(15)	Felhunter
+	(16)	Voidwalker
+	(17)	Succubus
+	(18)
+	(19)	Doomguard
+	(20)	Scorpid		 1.00				 1.10				  0.94
+	(21)	Turtle			 1.00				  1.13				  0.90
+	(22)
+	(23)	Imp
+	(24)	Bat			 1.00					 1.00					 1.07
+	(25)	Hyena		   1.00				  1.05				  1.00	
+	(26)	Owl			 1.00					 1.00				  1.07
+	(27)	Wind Serpent	1.00				  1.00				  1.07
+	(28)	Remote Control
+	(29)	Felguard
+	(30)	Dragonhawk	  1.00					1.00					1.00
+	(31)	Ravager	 0.93				  1.05				  1.10
+	(32)	Warp Stalker	1.00				  1.05				  0.94
+	(33)	Spore Bat	   1.00				  1.00				  1.00
+	(34)	Nether Ray	 1.10				 0.90				  1.03	 
+	(35)	Serpent	 1.00				 1.00				  1.00
+	*/
+
+	static double R_pet_mod_sta[36] = { 0, 1, 0.98, 1, 1.08, 1.04, 0.95, 1, 0.96, 1.04, 0, 0.95, 1.05, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0.93, 1, 1, 1.1, 1 };
+	static double R_pet_mod_arm[36] = { 0, 1.05, 1, 1, 1.05, 1.09, 1.1, 1.05, 1.13, 1, 0, 1.03, 1, 0, 0, 0, 0, 0, 0, 0, 1.1, 1.13, 0, 0, 1, 1.05, 1, 1, 0, 0, 1, 1.05, 1.05, 1, 0.9, 1 };
+	static double R_pet_mod_dps[36] = { 0, 1, 1.10, 1.07, 0.91, 0.9, 1, 1, 0.95, 1.02, 0, 1.1, 1, 0, 0, 0, 0, 0, 0, 0, 0.94, 0.9, 0, 0, 1.07, 1, 1.07, 1.07, 0, 0, 1, 1.1, 0.94, 1, 1.03, 1 };
+
+	double pet_mod_sta = 1, pet_mod_arm = 1, pet_mod_dps = 1;
+	if(creature_info->Family > 35 || R_pet_mod_sta[creature_info->Family] == 0)
+	{
+		if( myFamily == NULL && myFamily->name != NULL )
+            sLog.outError("PETSTAT: Creature family %u has missing data. Assuming to be 1.", creature_info->Family);
+		else
+			sLog.outError("PETSTAT: Creature family %u [%s] has missing data. Assuming to be 1.", creature_info->Family, myFamily->name);
+	}
+	else
+	{
+		pet_mod_sta = R_pet_mod_sta[creature_info->Family];
+		pet_mod_arm = R_pet_mod_arm[creature_info->Family];
+		pet_mod_dps = R_pet_mod_dps[creature_info->Family];
+	}
 
 	//Base attributes from http://petopia.brashendeavors.net/html/art...ttributes.shtml
 	static double R_pet_base_armor[70] = { 20, 21, 46, 82, 126, 180, 245, 322, 412, 518, 545, 580, 615,650, 685, 721, 756, 791, 826, 861, 897, 932, 967, 1002, 1037, 1072, 1108, 1142, 1177, 1212, 1247, 1283, 1317, 1353, 1387, 1494, 1607, 1724, 1849, 1980, 2117, 2262, 2414, 2574, 2742, 2798, 2853,2907, 2963, 3018, 3072, 3128, 3183, 3237, 3292, 3348, 3402, 3457, 3512, 3814, 4113, 4410, 4708, 5006, 5303, 5601, 5900, 6197, 6495, 6790 };
 	static double R_pet_base_hp[70] = { 42, 55, 71, 86, 102, 120, 137, 156, 176, 198, 222, 247, 273, 300, 328, 356, 386, 417, 449, 484, 521, 562, 605, 651, 699, 750, 800, 853, 905, 955, 1006, 1057, 1110, 1163, 1220, 1277, 1336, 1395, 1459, 1524, 1585, 1651, 1716, 1782, 1848, 1919, 1990, 2062, 2138, 2215, 2292, 2371, 2453, 2533, 2614, 2699, 2784, 2871, 2961, 3052, 3144, 3237, 3331, 3425, 3524, 3624, 3728, 3834, 3941, 4049 };
 
-	BaseStats[STAT_STAMINA] = float2int32(R_pet_base_hp[level-1] / 10);
+	double pet_hp;
+	double pet_armor;
+	if(level < 70)
+	{
+		pet_hp = (R_pet_base_hp[level-1] * pet_mod_sta) + BonusStats[STAT_STAMINA] * 10;
+		pet_armor = R_pet_base_armor[level-1];
+	}
+	else
+	{
+		pet_hp	= ((0.6 * dlevel * dlevel + 10.6 * dlevel + 33) * pet_mod_sta) + BonusStats[STAT_STAMINA] * 10;
+		pet_armor = -75 + 50 * dlevel;
+	}
+	pet_armor *= pet_mod_arm;
+	pet_armor *= (100 + BaseResistanceModPct[0]) / 100;
+	pet_armor += FlatResistanceMod[0];
+	pet_armor *= ResistanceModPct[0] / 100;
+
 
 	//other mods are done in different ratings :P
-	float pet_attack_power = (7.9 * dlevel * dlevel / (dlevel * 3));
+	double pet_attack_power = (7.9 * dlevel * dlevel / (dlevel * 3))  * pet_mod_dps;
 
-	if(pet_attack_power <= 0.0f)
-		pet_attack_power = 1.0f;
+	if(pet_attack_power <= 0.0f) pet_attack_power = 1;
+	if(pet_armor <= 0.0f) pet_armor = 1;
 
 	// Set base values.
-	SetUInt32Value(UNIT_FIELD_BASE_HEALTH, R_pet_base_hp[level - 1]);
-	BaseResistance[0] = R_pet_base_armor[level - 1];
+	SetUInt32Value(UNIT_FIELD_BASE_HEALTH, FL2UINT(pet_hp));
+	BaseResistance[0] = FL2UINT(pet_armor);
 	CalcResistance(0);
 
 	// Calculate damage.
-	SetUInt32Value(UNIT_FIELD_ATTACK_POWER, float2int32(pet_attack_power));
+	SetUInt32Value(UNIT_FIELD_ATTACK_POWER, FL2UINT(pet_attack_power));
 	CalcDamage();
+
+	// Reverse the health value to calculate stamina
+	BaseStats[STAT_STAMINA] = FL2UINT(pet_hp / 10);
 
 	for(uint32 x = 0; x < 5; ++x)
 		CalcStat(x);
-
 	UpdateTP();
 }
 
@@ -1415,18 +1502,10 @@ void Pet::UpdateStats()
 	else
 		ApplyPetLevelAbilities();
 
-	int32 stat_bonus = GetUInt32Value(UNIT_FIELD_STAT2) + GetUInt32Value(UNIT_FIELD_POSSTAT2) - GetUInt32Value(UNIT_FIELD_NEGSTAT2) - BaseStats[STAT_STAMINA];
-	int32 bonus = stat_bonus * 10 + m_healthfromspell;
-
-	int32 newhealth = GetUInt32Value(UNIT_FIELD_BASE_HEALTH) + bonus;
-	if (newhealth < 1)
-		newhealth = 1;
-
-	// Do we really want to set current health/mana?, that is SOOO abusable
 	// Apply health fields.
-	//SetUInt32Value(UNIT_FIELD_HEALTH, newhealth);
-	SetUInt32Value(UNIT_FIELD_MAXHEALTH, newhealth);
-	//SetUInt32Value(UNIT_FIELD_POWER1, m_uint32Values[UNIT_FIELD_BASE_MANA]);
+	SetUInt32Value(UNIT_FIELD_HEALTH, m_uint32Values[UNIT_FIELD_BASE_HEALTH]);
+	SetUInt32Value(UNIT_FIELD_MAXHEALTH, m_uint32Values[UNIT_FIELD_BASE_HEALTH]);
+	SetUInt32Value(UNIT_FIELD_POWER1, m_uint32Values[UNIT_FIELD_BASE_MANA]);
 	SetUInt32Value(UNIT_FIELD_MAXPOWER1, m_uint32Values[UNIT_FIELD_BASE_MANA]);
 }
 
@@ -1511,6 +1590,7 @@ void Pet::UpdateTP()
 	if(!m_Owner || Summon) return;
 	int16 pts = getLevel()*(GetLoyaltyLevel()-1)-GetUsedTP();
 	TP = pts;
+	SetUInt32Value(UNIT_TRAINING_POINTS, pts < 0?(-pts & 0xffff):(pts<<16));//uff, works, but has anybody better idea?
 }
 HappinessState Pet::GetHappinessState() 
 {
@@ -1766,72 +1846,3 @@ uint32 Pet::GetUntrainCost()
 	return 1000;
 }
 
-void Pet::ApplyPassiveAuras()
-{
-	if (myFamily == NULL)
-		return;
-
-	uint32 id = 0;
-	switch (myFamily->ID)
-	{
-	case 1: id = 17223; break;
-	case 2: id = 17210; break;
-	case 3: id = 17219; break;
-	case 4: id = 17208; break;
-	case 5: id = 7000; break;
-	case 6: id = 17212; break;
-	case 7: id = 17209; break;
-	case 8: id = 17211; break;
-	case 9: id = 17214; break;
-	case 12: id = 17220; break;
-	case 21: id = 17211; break;
-	case 20: id = 17218; break;
-	case 24: id = 17206; break;
-	case 25: id = 17215; break;
-	case 26: id = 17216; break;
-	case 27: id = 17222; break;
-	}
-
-	if (id != 0)
-	{
-		//remove if we have it
-		Aura* a=FindAura(id);
-		if (a != NULL && !sEventMgr.HasEvent(a, EVENT_AURA_UPDATE))
-			sEventMgr.AddEvent(a, &Aura::HandleChange, EVENT_AURA_UPDATE, 1000, 1, 0);
-		else
-		{
-			Spell* s=new Spell(this, dbcSpell.LookupEntry(id), true, NULL);
-			SpellCastTargets t(this);
-			s->prepare(&t);
-		}
-	}
-
-	//what now? muhaha
-	if (myFamily->tameable)
-	{
-		//apply tame passives, WEE
-		const uint32 passive[11]={	8875,
-									19580,
-									19581,
-									19582,
-									19589,
-									19591,
-									20782,
-									20784,
-									34666,
-									34667,
-									34675};
-		for (uint8 i=0; i<11; ++i)
-		{
-			Aura* a=FindAura(passive[i]);
-			if (a != NULL && !sEventMgr.HasEvent(a, EVENT_AURA_UPDATE))
-				sEventMgr.AddEvent(a, &Aura::HandleChange, EVENT_AURA_UPDATE, 1000, 1, 0);
-			else
-			{
-				Spell* s=new Spell(this, dbcSpell.LookupEntry(passive[i]), true, NULL);
-				SpellCastTargets t(this);
-				s->prepare(&t);
-			}
-		}
-	}
-}

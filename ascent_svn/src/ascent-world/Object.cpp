@@ -146,7 +146,7 @@ uint32 Object::BuildCreateUpdateBlockForPlayer(ByteBuffer *data, Player *target)
 	// gameobject stuff
 	if(m_objectTypeId == TYPEID_GAMEOBJECT)
 	{
-		switch(m_uint32Values[GAMEOBJECT_BYTES_1])
+		switch(m_uint32Values[GAMEOBJECT_TYPE_ID])
 		{
 			case GAMEOBJECT_TYPE_MO_TRANSPORT:  
 				{
@@ -376,7 +376,7 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint8 flags, uint32 flags2,
 
 		*data << (uint32)flags2;
 
-		*data << (uint16)0;
+		*data << (uint8)0;
 
 		*data << getMSTime(); // this appears to be time in ms but can be any thing
 
@@ -416,7 +416,7 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint8 flags, uint32 flags2,
 			{
 				*data << pThis->m_TransporterGUID;
 				*data << pThis->m_TransporterX << pThis->m_TransporterY << pThis->m_TransporterZ << pThis->m_TransporterO;
-				*data << pThis->m_TransporterUnk << uint8(0);
+				*data << pThis->m_TransporterUnk;
 			}
 			else if(m_objectTypeId==TYPEID_UNIT && ((Creature*)this)->m_transportPosition != NULL)
 			{
@@ -452,7 +452,6 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint8 flags, uint32 flags2,
 		*data << m_flySpeed;		// fly speed
 		*data << m_backFlySpeed;	// back fly speed
 		*data << m_turnRate;	  // turn rate
-		*data << float(7);
 	}
 
 	if(splinebuf)
@@ -463,16 +462,12 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint8 flags, uint32 flags2,
 
 	if(flags & 0x8)
 	{
-		//Andy: update this
 		*data << GetUInt32Value(OBJECT_FIELD_GUID);
 		if(flags & 0x10)
-			*data << GetUInt32Value(OBJECT_FIELD_GUID + 4);
+			*data << GetUInt32Value(OBJECT_FIELD_GUID_01);
 	}
 	else if(flags & 0x10)
-	{
 		*data << GetUInt32Value(OBJECT_FIELD_GUID);
-
-	}
 
 	if(flags & 0x2)
 	{
@@ -485,11 +480,6 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint8 flags, uint32 flags2,
 		}
 		else
             *data << getMSTime();
-	}
-
-	if (flags & 0x80)
-	{
-		*data << float(0) << uint32(0);
 	}
 }
 
@@ -610,10 +600,10 @@ void Object::_BuildValuesUpdate(ByteBuffer * data, UpdateMask *updateMask, Playe
 
 	if(activate_quest_object)
 	{
-		oldflags = m_uint32Values[GAMEOBJECT_DYNAMIC];
-		if(!updateMask->GetBit(GAMEOBJECT_DYNAMIC))
-			updateMask->SetBit(GAMEOBJECT_DYNAMIC);
-		m_uint32Values[GAMEOBJECT_DYNAMIC] = 1;
+		oldflags = m_uint32Values[GAMEOBJECT_DYN_FLAGS];
+		if(!updateMask->GetBit(GAMEOBJECT_DYN_FLAGS))
+			updateMask->SetBit(GAMEOBJECT_DYN_FLAGS);
+		m_uint32Values[GAMEOBJECT_DYN_FLAGS] = 1;
 		reset = true;
 	}
 
@@ -637,8 +627,77 @@ void Object::_BuildValuesUpdate(ByteBuffer * data, UpdateMask *updateMask, Playe
 	  
 	for( uint32 index = 0; index < values_count; index ++ )
 	{
-		if(updateMask->GetBit(index))
-			*data << m_uint32Values[index];
+		if( updateMask->GetBit( index ) )
+		{
+			switch(index)
+			{
+			case UNIT_FIELD_MAXHEALTH:
+				{
+					if(m_valuesCount < UNIT_END)
+						*data << m_uint32Values[index];
+					else
+					{
+						switch(m_objectTypeId)
+						{
+						case TYPEID_PLAYER:
+							*data << m_uint32Values[index];
+						break;
+
+						case TYPEID_UNIT:
+							{
+								if(IsPet())
+								{
+									*data << m_uint32Values[index];
+									break;
+								}
+								else
+								{
+									*data << (uint32)100;	
+								}
+							}
+						}
+					}
+				}
+				break;
+			case UNIT_FIELD_HEALTH:
+				{
+					if(m_valuesCount < UNIT_END)
+						*data << m_uint32Values[index];
+					else
+					{
+						switch(m_objectTypeId)
+						{
+						case TYPEID_PLAYER:
+							*data << m_uint32Values[index];
+						break;
+
+						case TYPEID_UNIT:
+							{
+								if(IsPet())
+								{
+									*data << m_uint32Values[index];
+									break;
+								}
+								else
+								{
+									uint32 pct = uint32(float( float(m_uint32Values[index]) / float(m_uint32Values[UNIT_FIELD_MAXHEALTH]) * 100.0f));
+
+									/* fix case where health value got rounded down and the client sees health as dead */
+									if(!pct && m_uint32Values[UNIT_FIELD_HEALTH] != 0)
+										++pct;
+									*data << pct;	
+								}
+							}
+						}
+					}
+				}
+				break;
+
+			default:
+				*data << m_uint32Values[ index ];
+				break;
+			}
+		}
 	}
 
 	if(reset)
@@ -649,7 +708,7 @@ void Object::_BuildValuesUpdate(ByteBuffer * data, UpdateMask *updateMask, Playe
 			m_uint32Values[UNIT_DYNAMIC_FLAGS] = oldflags;
 			break;
 		case TYPEID_GAMEOBJECT:
-			m_uint32Values[GAMEOBJECT_DYNAMIC] = oldflags;
+			m_uint32Values[GAMEOBJECT_DYN_FLAGS] = oldflags;
 			break;
 		}
 	}
@@ -681,7 +740,7 @@ WorldPacket * Object::BuildTeleportAckMsg(const LocationVector & v)
 	//First 4 bytes = no idea what it is
 	*data << uint32(2); // flags
 	*data << uint32(0); // mysterious value #1
-	*data << uint16(0);
+	*data << uint8(0);
 
 	*data << float(0);
 	*data << v;
@@ -801,8 +860,7 @@ void Object::SendMessageToSet(WorldPacket *data, bool bToSelf, bool myteam_only,
 {
 	if(bToSelf && m_objectTypeId == TYPEID_PLAYER)
 	{
-		if (static_cast<Player*>(this)->GetSession() != NULL)
-			static_cast< Player* >( this )->GetSession()->SendPacket(data);		
+		static_cast< Player* >( this )->GetSession()->SendPacket(data);		
 	}
 
 	if(!IsInWorld())
@@ -820,8 +878,7 @@ void Object::SendMessageToSet(WorldPacket *data, bool bToSelf, bool myteam_only,
 		{
 			for(; itr != it_end; ++itr)
 			{
-				if ((*itr)->GetSession() == NULL)
-					continue;
+				ASSERT((*itr)->GetSession());
 				if((*itr)->GetSession()->GetPermissionCount() > 0 && (*itr)->GetTeam()==myteam)
 					(*itr)->GetSession()->SendPacket(data);
 			}
@@ -830,8 +887,7 @@ void Object::SendMessageToSet(WorldPacket *data, bool bToSelf, bool myteam_only,
 		{
 			for(; itr != it_end; ++itr)
 			{
-				if ((*itr)->GetSession() == NULL)
-					continue;
+				ASSERT((*itr)->GetSession());
 				if((*itr)->GetTeam()==myteam)
 					(*itr)->GetSession()->SendPacket(data);
 			}
@@ -843,8 +899,7 @@ void Object::SendMessageToSet(WorldPacket *data, bool bToSelf, bool myteam_only,
 		{
 			for(; itr != it_end; ++itr)
 			{
-				if ((*itr)->GetSession() == NULL)
-					continue;
+				ASSERT((*itr)->GetSession());
 				if ((*itr)->GetGUID() == ignoreguid)
 					continue;
 
@@ -1136,24 +1191,6 @@ void Object::ModFloatValue(const uint32 index, const float value )
 {
 	ASSERT( index < m_valuesCount );
 	m_floatValues[ index ] += value;
-
-	if(IsInWorld())
-	{
-		m_updateMask.SetBit( index );
-
-		if(!m_objectUpdated)
-		{
-			m_mapMgr->ObjectUpdated(this);
-			m_objectUpdated = true;
-		}
-	}
-}
-
-//PERCENT, send 1.0f for 100%, not 100 
-void Object::ModFloatValuePct(const uint32 index, const float value )
-{
-	ASSERT( index < m_valuesCount );
-	m_floatValues[index] *= value;
 
 	if(IsInWorld())
 	{
@@ -1495,7 +1532,7 @@ Player* Object::GetPlayerFrom()
 		if (GetUInt32Value(UNIT_FIELD_SUMMONEDBY) != 0)
 		{
 			Unit* tmp=GetMapMgr()->GetUnit(GetUInt32Value(UNIT_FIELD_SUMMONEDBY));
-			if (tmp != NULL)
+			if (tmp != NULL && tmp->IsFromPlayer())
 				return tmp->GetPlayerFrom();
 		}
 	}
@@ -1589,25 +1626,25 @@ void Object::DealDamage(Unit *pVictim, uint32 damage, uint32 targetEvent, uint32
 	if( pVictim->IsSpiritHealer() )
 		return;
 
-	//handle function procs, not if your hitting yourself :)
-	if (this != pVictim)
-	{
-		std::vector<void*> data;
-		data.push_back((void*)this);
-		data.push_back((void*)pVictim);
-		data.push_back((void*)&damage);
-
-		if (IsUnit())
-			static_cast<Unit*>(this)->HandleProcFnc(SPELLFNC_PROC_ON_DEAL_DAMAGE, &data);
-		if (pVictim->IsUnit())
-			static_cast<Unit*>(pVictim)->HandleProcFnc(SPELLFNC_PROC_ON_TAKE_DAMAGE, &data);
-	}
-
 	if( this->IsUnit() && pVictim->IsUnit() && pVictim != this )
 	{
 		// Set our attack target to the victim.
 		static_cast< Unit* >( this )->CombatStatus.OnDamageDealt( pVictim );
 
+		std::map<void*, CallbackBase*>::iterator itr;
+		std::map<void*, CallbackBase*>::iterator itr2;
+
+		for (itr=pVictim->OnTakeDamageCallback.begin(); itr!=pVictim->OnTakeDamageCallback.end();)
+		{
+			itr2 = ++itr;
+			if (itr2->second == NULL)
+			{
+				pVictim->OnTakeDamageCallback.erase(itr2);
+				continue;
+			}
+
+			itr2->second->execute();
+		}
 	}
 	
 	if( pVictim->GetStandState() )//not standing-> standup
@@ -1739,7 +1776,7 @@ void Object::DealDamage(Unit *pVictim, uint32 damage, uint32 targetEvent, uint32
 			if( rage + float2int32( val ) > 1000 )
 			  val = 1000.0f - (float)pVictim->GetUInt32Value( UNIT_FIELD_POWER2 );
 
-			static_cast<Player*>(pVictim)->SetRage(rage + float2int32(val));
+			ModUnsigned32Value(UNIT_FIELD_POWER2, (int32)val);
 		}
 
 	if( pVictim->IsPlayer() )
@@ -1894,8 +1931,8 @@ void Object::SpellNonMeleeDamageLog(Unit *pVictim, uint32 spellID, uint32 damage
 //========================================================================================== 
 	uint32 school = forced_school != -1? forced_school : spellInfo->School;
 	float res = float(damage);
-	uint32 aproc = PROC_ON_ANY_HOSTILE_ACTION;
-	uint32 vproc = PROC_ON_ANY_HOSTILE_ACTION | PROC_ON_ANY_DAMAGE_VICTIM;
+	uint32 aproc = PROC_ON_ANY_HOSTILE_ACTION | PROC_ON_SPELL_HIT;
+	uint32 vproc = PROC_ON_ANY_HOSTILE_ACTION | PROC_ON_ANY_DAMAGE_VICTIM | PROC_ON_SPELL_HIT_VICTIM;
 	bool critical = false;
 //==========================================================================================
 //==============================+Spell Damage Bonus Calculations============================
@@ -1954,11 +1991,19 @@ void Object::SpellNonMeleeDamageLog(Unit *pVictim, uint32 spellID, uint32 damage
 			else
 			{
 				CritChance = caster->spellcritperc + caster->SpellCritChanceSchool[school] + pVictim->AttackerCritChanceMod[school];
-				if(caster->IsPlayer() && pVictim->HasFlag(UNIT_FIELD_AURASTATE, AURASTATE_FLAG_FROZEN))	
+				if( caster->IsPlayer() && ( pVictim->m_auracount[SPELL_AURA_MOD_ROOT] - pVictim->m_auracount[SPELL_AURA_MOD_STUN] ) )	
 					CritChance += static_cast< Player* >( caster )->m_RootedCritChanceBonus;
 
-				SM_FFValue(caster->SM_CriticalChance, &CritChance, spellInfo);
-
+				if( spellInfo->SpellGroupType )
+				{
+					SM_FFValue(caster->SM_CriticalChance, &CritChance, spellInfo->SpellGroupType);
+	#ifdef COLLECTION_OF_UNTESTED_STUFF_AND_TESTERS
+					float spell_flat_modifers=0;
+					SM_FFValue(caster->SM_CriticalChance,&spell_flat_modifers,spellInfo->SpellGroupType);
+					if(spell_flat_modifers!=0)
+						printf("!!!!spell critchance mod flat %f ,spell group %u\n",spell_flat_modifers,spellInfo->SpellGroupType);
+	#endif
+				}
 				if( pVictim->IsPlayer() )
 				CritChance -= static_cast< Player* >(pVictim)->CalcRating( PLAYER_RATING_MODIFIER_SPELL_CRIT_RESILIENCE );
 			}
@@ -1972,7 +2017,8 @@ void Object::SpellNonMeleeDamageLog(Unit *pVictim, uint32 spellID, uint32 damage
 			if (critical)
 			{		
 				int32 critical_bonus = 100;
-				SM_FIValue(caster->SM_PCriticalDamage, &critical_bonus, spellInfo);
+				if( spellInfo->SpellGroupType )
+					SM_FIValue( caster->SM_PCriticalDamage, &critical_bonus, spellInfo->SpellGroupType );
 
 				if( critical_bonus > 0 )
 				{
@@ -2009,7 +2055,11 @@ void Object::SpellNonMeleeDamageLog(Unit *pVictim, uint32 spellID, uint32 damage
 //==========================================================================================
 //==============================Post Roll Calculations======================================
 //==========================================================================================
-
+	//dirty fix for Ice Lance
+	if( ( pVictim->m_auracount[SPELL_AURA_MOD_ROOT] - pVictim->m_auracount[SPELL_AURA_MOD_STUN]) > 0 && spellInfo->NameHash == SPELL_HASH_ICE_LANCE ) //Ice Lance deals 3x damage if target is frozen
+	{
+		res *= 3;
+	}
 //------------------------------absorption--------------------------------------------------	
 	uint32 ress=(uint32)res;
 	uint32 abs_dmg = pVictim->AbsorbDamage(school, &ress);
@@ -2226,7 +2276,7 @@ bool Object::CanActivate()
 
 	case TYPEID_GAMEOBJECT:
 		{
-			if(static_cast<GameObject*>(this)->HasAI() && GetByte(GAMEOBJECT_BYTES_1, 1) != GAMEOBJECT_TYPE_TRAP)
+			if(static_cast<GameObject*>(this)->HasAI() && GetUInt32Value(GAMEOBJECT_TYPE_ID) != GAMEOBJECT_TYPE_TRAP)
 				return true;
 		}break;
 	}
@@ -2532,16 +2582,16 @@ void Object::HandleDeath(Unit *pVictim, uint32 damage, uint32 targetEvent, uint3
 		//lets see if we have spirit of redemption
 		if( pVictim->IsPlayer() )
 		{
-			if( static_cast< Player* >( pVictim)->HasSpell(20711)) //check for spirit of Redemption
+			if( static_cast< Player* >( pVictim)->HasSpell( 20711 ) ) //check for spirit of Redemption
 			{
-
-				Spell* sor = new Spell(pVictim, dbcSpell.LookupEntry(27827), true, NULL);
-				Spell* sor2 = new Spell(pVictim, dbcSpell.LookupEntry(27792), true, NULL);
-				Spell* sor3 = new Spell(pVictim, dbcSpell.LookupEntry(27795), true, NULL);
-				SpellCastTargets targets(pVictim);
-				sor->prepare(&targets);
-				sor2->prepare(&targets);
-				sor3->prepare(&targets);
+				SpellEntry* sorInfo = dbcSpell.LookupEntry(27827);
+				if( sorInfo != NULL )
+				{
+					Spell *sor = new Spell( pVictim, sorInfo, true, NULL );
+					SpellCastTargets targets;
+					targets.m_target = pVictim;
+					sor->prepare(&targets);
+				}
 			}
 		}
 		uint64 victimGuid = pVictim->GetGUID();

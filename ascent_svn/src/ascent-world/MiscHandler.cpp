@@ -437,7 +437,7 @@ void WorldSession::HandleLootReleaseOpcode( WorldPacket & recv_data )
 		if( pGO == NULL )
 			return;
 
-        switch( pGO->GetByte(GAMEOBJECT_BYTES_1, 1) )
+        switch( pGO->GetUInt32Value( GAMEOBJECT_TYPE_ID ) )
         {
         case GAMEOBJECT_TYPE_FISHINGNODE:
             {
@@ -473,7 +473,7 @@ void WorldSession::HandleLootReleaseOpcode( WorldPacket & recv_data )
                                     //we still have loot inside.
                                     if( pGO->HasLoot() )
                                     {
-                                        pGO->SetByte(GAMEOBJECT_BYTES_1, 0, 1);
+                                        pGO->SetUInt32Value( GAMEOBJECT_STATE, 1 );
 										// TODO : redo this temporary fix, because for some reason hasloot is true even when we loot everything
 										// my guess is we need to set up some even that rechecks the GO in 10 seconds or something
 										//pGO->Despawn( 600000 + ( RandomUInt( 300000 ) ) );
@@ -497,7 +497,7 @@ void WorldSession::HandleLootReleaseOpcode( WorldPacket & recv_data )
 								{
 									if(pGO->HasLoot())
 									{
-										pGO->SetByte(GAMEOBJECT_BYTES_1, 0, 1);
+										pGO->SetUInt32Value(GAMEOBJECT_STATE, 1);
 										return;
 									}
 									pGO->Despawn((sQuestMgr.GetGameObjectLootQuest(pGO->GetEntry()) ? 60000 : 12000 + ( RandomUInt( 60000 ) ) ) );
@@ -508,7 +508,7 @@ void WorldSession::HandleLootReleaseOpcode( WorldPacket & recv_data )
 							{
 								if(pGO->HasLoot())
 								{
-									pGO->SetByte(GAMEOBJECT_BYTES_1, 0, 1);
+									pGO->SetUInt32Value(GAMEOBJECT_STATE, 1);
 									return;
 								}
 								pGO->Despawn((sQuestMgr.GetGameObjectLootQuest(pGO->GetEntry()) ? 60000 : 12000 + ( RandomUInt( 60000 ) ) ) );
@@ -521,7 +521,7 @@ void WorldSession::HandleLootReleaseOpcode( WorldPacket & recv_data )
                 {
                     if( pGO->HasLoot() )
                     {
-                        pGO->SetByte(GAMEOBJECT_BYTES_1, 0, 1);
+                        pGO->SetUInt32Value(GAMEOBJECT_STATE, 1);
                         return;
                     }
                     pGO->Despawn((sQuestMgr.GetGameObjectLootQuest(pGO->GetEntry()) ? 60000 : 12000 + ( RandomUInt( 60000 ) ) ) );
@@ -1231,7 +1231,7 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
    
 	CALL_GO_SCRIPT_EVENT(obj, OnActivate)(_player);
 
-	uint32 type = obj->GetByte(GAMEOBJECT_BYTES_1, 1);
+	uint32 type = obj->GetUInt32Value(GAMEOBJECT_TYPE_ID);
 	switch (type)
 	{
 		case GAMEOBJECT_TYPE_CHAIR:
@@ -1263,12 +1263,12 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 	case GAMEOBJECT_TYPE_DOOR:
 		{
 			// door
-			if((obj->GetByte(GAMEOBJECT_BYTES_1, 0) == 1) && (obj->GetUInt32Value(GAMEOBJECT_FLAGS) == 33))
+			if((obj->GetUInt32Value(GAMEOBJECT_STATE) == 1) && (obj->GetUInt32Value(GAMEOBJECT_FLAGS) == 33))
 				obj->EventCloseDoor();
 			else
 			{
 				obj->SetUInt32Value(GAMEOBJECT_FLAGS, 33);
-				obj->SetByte(GAMEOBJECT_BYTES_1, 0, 0);
+				obj->SetUInt32Value(GAMEOBJECT_STATE, 0);
 				sEventMgr.AddEvent(obj,&GameObject::EventCloseDoor,EVENT_GAMEOBJECT_DOOR_CLOSE,20000,1,0);
 			}
 		}break;
@@ -1528,7 +1528,7 @@ void WorldSession::HandleInspectOpcode( WorldPacket & recv_data )
 
 	_player->SetSelection( guid );
 
-    WorldPacket data( SMSG_INSPECT_TALENT, 4 + talent_points );
+    WorldPacket data( SMSG_INSPECT_TALENTS, 4 + talent_points );
 
     data << uint32( talent_points );
 
@@ -1624,7 +1624,7 @@ void WorldSession::HandleAcknowledgementOpcodes( WorldPacket & recv_data )
 		_player->m_waterwalk = _player->m_setwaterwalk;
 		break;
 
-	case CMSG_MOVE_SET_CAN_FLY_ACK:
+	case CMSG_MOVE_SET_FLY_ACK:
 		_player->FlyCheat = _player->m_setflycheat;
 		break;
 
@@ -1632,8 +1632,8 @@ void WorldSession::HandleAcknowledgementOpcodes( WorldPacket & recv_data )
 	case CMSG_FORCE_RUN_BACK_SPEED_CHANGE_ACK:
 	case CMSG_FORCE_SWIM_SPEED_CHANGE_ACK:
 	case CMSG_FORCE_SWIM_BACK_SPEED_CHANGE_ACK:
-	case CMSG_FORCE_FLIGHT_BACK_SPEED_CHANGE_ACK:
-	case CMSG_FORCE_FLIGHT_SPEED_CHANGE_ACK:
+	case CMSG_FORCE_FLY_BACK_SPEED_CHANGE_ACK:
+	case CMSG_FORCE_MOVE_SET_FLY_SPEED_ACK:
 		_player->ResetHeartbeatCoords();
 		_player->DelaySpeedHack( 5000 );			// give the client a chance to fall/catch up
 		_player->_speedChangeInProgress = false;
@@ -2105,7 +2105,7 @@ void WorldSession::HandleDungeonDifficultyOpcode(WorldPacket& recv_data)
     if(_player->GetGroup() && _player->IsGroupLeader())
     {
         WorldPacket pData;
-        pData.Initialize(MSG_SET_DUNGEON_DIFFICULTY);
+        pData.Initialize(CMSG_DUNGEON_DIFFICULTY);
         pData << data;
 
         _player->iInstanceType = data;
@@ -2166,7 +2166,7 @@ void WorldSession::HandleSummonResponseOpcode(WorldPacket & recv_data)
 
 void WorldSession::HandleDismountOpcode(WorldPacket& recv_data)
 {
-	sLog.outDebug( "WORLD: Received CMSG_CANCEL_MOUNT_AURA"  );
+	sLog.outDebug( "WORLD: Received CMSG_DISMOUNT"  );
 
 	if( !_player->IsInWorld() || _player->GetTaxiState())
 		return;

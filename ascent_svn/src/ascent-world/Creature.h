@@ -40,6 +40,9 @@ struct CreatureItem
 	ItemExtendedCostEntry* extended_cost;
 };
 
+SERVER_DECL bool Rand(float chance);
+SERVER_DECL bool Rand(uint32 chance);
+SERVER_DECL bool Rand(int32 chance);
 #pragma pack(push,1)
 struct CreatureInfo
 {

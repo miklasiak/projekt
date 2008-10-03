@@ -94,16 +94,6 @@ enum OBJECT_UPDATE_TYPE {
 
 };
 
-struct ProcFnc
-{
-	void* m_creator;
-	CallbackBase* m_base;
-	std::vector<void*>* m_data;
-	bool deleted;
-
-	ProcFnc() : m_creator(NULL), m_base(NULL), m_data(NULL), deleted(false) {}
-};
-
 class WorldPacket;
 class ByteBuffer;
 class WorldSession;
@@ -265,7 +255,6 @@ public:
 	}
 
 	void __fastcall ModFloatValue(const uint32 index, const float value );
-	void __fastcall ModFloatValuePct(const uint32 index, const float value );
 	void ModSignedInt32Value(uint32 index, int32 value);
 	void ModUnsigned32Value(uint32 index, int32 mod);
 	uint32 GetModPUInt32Value(const uint32 index, const int32 value);

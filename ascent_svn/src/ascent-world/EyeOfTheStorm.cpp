@@ -412,7 +412,7 @@ void EyeOfTheStorm::OnCreate()
 		if( !m_bubbles[i]->CreateFromProto( 184719, m_mapMgr->GetMapId(), EOTSBubbleLocations[i][0], EOTSBubbleLocations[i][1], EOTSBubbleLocations[i][2], EOTSBubbleLocations[i][3] ) )
 		{
 			m_bubbles[i]->SetFloatValue(OBJECT_FIELD_SCALE_X,0.1f);
-			m_bubbles[i]->SetByte(GAMEOBJECT_BYTES_1, 0, 1);
+			m_bubbles[i]->SetUInt32Value(GAMEOBJECT_STATE,1);
 			m_bubbles[i]->SetUInt32Value(GAMEOBJECT_FLAGS,32);
 			Log.LargeErrorMessage(LARGERRORMESSAGE_ERROR, "EOTS is being created and you are missing gameobjects. Terminating.");
 			abort();
@@ -425,15 +425,15 @@ void EyeOfTheStorm::OnCreate()
 	/* Flag */
 	m_standFlag = m_mapMgr->CreateGameObject(184141);
 	m_standFlag->CreateFromProto( 184141, m_mapMgr->GetMapId(), 2174.782227f, 1569.054688f, 1160.361938f, -1.448624f );
-	m_standFlag->SetFloatValue( GAMEOBJECT_PARENTROTATION_2, 0.662620f );
-	m_standFlag->SetFloatValue( GAMEOBJECT_PARENTROTATION_3, -0.748956f );
+	m_standFlag->SetFloatValue( GAMEOBJECT_ROTATION_02, 0.662620f );
+	m_standFlag->SetFloatValue( GAMEOBJECT_ROTATION_03, -0.748956f );
 	m_standFlag->SetFloatValue( OBJECT_FIELD_SCALE_X, 2.5f );
 	m_standFlag->PushToWorld( m_mapMgr );
 
 	m_dropFlag = m_mapMgr->CreateGameObject(184142);
 	m_dropFlag->CreateFromProto( 184142, m_mapMgr->GetMapId(), 2174.782227f, 1569.054688f, 1160.361938f, -1.448624f );
-	m_dropFlag->SetFloatValue( GAMEOBJECT_PARENTROTATION_2, 0.885448f );
-	m_dropFlag->SetFloatValue( GAMEOBJECT_PARENTROTATION_3, -0.464739f );
+	m_dropFlag->SetFloatValue( GAMEOBJECT_ROTATION_02, 0.885448f );
+	m_dropFlag->SetFloatValue( GAMEOBJECT_ROTATION_03, -0.464739f );
 	m_dropFlag->SetFloatValue( OBJECT_FIELD_SCALE_X, 2.5f );
 }
 

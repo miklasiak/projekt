@@ -29,7 +29,6 @@ enum AUARA_STAE_FLAGS
 	AURASTATE_FLAG_DODGE_BLOCK			= 1,        //1
     AURASTATE_FLAG_HEALTH20             = 2,        //2
     AURASTATE_FLAG_BERSERK              = 4,        //3
-    AURASTATE_FLAG_FROZEN               = 8,        //4
     AURASTATE_FLAG_JUDGEMENT            = 16,       //5
     AURASTATE_FLAG_PARRY                = 64,       //7
     AURASTATE_FLAG_LASTKILLWITHHONOR    = 512,      //10
@@ -61,8 +60,6 @@ struct Modifier
     int32 realamount;
     //need this to store % values or they cannot be reverted corectly (i think :D )
     signed int fixed_amount[7];
-	//precision!
-	float float_amounts[7];
 };
 
 
@@ -99,18 +96,19 @@ struct DamageSplitTarget
 #ifndef NEW_PROCFLAGS
 struct ProcTriggerSpell
 {
+	//  ProcTriggerSpell() : origId(0), trigger(0), spellId(0), caster(0), procChance(0), procFlags(0), procCharges(0) { }
 	uint32 origId;
+	// uint32 trigger;
 	uint32 spellId;
 	uint64 caster;
 	uint32 procChance;
 	uint32 procFlags;
 	uint32 procCharges;
+	//    SpellEntry *ospinfo;
+	//    SpellEntry *spinfo;
 	uint32 LastTrigger;
-	uint8 i;
-	bool m_targetClass;
+	uint32 ProcType; //0=triggerspell/1=triggerclassspell
 	bool deleted;
-
-	ProcTriggerSpell() : origId(0), spellId(0), caster(0), procChance(0), procFlags(0), procCharges(0), LastTrigger(0), m_targetClass(false), deleted(false), i(0xFF) { }
 };
 #else
 struct ProcTriggerSpell
@@ -144,7 +142,7 @@ public:
 
 	ASCENT_INLINE void SetPeriodicTarget(uint64 guid) { periodic_target = guid; }
 
-	void HandleChange();
+	void HandleStatChange();
 
 	void ReapplyModifiers();
 
@@ -202,17 +200,10 @@ public:
 		timeleft = getMSTime() + GetDuration() - time;
 
 		//modify the remove event
-		if (GetDuration() > 0)
-		{
-			if (!sEventMgr.HasEvent(this, EVENT_AURA_REMOVE))
-				sEventMgr.AddEvent(this, &Aura::Remove, true, EVENT_AURA_REMOVE, GetTimeLeft() + 500, 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
-			else
-				sEventMgr.ModifyEventTimeLeft(this, EVENT_AURA_REMOVE, GetTimeLeft() + 500);
-		}
-		UpdateDurations();
+		sEventMgr.ModifyEventTimeLeft(this, EVENT_AURA_REMOVE, GetTimeLeft() + 200);
 	}
 
-	/*ASCENT_INLINE*/ uint32 GetTimeLeft()
+	ASCENT_INLINE uint32 GetTimeLeft()
 	{
 		if (GetDuration() == -1)
 			return -1;
@@ -421,7 +412,7 @@ public:
 	void EventJumpAndHeal();
 	void EventPeriodicDrink(uint32 amount);
 
-	void SendModifierLog(int32 ** m,int32 v, SpellEntry* sp, uint8 i,uint8 type,bool pct = false);
+	void SendModifierLog(int32 ** m,int32 v,uint64 mask,uint8 type,bool pct = false);
 	void SendDummyModifierLog(std::map<SpellEntry*,uint32> * m,SpellEntry * spellInfo,uint32 i,bool apply,bool pct = false);
 
 	// Events

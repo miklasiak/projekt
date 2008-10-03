@@ -25,7 +25,7 @@
 #endif
 #include "../ascent-shared/ascent_extra_functions.h"
 
-#define BANNER "Ascent %s r%u/%s-%s (%s) powered by Evolution Cores :: Logon Server"
+#define BANNER "Ascent %s r%u/%s-%s (%s) :: Logon Server"
 
 #ifndef WIN32
 #include <sched.h>

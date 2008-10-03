@@ -63,7 +63,7 @@ typedef struct
 	float	x;
 	float	y;
 	float	z;
-	uint64	o;
+	float	o;
 	float	o1;
 	float	o2;
 	float	o3;

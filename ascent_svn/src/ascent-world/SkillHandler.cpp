@@ -246,21 +246,15 @@ void WorldSession::HandleLearnTalentOpcode( WorldPacket & recv_data )
 			_player->SetUInt32Value(PLAYER_CHARACTER_POINTS1, CurTalentPoints-1);
 		}
 	}
-
-	//reapply pet passives
-	if (_player->GetSummon() != NULL)
-		_player->GetSummon()->ApplyPassiveAuras();
 }
 
 void WorldSession::HandleUnlearnTalents( WorldPacket & recv_data )
 {
-	if(!_player->IsInWorld())
-		return;
+	if(!_player->IsInWorld()) return;
 	uint32 playerGold = GetPlayer()->GetUInt32Value( PLAYER_FIELD_COINAGE );
 	uint32 price = GetPlayer()->CalcTalentResetCost(GetPlayer()->GetTalentResetTimes());
 
-	if( playerGold < price )
-		return;
+	if( playerGold < price ) return;
 
 	GetPlayer()->SetTalentResetTimes(GetPlayer()->GetTalentResetTimes() + 1);
 	GetPlayer()->SetUInt32Value( PLAYER_FIELD_COINAGE, playerGold - price );
@@ -282,9 +276,6 @@ void WorldSession::HandleUnlearnTalents( WorldPacket & recv_data )
 	}
 	talentproto->clear();
 */
-	//reapply pet passives
-	if (_player->GetSummon() != NULL)
-		_player->GetSummon()->ApplyPassiveAuras();
 }
 
 void WorldSession::HandleUnlearnSkillOpcode(WorldPacket& recv_data)
