@@ -1,4 +1,9 @@
 #New unique auras table
+
+#Groups you can reuse:
+#Group1: 11
+#Group2: 1-10 are unused.
+
 DROP TABLE IF EXISTS `spell_unique_auras`;
 
 CREATE TABLE `spell_unique_auras` (
@@ -9,32 +14,51 @@ CREATE TABLE `spell_unique_auras` (
   PRIMARY KEY  (`SpellId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-#Group 1: Armor spells (Warlock/Mage armors)
-
+#Group 1: Armor spells (Warlock/Mage armors) (1 per target, for spellsteal)
+#Demon Armor
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (706,1,1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (1086,1,1);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (11733,1,1);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (11734,1,1);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (11735,1,1);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (27260,1,1);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (47793,1,1);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (47889,1,1);
+#Mage Armor
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (6117,1,1);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (22782,1,1);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (22783,1,1);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (27125,1,1);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (43023,1,1);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (43024,1,1);
+#Ice Armor
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (7302,1,1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (7320,1,1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (10219,1,1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (10220,1,1);
-insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (11733,1,1);
-insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (11734,1,1);
-insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (11735,1,1);
-insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (22782,1,1);
-insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (22783,1,1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (27124,1,1);
-insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (27125,1,1);
-insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (27260,1,1);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (43008,1,1);
+#Fel Armor
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (28176,1,1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (28189,1,1);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (47892,1,1);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (47893,1,1);
+#Molten Armor
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (30482,1,1);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (43045,1,1);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (43046,1,1);
+#Demon Skin
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (687,1,1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (696,1,1);
+#Frost Armor
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (168,1,1);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (7300,1,1);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (7301,1,1);
 
 
 #Group 2: Shadow vulnerability (from Improved Shadow Bolt proc)
 
+#Shadow Vulnerability (from Improved Shadow Bolt proc)
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (17794,2,1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (17797,2,1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (17798,2,1);
@@ -43,15 +67,28 @@ insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (17
 
 #Group 3: Shadow vulnerability (from Shadow Weaving proc)
 
+#Shadow Vulnerability (from Shadow Weaving proc)
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (15258,3,1);
 
-#Group 4: Fire vulnerability (from Improved Scorch proc)
+#Group 4: Fire vulnerability (from Improved Scorch proc), Winter's Chill (from Winter's Chill proc)
 
+#Fire Vulnerability
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (22959,4,1);
+#Winter's Chill
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (12579,4,1);
 
-#Group 5: Winter's Chill (from Winter's Chill proc)
+#Group 5: Paladin Hands
 
-insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (12579,5,1);
+#Hand of Freedom
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (1044,5,1);
+#Hand of Salvation
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (1038,5,1);
+#Hand of Protection
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (1022,5,1);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (5599,5,1);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (10278,5,1);
+#Hand of Sacrifice
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (6940,5,1);
 
 #Group 6: Warlock curses
 
@@ -60,6 +97,7 @@ insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (14
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (11721,6,1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (11722,6,1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (27228,6,1);
+47865
 #Curse of Agony
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (980,6,0);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (1014,6,0);
@@ -68,9 +106,12 @@ insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (11
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (11712,6,0);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (11713,6,0);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (27218,6,0);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (47863,6,0);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (47864,6,0);
 #Curse of Doom, 1 per target
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (603,6,1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (30910,6,1);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (47867,6,1);
 #Curse of Exhaustion, 1 per target
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (18223,6,1);
 #Curse of Recklessness, 1 per target
@@ -79,6 +120,7 @@ insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (76
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (7659,6,1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (11717,6,1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (27226,6,1);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (57595,6,1);
 #Curse of Tongues, 1 per target
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (1714,6,1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (11719,6,1);
@@ -91,45 +133,55 @@ insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (11
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (11708,6,1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (27224,6,1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (30909,6,1);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (50511,6,1);
 
 #Group 7: Attack power reducing auras (demo shout/roar currently)
 
+#Demoralizing Roar
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (99,7,1);
-insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (1160,7,1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (1735,7,1);
-insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (6190,7,1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (9490,7,1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (9747,7,1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (9898,7,1);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (26998,7,1);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (48559,7,1);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (48560,7,1);
+#Demoralizing Shout
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (1160,7,1);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (6190,7,1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (11554,7,1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (11555,7,1);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (11556,7,1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (25202,7,1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (25203,7,1);
-insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (26998,7,1);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (47437,7,1);
 
 #Group 8: Armor reducing auras (sunder armor/expose armor currently)
 
+#Sunder Armor
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (7386,8,1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (7405,8,1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (8380,8,1);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (11596,8,1);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (11597,8,1);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (25225,8,1);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (47467,8,1);
+#Expose Armor
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (8647,8,1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (8649,8,1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (8650,8,1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (11197,8,1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (11198,8,1);
-insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (11596,8,1);
-insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (11597,8,1);
-insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (25225,8,1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (26866,8,1);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (48669,8,1);
 
 #Group 9: Paladin blessings (including greater blessings)
 
-insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (1044,9,0);
+#Kings
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (20217,9,0);
-insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (19977,9,0);
-insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (19978,9,0);
-insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (19979,9,0);
-insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (27144,9,0);
+#Greater Kings
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (25898,9,0);
+#Might
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (19740,9,0);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (19834,9,0);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (19835,9,0);
@@ -138,19 +190,19 @@ insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (19
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (19838,9,0);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (25291,9,0);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (27140,9,0);
-insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (1022,9,0);
-insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (5599,9,0);
-insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (10278,9,0);
-insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (6940,9,0);
-insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (20729,9,0);
-insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (27147,9,0);
-insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (27148,9,0);
-insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (1038,9,0);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (48931,9,0);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (48932,9,0);
+#Greater Might
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (25782,9,0);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (25916,9,0);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (27141,9,0);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (48933,9,0);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (48934,9,0);
+#Sanctuary
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (20911,9,0);
-insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (20912,9,0);
-insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (20913,9,0);
-insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (20914,9,0);
-insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (27168,9,0);
+#Greater Sanctuary
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (25899,9,0);
+#Wisdom
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (19742,9,0);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (19850,9,0);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (19852,9,0);
@@ -158,34 +210,29 @@ insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (19
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (19854,9,0);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (25290,9,0);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (27142,9,0);
-insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (25898,9,0);
-insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (25890,9,0);
-insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (27145,9,0);
-insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (25782,9,0);
-insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (25916,9,0);
-insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (27141,9,0);
-insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (25895,9,0);
-insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (25899,9,0);
-insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (27169,9,0);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (48935,9,0);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (48936,9,0);
+#Greater Wisdom
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (25894,9,0);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (25918,9,0);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (27143,9,0);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (48937,9,0);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (48938,9,0);
 
 #Group 10 Trueshot Aura
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (19506, 10, 1);
-insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (20905, 10, 1);
-insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (20906, 10, 1);
-insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (27066, 10, 1);
 
 #Group 11 Deleted, reuse please
 
 #Group 12: Hunter's Mark (only 1 target at a time)
+#Hunter's Mark
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (1130, 12, 2);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (14323, 12, 2);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (14324, 12, 2);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (14325, 12, 2);
 
 #Group 13: Fortitude buff (power word, prayer)
+#Power Word: Fortitude
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (1243, 13, 1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (1244, 13, 1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (1245, 13, 1);
@@ -193,21 +240,25 @@ insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (27
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (10937, 13, 1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (10938, 13, 1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (25389, 13, 1);
+#Prayer of Fortitude
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (51562, 13, 1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (21564, 13, 1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (25392, 13, 1);
 
 #Group 14: Intellect buff (arcane intellect, arcane brilliance)
+#Arcane Intellect
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (1459, 14, 1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (1460, 14, 1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (1461, 14, 1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (10156, 14, 1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (10157, 14, 1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (27126, 14, 1);
+#Arcane Brilliance
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (23028, 14, 1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (27127, 14, 1);
 
 #Group 15: Armor/resist buff (mark of the wild, gift of the wild)
+#Mark of the Wild
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (1126, 15, 1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (5232, 15, 1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (6756, 15, 1);
@@ -216,6 +267,7 @@ insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (89
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (9884, 15, 1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (9985, 15, 1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (26990, 15, 1);
+#Gift of the Wild
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (21849, 15, 1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (21850, 15, 1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (26991, 15, 1);
@@ -306,11 +358,13 @@ insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (24
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (24932, 30, 1);
 
 #Group 31 Mage roots (frost nova, freeze)
+#Frost Nova
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (122, 31, 1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (865, 31, 1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (6131, 31, 1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (10230, 31, 1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (27088, 31, 1);
+#Freeze
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (33395, 31, 1);
 
 #Group 32 Concentration Aura
@@ -353,11 +407,12 @@ insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`AuraGroup2`,`UniqueType
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`AuraGroup2`,`UniqueType`) values (20218, 38, 11, 1);
 
 #Group 39 Shadow Resistance Aura and Prayer of Shadow Protection
+#Shadow Resistance Aura
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`AuraGroup2`,`UniqueType`) values (19876, 39, 11, 1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`AuraGroup2`,`UniqueType`) values (19895, 39, 11, 1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`AuraGroup2`,`UniqueType`) values (19896, 39, 11, 1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`AuraGroup2`,`UniqueType`) values (27151, 39, 11, 1);
-#Prayer, no second group
+#Prayer of Shadow Protection
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (27683, 39, 1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (36374, 39, 1);
 
@@ -390,3 +445,17 @@ insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (10
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (10600, 44, 1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (10601, 44, 1);
 insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (25574, 44, 1);
+
+
+#Group 45 Battle Shout/Commanding Shout
+#Commanding Shout
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (469, 45, 0);
+#Battle Shout
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (6673, 45, 0);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (5242, 45, 0);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (6192, 45, 0);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (11549, 45, 0);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (11550, 45, 0);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (11551, 45, 0);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (25289, 45, 0);
+insert  into `spell_unique_auras`(`SpellId`,`AuraGroup`,`UniqueType`) values (2048, 45, 0);

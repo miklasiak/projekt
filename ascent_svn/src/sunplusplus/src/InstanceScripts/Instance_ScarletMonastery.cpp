@@ -671,7 +671,7 @@ void OnCombatStop(Unit *mTarget)
    return;
 
    // Open the door
-   pDoor->SetUInt32Value(GAMEOBJECT_STATE, 0);
+   pDoor->SetByte(GAMEOBJECT_BYTES_1, 0, 0);
        
    RemoveAIUpdateEvent();
      }

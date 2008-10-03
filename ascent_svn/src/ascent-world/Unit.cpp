@@ -3792,15 +3792,6 @@ void Unit::AddAura(Aura *aur, SpellScript* script)
 			if(m_objectTypeId == TYPEID_UNIT)
 				m_aiInterface->AttackReaction(pCaster, 1, aur->GetSpellId());
 		}
-		/*if(isAlive() && CanAgroHash(aur->m_spellProto->NameHash)) //no threat for hunter's mark
-		{
-			Unit * pCaster = aur->GetUnitCaster();
-			if(!pCaster) return;
-
-			addAttacker(pCaster);
-
-			GetAIInterface()->AttackReaction(pCaster, 1, aur->GetSpellId());
-		}*/
 	}
 }
 

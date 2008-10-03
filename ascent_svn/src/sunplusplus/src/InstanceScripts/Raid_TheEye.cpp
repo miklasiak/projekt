@@ -3174,9 +3174,9 @@ public:
 		for (int i = 0; i < 2; ++i)
 		{
 			GameObject *pGameobject = _unit->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords(Gates[i].mX, Gates[i].mY, Gates[i].mZ, Gates[i].mAddition);
-			if (pGameobject != NULL && pGameobject->GetUInt32Value(GAMEOBJECT_STATE) == 1)
+			if (pGameobject != NULL && pGameobject->GetByte(GAMEOBJECT_BYTES_1, 0) == 1)
 			{
-				pGameobject->SetUInt32Value(GAMEOBJECT_STATE, 0);
+				pGameobject->SetByte(GAMEOBJECT_BYTES_1, 0, 0);
 			}
 		}
 	}
@@ -3192,9 +3192,9 @@ public:
 		for (int i = 0; i < 2; ++i)
 		{
 			GameObject *pGameobject = _unit->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords(Gates[i].mX, Gates[i].mY, Gates[i].mZ, Gates[i].mAddition);
-			if (pGameobject != NULL && pGameobject->GetUInt32Value(GAMEOBJECT_STATE) == 0)
+			if (pGameobject != NULL && pGameobject->GetByte(GAMEOBJECT_BYTES_1, 0) == 0)
 			{
-				pGameobject->SetUInt32Value(GAMEOBJECT_STATE, 1);
+				pGameobject->SetByte(GAMEOBJECT_BYTES_1, 0, 1);
 			}
 		}
 
@@ -3226,9 +3226,9 @@ public:
 		for (int i = 0; i < 2; ++i)
 		{
 			GameObject *pGameobject = _unit->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords(Gates[i].mX, Gates[i].mY, Gates[i].mZ, Gates[i].mAddition);
-			if (pGameobject != NULL && pGameobject->GetUInt32Value(GAMEOBJECT_STATE) == 1)
+			if (pGameobject != NULL && pGameobject->GetByte(GAMEOBJECT_BYTES_1, 0) == 1)
 			{
-				pGameobject->SetUInt32Value(GAMEOBJECT_STATE, 0);
+				pGameobject->SetByte(GAMEOBJECT_BYTES_1, 0, 0);
 			}
 		}
 	}

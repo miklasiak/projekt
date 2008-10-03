@@ -47,7 +47,7 @@ public:
             return;
 
         // Open the door
-        pDoor->SetUInt32Value(GAMEOBJECT_STATE, 0);
+        pDoor->SetByte(GAMEOBJECT_BYTES_1, 0, 0);
     }
 
     void OnCombatStop(Unit *mTarget)
@@ -215,7 +215,7 @@ public:
             return;
 
         // Open the door
-        pDoor->SetUInt32Value(GAMEOBJECT_STATE, 0);
+        pDoor->SetByte(GAMEOBJECT_BYTES_1, 0, 0);
     }
 
     void Destroy()
@@ -251,7 +251,7 @@ public:
             return;
 
         // Open the door
-        pDoor->SetUInt32Value(GAMEOBJECT_STATE, 0);
+        pDoor->SetByte(GAMEOBJECT_BYTES_1, 0, 0);
     }
 
     void OnCombatStart(Unit* mTarget)
@@ -501,27 +501,17 @@ public:
         switch(phase)
         {
         case 0:
-            _unit->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, 7420);
-            _unit->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO, 33490690);         // no idea where to get it :S
-            _unit->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO_01, 768);			 // no idea where to get it :S
-            _unit->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY_01, 0);
-            _unit->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO_02, 0);
-            _unit->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO_03, 0);
+            _unit->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID, 7420);
+            _unit->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID_1, 0);
 			_unit->SetUInt32Value(UNIT_FIELD_BASEATTACKTIME, 1483);   // 1483 is taken from NCDB creature_proto
             break;
         case 1:
-            _unit->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY_01, 7419);
-            _unit->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO_02, 33490690);				// no idea where to get it :S
-            _unit->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO_03, 781);					// no idea where to get it :S
+            _unit->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID_1, 7419);				// no idea where to get it :S
 			_unit->SetUInt32Value(UNIT_FIELD_BASEATTACKTIME, _unit->GetUInt32Value(UNIT_FIELD_BASEATTACKTIME) / 2);
             break;
         case 2:
-            _unit->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, 19610);
-            _unit->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO, 33488898);			    // no idea where to get it :S
-            _unit->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO_01, 0);
-            _unit->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY_01, 0);
-            _unit->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO_02, 0);
-            _unit->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO_03, 0);
+            _unit->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID, 19610);
+            _unit->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID_1, 0);
 			_unit->SetUInt32Value(UNIT_FIELD_BASEATTACKTIME, _unit->GetUInt32Value(UNIT_FIELD_BASEATTACKTIME) * 2);
 			_unit->CastSpell(_unit, smite_buff, true);
         }

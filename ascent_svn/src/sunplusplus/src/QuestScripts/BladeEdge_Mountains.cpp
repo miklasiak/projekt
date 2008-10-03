@@ -184,7 +184,7 @@ public:
 
 		if( obelisk1 && obelisk2 && obelisk3 && obelisk4 && obelisk5 )
 		{
-			if(obelisk1->GetUInt32Value(GAMEOBJECT_STATE) == 0 && obelisk2->GetUInt32Value(GAMEOBJECT_STATE) == 0 && obelisk3->GetUInt32Value(GAMEOBJECT_STATE) == 0 && obelisk4->GetUInt32Value(GAMEOBJECT_STATE) == 0 && obelisk5->GetUInt32Value(GAMEOBJECT_STATE) == 0)
+			if(obelisk1->GetByte(GAMEOBJECT_BYTES_1, 0) == 0 && obelisk2->GetByte(GAMEOBJECT_BYTES_1, 0) == 0 && obelisk3->GetByte(GAMEOBJECT_BYTES_1, 0) == 0 && obelisk4->GetByte(GAMEOBJECT_BYTES_1, 0) == 0 && obelisk5->GetByte(GAMEOBJECT_BYTES_1, 0) == 0)
 			{
 				sEAS.SpawnCreature(pPlayer, 19963, 2943.59, 4779.05, 284.49, 1.89, 60*5*1000 );
 			}
@@ -205,15 +205,15 @@ public:
 		GameObject* obelisk5 = plr->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords(2965.75, 4835.25, 277.949, 185193);
 
 		if (obelisk1 != NULL)
-			obelisk1->SetUInt32Value(GAMEOBJECT_STATE, 1);
+			obelisk1->SetByte(GAMEOBJECT_BYTES_1, 0, 1);
 		if (obelisk2 != NULL)
-			obelisk2->SetUInt32Value(GAMEOBJECT_STATE, 1);
+			obelisk2->SetByte(GAMEOBJECT_BYTES_1, 0, 1);
 		if (obelisk3 != NULL)
-			obelisk3->SetUInt32Value(GAMEOBJECT_STATE, 1);
+			obelisk3->SetByte(GAMEOBJECT_BYTES_1, 0, 1);
 		if (obelisk4 != NULL)
-			obelisk4->SetUInt32Value(GAMEOBJECT_STATE, 1);
+			obelisk4->SetByte(GAMEOBJECT_BYTES_1, 0, 1);
 		if (obelisk5 != NULL)
-			obelisk5->SetUInt32Value(GAMEOBJECT_STATE, 1);
+			obelisk5->SetByte(GAMEOBJECT_BYTES_1, 0, 1);
 	}
 };
 
@@ -397,7 +397,7 @@ public:
 
       if( GetRange( Ogre ) <= 5 )
       {
-         Ogre->SetDisplayWeaponIds( 28562, 0, 789, 0, 0, 0);
+         Ogre->SetDisplayWeaponIds( 28562, 0 );
 		 Ogre->GetUnit()->SetUInt32Value( UNIT_NPC_EMOTESTATE, 92 );
          Ogre->GetUnit()->SetUInt32Value( UNIT_FIELD_FACTIONTEMPLATE, 35 );		 
 		 Ogre->GetUnit()->SetStandState( STANDSTATE_SIT );

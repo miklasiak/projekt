@@ -457,7 +457,7 @@ public:
 		pCreature->GetAIInterface()->SetNextTarget(pPlayer);
 		pCreature->GetAIInterface()->AttackReaction(pPlayer, 1);
 		pDoor->SetUInt32Value(GAMEOBJECT_FLAGS, 33);
-		pDoor->SetUInt32Value(GAMEOBJECT_STATE, 0);
+		pDoor->SetByte(GAMEOBJECT_BYTES_1, 0, 0);
 	}
 };
 
