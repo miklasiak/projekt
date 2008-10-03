@@ -123,7 +123,7 @@ public:
 		// We set Gate (if exists) as opened
 		GameObject* Gate = _unit->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords(-72.5866f, 1.559f, 0.0f, 183847);
 		if (Gate)
-			Gate->SetByte(GAMEOBJECT_BYTES_1, 0, 0);
+			Gate->SetUInt32Value(GAMEOBJECT_STATE, 0);
 	}
 
 	void AIUpdate()
@@ -340,7 +340,7 @@ public:
 				// If Gate is found we close it
 				GameObject* Gate = _unit->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords(-72.5866f, 1.559f, 0.0f, 183847);
 				if (Gate)
-					Gate->SetByte(GAMEOBJECT_BYTES_1, 0, 1);
+					Gate->SetUInt32Value(GAMEOBJECT_STATE, 1);
 			}
 		}
 		// We use different functions for each phase
@@ -427,7 +427,7 @@ public:
 				{
 					GameObject* Gate = _unit->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords(-72.5866f, 1.559f, 0.0f, 183847);
 					if (Gate)
-						Gate->SetByte(GAMEOBJECT_BYTES_1, 0, 0);
+						Gate->SetUInt32Value(GAMEOBJECT_STATE, 0);
 				}
 				// After doing our job we can clear temporary channeler list
 				AliveChannelers.clear();
@@ -1351,7 +1351,7 @@ public:
 
 		GameObject *Gate = _unit->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords(-72.5866f, 1.559f, 0.0f, 183847);
 		if (Gate)
-			Gate->SetByte(GAMEOBJECT_BYTES_1, 0, 1);
+			Gate->SetUInt32Value(GAMEOBJECT_STATE, 1);
     }
 
     void OnCombatStop(Unit *mTarget)
@@ -1368,16 +1368,16 @@ public:
 		{
 			Gate = _unit->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords(Columns[i].x, Columns[i].y, Columns[i].z, 184634+i);
 			if (Gate)
-				Gate->SetByte(GAMEOBJECT_BYTES_1, 0, 1);
+				Gate->SetUInt32Value(GAMEOBJECT_STATE, 1);
 		}
 
 		Gate = _unit->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords(0.0f, 0.0f, 0.0f, 184653);
 		if (Gate)
-			Gate->SetByte(GAMEOBJECT_BYTES_1, 0, 1);
+			Gate->SetUInt32Value(GAMEOBJECT_STATE, 1);
 
 		Gate = _unit->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords(-72.5866f, 1.559f, 0.0f, 183847);
 		if (Gate)
-			Gate->SetByte(GAMEOBJECT_BYTES_1, 0, 0);
+			Gate->SetUInt32Value(GAMEOBJECT_STATE, 0);
     }
 
 	void OnDied(Unit * mKiller)
@@ -1534,12 +1534,12 @@ public:
 				{
 					Gate = _unit->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords(Columns[i].x, Columns[i].y, Columns[i].z, 184634+i);
 					if (Gate)
-						Gate->SetByte(GAMEOBJECT_BYTES_1, 0, 0);
+						Gate->SetUInt32Value(GAMEOBJECT_STATE, 0);
 				}
 
 				Gate = _unit->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords(0.0f, 0.0f, 0.0f, 184653);
 				if (Gate)
-					Gate->SetByte(GAMEOBJECT_BYTES_1, 0, 0);
+					Gate->SetUInt32Value(GAMEOBJECT_STATE, 0);
 			}
 
 			if (timer_caveIn == 5)

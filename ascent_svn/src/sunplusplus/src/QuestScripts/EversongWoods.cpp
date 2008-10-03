@@ -43,7 +43,6 @@ bool PoweringOurDefenses(uint32 i, Spell* pSpell)
 		qle->SendUpdateAddKill(0);
 		qle->UpdatePlayerFields();
 	}
-	return true;
 }
 
 void SetupEversongWoods(ScriptMgr * mgr)

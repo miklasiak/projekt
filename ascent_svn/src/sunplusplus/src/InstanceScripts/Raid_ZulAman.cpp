@@ -974,7 +974,7 @@ public:
         if(pDoor == 0)
             return;
 
-       pDoor->SetByte(GAMEOBJECT_BYTES_1, 0, 0); // Open the door
+       pDoor->SetUInt32Value(GAMEOBJECT_STATE, 0); // Open the door
     }
 
     void AIUpdate()

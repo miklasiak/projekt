@@ -157,7 +157,7 @@ class HighKingMaulgarAI : public MoonScriptBossAI
 		GameObject *pDoor = mKiller->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords(95.26f, 251.836f, 0.47f, 183817);
 		if(pDoor != NULL)
 		{
-			pDoor->SetByte(GAMEOBJECT_BYTES_1, 0, 0);
+			pDoor->SetUInt32Value(GAMEOBJECT_STATE, 0);
 		}
 	}
 
@@ -426,7 +426,7 @@ class GruulTheDragonkillerAI : public MoonScriptCreatureAI
 
 		GameObject *pGate = _unit->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords(166.897f, 368.226f, 16.9209f, 184662);
 		if (pGate != NULL)
-			pGate->SetByte(GAMEOBJECT_BYTES_1, 0, 1);
+			pGate->SetUInt32Value(GAMEOBJECT_STATE, 1);
 	}
 
 	void OnCombatStop(Unit *pTarget)
@@ -435,7 +435,7 @@ class GruulTheDragonkillerAI : public MoonScriptCreatureAI
 
 		GameObject *pGate = _unit->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords(166.897f, 368.226f, 16.9209f, 184662);
 		if (pGate != NULL)
-			pGate->SetByte(GAMEOBJECT_BYTES_1, 0, 0);
+			pGate->SetUInt32Value(GAMEOBJECT_STATE, 0);
 	}
 
 	void OnDied(Unit *mKiller)
@@ -444,7 +444,7 @@ class GruulTheDragonkillerAI : public MoonScriptCreatureAI
 
 		GameObject *pGate = _unit->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords(166.897f, 368.226f, 16.9209f, 184662);
 		if (pGate != NULL)
-			pGate->SetByte(GAMEOBJECT_BYTES_1, 0, 0);
+			pGate->SetUInt32Value(GAMEOBJECT_STATE, 0);
 	}
 
 	void AIUpdate()

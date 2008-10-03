@@ -1343,7 +1343,7 @@ class ShadowmoonWeaponMasterAI : public MoonScriptBossAI
 		AddPhaseSpell(3, AddSpell(SHADOWMOON_WEAPON_MASTER_MUTILATE, Target_Current, 8, 0, 30, 0, 10));
 		mDefensiveStance = AddSpellFunc(&SpellFunc_DefensiveStance, Target_Self, 0, 0, 0);
 		mBerserkerStance = AddSpellFunc(&SpellFunc_BerserkerStance, Target_Self, 0, 0, 0);
-		//SetDisplayWeaponIds(0, 0)	// Sword
+		//SetDisplayWeaponIds(0, 0, 0, 0, 0, 0)	// Sword
 		ApplyAura(SHADOWMOON_WEAPON_MASTER_BATTLE_STANCE);
 		ApplyAura(SHADOWMOON_WEAPON_MASTER_BATTLE_AURA);
 	}
@@ -1356,7 +1356,7 @@ class ShadowmoonWeaponMasterAI : public MoonScriptBossAI
 		{
 			RemoveAura(SHADOWMOON_WEAPON_MASTER_DEFENSIVE_AURA);
 			RemoveAura(SHADOWMOON_WEAPON_MASTER_BERSEKER_AURA);
-			//SetDisplayWeaponIds(0, 0)	// Sword
+			//SetDisplayWeaponIds(0, 0, 0, 0, 0, 0)	// Sword
 			ApplyAura(SHADOWMOON_WEAPON_MASTER_BATTLE_STANCE);
 			ApplyAura(SHADOWMOON_WEAPON_MASTER_BATTLE_AURA);
 		}
@@ -1388,7 +1388,7 @@ void SpellFunc_DefensiveStance(SpellDesc *pThis, MoonScriptCreatureAI *pCreature
 	if (pWeaponMaster != NULL)
 	{
 		pWeaponMaster->RemoveAura(SHADOWMOON_WEAPON_MASTER_BATTLE_AURA);
-		//SetDisplayWeaponIds(0, 0)	// Axe + Shield
+		//SetDisplayWeaponIds(0, 0, 0, 0, 0, 0)	// Axe + Shield
 		pWeaponMaster->ApplyAura(SHADOWMOON_WEAPON_MASTER_DEFENSIVE_STANCE);
 		pWeaponMaster->ApplyAura(SHADOWMOON_WEAPON_MASTER_DEFENSIVE_AURA);
 	}
@@ -1400,7 +1400,7 @@ void SpellFunc_BerserkerStance(SpellDesc *pThis, MoonScriptCreatureAI *pCreature
 	if (pWeaponMaster != NULL)
 	{
 		pWeaponMaster->RemoveAura(SHADOWMOON_WEAPON_MASTER_DEFENSIVE_AURA);
-		//SetDisplayWeaponIds(0, 0)	// Sword
+		//SetDisplayWeaponIds(0, 0, 0, 0, 0, 0)	// Sword
 		pWeaponMaster->ApplyAura(SHADOWMOON_WEAPON_MASTER_BERSERKER_STANCE);
 		pWeaponMaster->ApplyAura(SHADOWMOON_WEAPON_MASTER_BERSEKER_AURA);
 		pWeaponMaster->Emote("Berserker stance! Attack them recklessly!", Text_Say, 0);
@@ -5696,7 +5696,7 @@ class AkamaAI : public MoonScriptBossAI
 			mOlumAI  = SpawnCreature(23411, 751.687744f, 297.408600f, 312.124817f, 0.054958f);
 			if (mUdaloAI == NULL || mOlumAI == NULL)
 			{
-				pGate->SetByte(GAMEOBJECT_BYTES_1, 0, 0);
+				pGate->SetUInt32Value(GAMEOBJECT_STATE, 0);
 				break;
 			}
 			break;
@@ -5723,7 +5723,7 @@ class AkamaAI : public MoonScriptBossAI
 			}
 			break;
 		case 11:
-			pGate->SetByte(GAMEOBJECT_BYTES_1, 0, 0);
+			pGate->SetUInt32Value(GAMEOBJECT_STATE, 0);
 			if (pDoorTrigger != NULL)
 			{
 				pDoorTrigger->CastSpell(pDoorTrigger, dbcSpell.LookupEntry(GATE_FAILURE), true);
@@ -5845,11 +5845,11 @@ class AkamaAI : public MoonScriptBossAI
 			GameObject *pLeftGate  = _unit->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords(744.829f, 369.276f, 354.324f, 200001);
 			if (pRightGate != NULL)
 			{
-				pRightGate->SetByte(GAMEOBJECT_BYTES_1, 0, 1);
+				pRightGate->SetUInt32Value(GAMEOBJECT_STATE, 1);
 			}
 			if (pLeftGate != NULL)
 			{
-				pLeftGate->SetByte(GAMEOBJECT_BYTES_1, 0, 1);
+				pLeftGate->SetUInt32Value(GAMEOBJECT_STATE, 1);
 			}
 
 			SetCanMove(true);
@@ -6387,11 +6387,11 @@ class MaievAI : public MoonScriptBossAI
 				GameObject *pLeftGate  = _unit->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords(744.829f, 369.276f, 354.324f, 200001);
 				if (pRightGate != NULL)
 				{
-					pRightGate->SetByte(GAMEOBJECT_BYTES_1, 0, 0);
+					pRightGate->SetUInt32Value(GAMEOBJECT_STATE, 0);
 				}
 				if (pLeftGate != NULL)
 				{
-					pLeftGate->SetByte(GAMEOBJECT_BYTES_1, 0, 0);
+					pLeftGate->SetUInt32Value(GAMEOBJECT_STATE, 0);
 				}
 
 				mIllidanAI->GetUnit()->SetUInt32Value(UNIT_NPC_EMOTESTATE, 0);
@@ -6594,7 +6594,7 @@ class IllidanStormrageAI : public MoonScriptBossAI
 			AddWaypoint(CreateWaypoint(i, 0, Flag_Fly, ForIllidan[i]));
 		}
 
-		_unit->SetUInt32Value(UNIT_FIELD_RANGEDATTACKTIME, 1800);
+		_unit->SetUInt32Value(UNIT_FIELD_BASEATTACKTIME_01, 1800);
 		_unit->SetUInt32Value(UNIT_NPC_EMOTESTATE, 0);
 		_unit->SetDuelWield(true);
 
@@ -6608,11 +6608,11 @@ class IllidanStormrageAI : public MoonScriptBossAI
 		GameObject *pLeftGate  = _unit->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords(744.829f, 369.276f, 354.324f, 200001);
 		if (pRightGate != NULL)
 		{
-			pRightGate->SetByte(GAMEOBJECT_BYTES_1, 0, 1);
+			pRightGate->SetUInt32Value(GAMEOBJECT_STATE, 1);
 		}
 		if (pLeftGate != NULL)
 		{
-			pLeftGate->SetByte(GAMEOBJECT_BYTES_1, 0, 1);
+			pLeftGate->SetUInt32Value(GAMEOBJECT_STATE, 1);
 		}
 
 		_unit->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_ONESHOT_READY1H);
@@ -6676,11 +6676,11 @@ class IllidanStormrageAI : public MoonScriptBossAI
 			GameObject *pLeftGate  = _unit->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords(744.829f, 369.276f, 354.324f, 200001);
 			if (pRightGate != NULL)
 			{
-				pRightGate->SetByte(GAMEOBJECT_BYTES_1, 0, 0);
+				pRightGate->SetUInt32Value(GAMEOBJECT_STATE, 0);
 			}
 			if (pLeftGate != NULL)
 			{
-				pLeftGate->SetByte(GAMEOBJECT_BYTES_1, 0, 0);
+				pLeftGate->SetUInt32Value(GAMEOBJECT_STATE, 0);
 			}
 
 			Creature *pMaiev = (Creature*)(ForceCreatureFind(CN_MAIEV));
@@ -6714,11 +6714,11 @@ class IllidanStormrageAI : public MoonScriptBossAI
 			GameObject *pLeftGate  = _unit->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords(744.829f, 369.276f, 354.324f, 200001);
 			if (pRightGate != NULL)
 			{
-				pRightGate->SetByte(GAMEOBJECT_BYTES_1, 0, 0);
+				pRightGate->SetUInt32Value(GAMEOBJECT_STATE, 0);
 			}
 			if (pLeftGate != NULL)
 			{
-				pLeftGate->SetByte(GAMEOBJECT_BYTES_1, 0, 0);
+				pLeftGate->SetUInt32Value(GAMEOBJECT_STATE, 0);
 			}
 		}
 
@@ -7651,11 +7651,11 @@ class IllidanStormrageAI : public MoonScriptBossAI
 		GameObject *pLeftGate  = _unit->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords(744.829f, 369.276f, 354.324f, 200001);
 		if (pRightGate != NULL)
 		{
-			pRightGate->SetByte(GAMEOBJECT_BYTES_1, 0, 0);
+			pRightGate->SetUInt32Value(GAMEOBJECT_STATE, 0);
 		}
 		if (pLeftGate != NULL)
 		{
-			pLeftGate->SetByte(GAMEOBJECT_BYTES_1, 0, 0);
+			pLeftGate->SetUInt32Value(GAMEOBJECT_STATE, 0);
 		}*/
 
 		delete this;

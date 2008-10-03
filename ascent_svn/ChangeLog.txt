@@ -1,3 +1,9 @@
+r82
+- compile fix
+- disabled antipvp script for compile until it workds :)
+- hates ascent neu rev for 3.0.2 does not support 2.4.3 no ascent update!!!
+- sun++ update fails so don't update it!!!
+------------------------------------------------------------------------------------
 r81
 - server fix
 - compile fix

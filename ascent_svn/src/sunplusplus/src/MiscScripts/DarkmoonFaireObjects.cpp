@@ -82,7 +82,7 @@ public:
 
 		// Open and disable the Tonk Console
 		tonkConsole->SetUInt32Value(GAMEOBJECT_FLAGS, 1);
-		tonkConsole->SetByte(GAMEOBJECT_BYTES_1, 0, 0);
+		tonkConsole->SetUInt32Value(GAMEOBJECT_STATE, 0);
 
 		// Spawn Steam Tonk
 		pPlayer->GetMapMgr()->GetInterface()->SpawnCreature(19405, pPlayer->GetPositionX(), pPlayer->GetPositionY(), pPlayer->GetPositionZ(), pPlayer->GetOrientation(), true, false, 0, 0)->Despawn(310000, 0);;
@@ -114,7 +114,7 @@ public:
 
 			// Close the console so others can access it
 			Console->SetUInt32Value(GAMEOBJECT_FLAGS, 0);
-			Console->SetByte(GAMEOBJECT_BYTES_1, 0, 1);
+			Console->SetUInt32Value(GAMEOBJECT_STATE, 1);
 			RemoveAIUpdateEvent();
 		}
 	}

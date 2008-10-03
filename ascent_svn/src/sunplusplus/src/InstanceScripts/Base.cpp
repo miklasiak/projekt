@@ -333,16 +333,21 @@ void MoonScriptCreatureAI::SetWieldWeapon(bool pValue)
 
 void MoonScriptCreatureAI::SetDisplayWeapon(bool pMainHand, bool pOffHand)
 {
-	SetDisplayWeaponIds(pMainHand ? _unit->proto->Item1SlotDisplay : 0,	pOffHand ? _unit->proto->Item2SlotDisplay : 0 );
+	SetDisplayWeaponIds(pMainHand ? _unit->proto->Item1SlotDisplay : 0, pMainHand ? _unit->proto->Item1Info1 : 0, pMainHand ? _unit->proto->Item1Info2 : 0,
+		pOffHand ? _unit->proto->Item2SlotDisplay : 0, pOffHand ? _unit->proto->Item2Info1 : 0, pOffHand ? _unit->proto->Item2Info2 : 0);
 }
 
-void MoonScriptCreatureAI::SetDisplayWeaponIds(uint32 pItem1Id, uint32 pItem2Id)
+void MoonScriptCreatureAI::SetDisplayWeaponIds(uint32 pItem1Id, uint32 pItem1Info, uint32 pItem1Slot, uint32 pItem2Id, uint32 pItem2Info, uint32 pItem2Slot)
 {
 	//Main Hand
-	_unit->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID, pItem1Id);
+	_unit->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, pItem1Id);
+	_unit->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO, pItem1Info);
+	_unit->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO_01, pItem1Slot);
 
 	//Off Hand
-	_unit->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID_1, pItem2Id);
+	_unit->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY_01, pItem2Id);
+	_unit->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO_02, pItem2Info);
+	_unit->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO_03, pItem2Slot);
 }
 
 float MoonScriptCreatureAI::GetRange(MoonScriptCreatureAI* pCreature)
