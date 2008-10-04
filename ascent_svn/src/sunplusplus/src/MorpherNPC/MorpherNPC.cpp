@@ -26,7 +26,7 @@ public:
     {
         GossipMenu *Menu;
         objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 1, Plr);
-	     Menu->AddItem(0, "-------------Author: |cff800080Soul02|r-------------", 10000);
+	     Menu->AddItem(0, "-------------Author: Arotho -------------", 10000);
 	     Menu->AddItem(5, "Flesh Eater", 1);
 	     Menu->AddItem(5, "Kobold Vermin", 2);
 	     Menu->AddItem(5, "Benny Questgiver", 3);

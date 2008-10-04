@@ -1,3 +1,8 @@
+r83
+- server crash fix
+- deleted collision because it is not necessary
+- fixed a script
+------------------------------------------------------------------------------------
 r82
 - compile fix
 - disabled antipvp script for compile until it workds :)

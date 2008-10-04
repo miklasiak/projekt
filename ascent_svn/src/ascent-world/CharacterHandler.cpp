@@ -884,10 +884,10 @@ void WorldSession::FullLogin(Player * plr)
 
 	// Send revision (if enabled)
 #ifdef WIN32
-	_player->BroadcastMessage("Server: %sAscent %s r%u powered by Evolution-Core %s(http://evolution-cores.ath.cx)", MSG_COLOR_WHITE, BUILD_REVISION, 
+	_player->BroadcastMessage("Server: %sAscent r%u powered by %sEvolution-Core %s(www.evolution-cores.ath.cx)", MSG_COLOR_WHITE, BUILD_REVISION, MSG_COLOR_RED,
 		MSG_COLOR_LIGHTBLUE);		
 #else
-	_player->BroadcastMessage("Server: %sAscent %s r%u powered by Evolution-Core %s(http://evolution-cores.ath.cx)", MSG_COLOR_WHITE, BUILD_REVISION, 
+	_player->BroadcastMessage("Server: %sAscent r%u powered by %sEvolution-Core %s(www.evolution-cores.ath.cx)", MSG_COLOR_WHITE, BUILD_REVISION, MSG_COLOR_RED,
 		MSG_COLOR_LIGHTBLUE);
 #endif
 
