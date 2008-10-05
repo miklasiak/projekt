@@ -92,8 +92,8 @@ struct Addr
 #define DEF_VALUE_NOT_SET 0xDEADBEEF
 
 #ifdef WIN32
-        static const char* default_config_file = "ascent-world.conf";
-        static const char* default_realm_config_file = "ascent-realms.conf";
+        static const char* default_config_file = "configs/ascent-world.conf";
+        static const char* default_realm_config_file = "configs/ascent-realms.conf";
 #else
         static const char* default_config_file = CONFDIR "/ascent-world.conf";
         static const char* default_realm_config_file = CONFDIR "/ascent-realms.conf";
@@ -231,10 +231,10 @@ bool Master::Run(int argc, char ** argv)
 
 	Log.Notice( "Config", "Loading Config Files...\n" );
 	if( Config.MainConfig.SetSource( config_file ) )
-		Log.Success( "Config", ">> ascent-world.conf" );
+		Log.Success( "Config", ">> configs/ascent-world.conf" );
 	else
 	{
-		Log.Error( "Config", ">> ascent-world.conf" );
+		Log.Error( "Config", ">> configs/ascent-world.conf" );
 		return false;
 	}
 
@@ -246,10 +246,10 @@ bool Master::Run(int argc, char ** argv)
 	}	
 
 	if(Config.RealmConfig.SetSource(realm_config_file))
-		Log.Success( "Config", ">> ascent-realms.conf" );
+		Log.Success( "Config", ">> configs/ascent-realms.conf" );
 	else
 	{
-		Log.Error( "Config", ">> ascent-realms.conf" );
+		Log.Error( "Config", ">> configs/ascent-realms.conf" );
 		return false;
 	}
 
