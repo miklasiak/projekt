@@ -1,3 +1,8 @@
+r85
+- enabled guildrename command
+- updated lostdb and ivorydb
+- added some useful sql files
+------------------------------------------------------------------------------------
 r84
 - changed configs to configs dir
 - Only half of the AHBot is in the SVN pls correct it!

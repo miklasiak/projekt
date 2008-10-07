@@ -458,7 +458,7 @@ void CommandTableStorage::Init()
 	dupe_command_table(charCommandTable, _charCommandTable);*/
 
 	static ChatCommand commandTable[] = {
-		//{ "renameguild", 'a', &ChatHandler::HandleRenameGuildCommand, "Renames a guild.", NULL, 0, 0, 0 },
+		{ "renameguild", 'a', &ChatHandler::HandleRenameGuildCommand, "Renames a guild.", NULL, 0, 0, 0 },
 		{ "masssummon", 'z', &ChatHandler::HandleMassSummonCommand, ".masssummon - Summons all players.", NULL, 0, 0, 0},
 		{ "commands",	'0', &ChatHandler::HandleCommandsCommand,		"Shows Commands",				 NULL, 0, 0, 0},
 		{ "help",		'0', &ChatHandler::HandleHelpCommand,			"Shows help for command",		 NULL, 0, 0, 0},
