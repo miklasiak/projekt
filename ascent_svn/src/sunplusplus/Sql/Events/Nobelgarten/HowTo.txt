@@ -1,3 +1,0 @@
-1. Zum Eventstart "Noblegarten_Spawn.sql" batchen.
-
-2. Zum entfernen "Noblegarten_Remove.sql" batchen.
