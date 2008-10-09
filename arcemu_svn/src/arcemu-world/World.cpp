@@ -647,7 +647,7 @@ void World::SendGamemasterMessage(WorldPacket *packet, WorldSession *self)
 	  itr->second->GetPlayer()->IsInWorld()
 	  && itr->second != self)  // dont send to self!
 	  {
-		if(itr->second->CanUseCommand('u'))
+		if(itr->second->CanUseCommand('g'))
 		itr->second->SendPacket(packet);
 	  }
 	}
