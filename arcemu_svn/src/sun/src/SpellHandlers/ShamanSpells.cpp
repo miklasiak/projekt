@@ -25,7 +25,7 @@
 bool RockbiterWeapon(uint32 i, Spell* pSpell)
 {
     uint32 enchantment_entry = 0;
-    switch(pSpell->m_spellInfo->RankNumber)
+    switch(pSpell->GetProto()->RankNumber)
     {
     case 1:
         enchantment_entry = 3021;
@@ -58,8 +58,12 @@ bool RockbiterWeapon(uint32 i, Spell* pSpell)
 
     if(!enchantment_entry || !pSpell->p_caster)
         return true;
+		Item * item = NULL;
+	if(rand()%2 == 0) // Don't know which weapon to enchant, so use random
+		item = pSpell->p_caster->GetItemInterface()->GetInventoryItem(EQUIPMENT_SLOT_OFFHAND);
+	if(!item)
+		item = pSpell->p_caster->GetItemInterface()->GetInventoryItem(EQUIPMENT_SLOT_MAINHAND);
 
-    Item * item = pSpell->p_caster->GetItemInterface()->GetInventoryItem(EQUIPMENT_SLOT_MAINHAND);
     EnchantEntry * enchant = dbcEnchant.LookupEntry(enchantment_entry);
     if(!item || !enchant)
         return true;
@@ -76,29 +80,11 @@ bool RockbiterWeapon(uint32 i, Spell* pSpell)
         if(Slot < 0) return true;
     }
 
-    sLog.outDebug("ShamanSpells.cpp :: Rockbiter Weapon Rank %u, enchant %u, slot %u", pSpell->m_spellInfo->RankNumber,
+    sLog.outDebug("ShamanSpells.cpp :: Rockbiter Weapon Rank %u, enchant %u, slot %u", pSpell->GetProto()->RankNumber,
         enchantment_entry, Slot);
     
     return true;
 }
-
-class LinkedHPElemental : public CreatureAIScript
-{
-public:
-    ADD_CREATURE_FACTORY_FUNCTION(LinkedHPElemental);
-	LinkedHPElemental(Creature* pCreature) : CreatureAIScript(pCreature) { }
-
-	void OnLoad()
-	{
-		//we should be in world here, lets get totem
-		Unit* totem=_unit->GetMapMgr()->GetUnit(_unit->GetUInt64Value(UNIT_FIELD_CREATEDBY));
-
-		if (totem == NULL) //WTF
-			return;
-
-		_unit->ShareHealthWithUnit(totem);
-	}
-};
 
 void SetupShamanSpells(ScriptMgr * mgr)
 {
@@ -111,6 +97,4 @@ void SetupShamanSpells(ScriptMgr * mgr)
     mgr->register_dummy_spell(16316, &RockbiterWeapon);// rank 7
 	mgr->register_dummy_spell(25479, &RockbiterWeapon);// rank 8
     mgr->register_dummy_spell(25485, &RockbiterWeapon);// rank 9
-	mgr->register_creature_script(15352, &LinkedHPElemental::Create);
-	mgr->register_creature_script(15438, &LinkedHPElemental::Create);
 }

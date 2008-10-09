@@ -18,8 +18,6 @@
 #ifndef SPELL_SCRIPTS_SETUP_H
 #define SPELL_SCRIPTS_SETUP_H
 
-#pragma warning(disable:4244)
-
 void SetupShamanSpells(ScriptMgr * mgr);
 void SetupWarlockSpells(ScriptMgr * mgr);
 void SetupWarriorSpells(ScriptMgr * mgr);
@@ -28,11 +26,6 @@ void SetupItemSpells_1(ScriptMgr * mgr);
 void SetupMageSpells(ScriptMgr * mgr);
 void SetupPaladinSpells(ScriptMgr * mgr);
 void SetupRogueSpells(ScriptMgr * mgr);
-void SetupDruidSpells(ScriptMgr * mgr);
-void SetupPriestSpells(ScriptMgr * mgr);
-void SetupOldSpellCPPSuff(ScriptMgr * mgr);
-
-//Instance spells (mainly scripted targets)
-void SetupRaidBlackTempleSpells(ScriptMgr* mgr);
+void SetupQuestItems(ScriptMgr * mgr);
 
 #endif

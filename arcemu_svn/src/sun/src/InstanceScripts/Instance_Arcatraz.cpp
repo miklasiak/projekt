@@ -3099,7 +3099,7 @@ public:
 			{
 				creature = static_cast<Creature*>((*itr));
 
-				if(creature && creature->creature_info && creature->creature_info->Id == 21101 && creature->isAlive())
+				if(creature && creature->GetCreatureInfo() && creature->GetCreatureInfo()->Id == 21101 && creature->isAlive())
 				{
 					creature->Despawn(0, 0);
 					//creature->SafeDelete();

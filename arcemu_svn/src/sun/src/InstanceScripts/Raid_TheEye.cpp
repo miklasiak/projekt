@@ -2700,7 +2700,7 @@ public:
 			_unit->GetAIInterface()->modThreatByPtr(mCurrentTarget, 1000000);
 			Player *pPlayer = static_cast<Player*>(mCurrentTarget);
 			char msg[256];
-			snprintf((char*)msg, 256, "%s sets eyes on %s", _unit->creature_info->Name, pPlayer->GetName());
+			snprintf((char*)msg, 256, "%s sets eyes on %s", _unit->GetCreatureInfo()->Name, pPlayer->GetName());
 			_unit->SendChatMessageAlternateEntry(CN_DARKENER, CHAT_MSG_MONSTER_EMOTE, LANG_UNIVERSAL, msg);
 			return true;
 		}

@@ -1958,7 +1958,7 @@ public:
 			if(z_diff > 2.5f)
 				continue;
 
-			if(pUnit->m_auracount[SPELL_AURA_MOD_INVISIBILITY])
+			if(pUnit->m_invisible)
 				continue;
 			
 			if(!pUnit->isAlive() || _unit == pUnit)

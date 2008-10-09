@@ -21,32 +21,11 @@
 bool ColdSnap(uint32 i, Spell * pSpell)
 {
     if(!pSpell->p_caster) return true;
-    pSpell->p_caster->ClearCooldownsOnLine(6, pSpell->m_spellInfo->Id);
+    pSpell->p_caster->ClearCooldownsOnLine(6, pSpell->GetProto()->Id);
     return true;
 }
-
-class IceBlock : public SpellScript
-{
-public:
-	ADD_SPELL_FACTORY_FUNCTION(IceBlock);
-	IceBlock(Spell* pSpell) : SpellScript(pSpell) {}
-	SpellCastError CanCast(bool tolerate)
-	{
-		if (_spell->u_caster == NULL || _spell->u_caster->HasAura(41425))
-			return SPELL_FAILED_DAMAGE_IMMUNE;
-
-		return SPELL_CANCAST_OK;
-	}
-
-	void OnCast()
-	{
-		if (_spell->u_caster != NULL)
-			_spell->u_caster->CastSpell(_spell->u_caster, 41425, true);
-	}
-};
 
 void SetupMageSpells(ScriptMgr * mgr)
 {
     mgr->register_dummy_spell(11958, &ColdSnap);
-	mgr->register_spell_script(45438, &IceBlock::Create);
 }

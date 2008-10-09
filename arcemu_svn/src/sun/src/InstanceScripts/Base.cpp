@@ -333,8 +333,8 @@ void MoonScriptCreatureAI::SetWieldWeapon(bool pValue)
 
 void MoonScriptCreatureAI::SetDisplayWeapon(bool pMainHand, bool pOffHand)
 {
-	SetDisplayWeaponIds(pMainHand ? _unit->proto->Item1SlotDisplay : 0, pMainHand ? _unit->proto->Item1Info1 : 0, pMainHand ? _unit->proto->Item1Info2 : 0,
-		pOffHand ? _unit->proto->Item2SlotDisplay : 0, pOffHand ? _unit->proto->Item2Info1 : 0, pOffHand ? _unit->proto->Item2Info2 : 0);
+	SetDisplayWeaponIds(pMainHand ? _unit->GetProto()->Item1SlotDisplay : 0, pMainHand ? _unit->GetProto()->Item1Info1 : 0, pMainHand ? _unit->GetProto()->Item1Info2 : 0,
+		pOffHand ? _unit->GetProto()->Item2SlotDisplay : 0, pOffHand ? _unit->GetProto()->Item2Info1 : 0, pOffHand ? _unit->GetProto()->Item2Info2 : 0);
 }
 
 void MoonScriptCreatureAI::SetDisplayWeaponIds(uint32 pItem1Id, uint32 pItem1Info, uint32 pItem1Slot, uint32 pItem2Id, uint32 pItem2Info, uint32 pItem2Slot)
@@ -1258,13 +1258,13 @@ bool MoonScriptCreatureAI::IsValidUnitTarget(Object* pObject, TargetFilter pFilt
 	//Skip dead (if not required), feign death or invisible targets
 	if( !UnitTarget->isAlive() )
 	{
-		if( (pFilter & TargetFilter_Corpse) && UnitTarget->IsCreature() && static_cast<Creature*>(UnitTarget)->creature_info->Rank != ELITE_WORLDBOSS )
+		if( (pFilter & TargetFilter_Corpse) && UnitTarget->IsCreature() && static_cast<Creature*>(UnitTarget)->GetCreatureInfo()->Rank != ELITE_WORLDBOSS )
 			return true;
 		else
 			return false;
 	}
 	if( UnitTarget->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_FEIGN_DEATH) ) return false;
-	if( UnitTarget->m_auracount[SPELL_AURA_MOD_INVISIBILITY] ) return false;
+	if( UnitTarget->m_invisible ) return false;
 	if( UnitTarget->isAlive() && (pFilter & TargetFilter_Corpse) ) return false;
 
 	//Check if we apply target filtering

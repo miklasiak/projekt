@@ -81,10 +81,11 @@ class MutantWarHoundAI : public MoonScriptCreatureAI
 	{
 		ParentClass::OnDied(pKiller);
 
-		Aura *pAura = new Aura(dbcSpell.LookupEntry(MUTANT_WAR_HOUND_CLOUD_OF_DISEASE), 20000, _unit, _unit);
+		Aura *pAura = new Aura();
 		if (pAura != NULL)
 		{
-			_unit->AddAura(pAura, NULL);
+			pAura->Init(dbcSpell.LookupEntry(MUTANT_WAR_HOUND_CLOUD_OF_DISEASE), 20000, _unit, _unit);
+			_unit->AddAura(pAura);
 		}
 	}
 };
@@ -1343,7 +1344,7 @@ class ShadowmoonWeaponMasterAI : public MoonScriptBossAI
 		AddPhaseSpell(3, AddSpell(SHADOWMOON_WEAPON_MASTER_MUTILATE, Target_Current, 8, 0, 30, 0, 10));
 		mDefensiveStance = AddSpellFunc(&SpellFunc_DefensiveStance, Target_Self, 0, 0, 0);
 		mBerserkerStance = AddSpellFunc(&SpellFunc_BerserkerStance, Target_Self, 0, 0, 0);
-		//SetDisplayWeaponIds(0, 0)	// Sword
+		//SetDisplayWeaponIds(0, 0, 0, 0, 0, 0)	// Sword
 		ApplyAura(SHADOWMOON_WEAPON_MASTER_BATTLE_STANCE);
 		ApplyAura(SHADOWMOON_WEAPON_MASTER_BATTLE_AURA);
 	}
@@ -1356,7 +1357,7 @@ class ShadowmoonWeaponMasterAI : public MoonScriptBossAI
 		{
 			RemoveAura(SHADOWMOON_WEAPON_MASTER_DEFENSIVE_AURA);
 			RemoveAura(SHADOWMOON_WEAPON_MASTER_BERSEKER_AURA);
-			//SetDisplayWeaponIds(0, 0)	// Sword
+			//SetDisplayWeaponIds(0, 0, 0, 0, 0, 0)	// Sword
 			ApplyAura(SHADOWMOON_WEAPON_MASTER_BATTLE_STANCE);
 			ApplyAura(SHADOWMOON_WEAPON_MASTER_BATTLE_AURA);
 		}
@@ -1388,7 +1389,7 @@ void SpellFunc_DefensiveStance(SpellDesc *pThis, MoonScriptCreatureAI *pCreature
 	if (pWeaponMaster != NULL)
 	{
 		pWeaponMaster->RemoveAura(SHADOWMOON_WEAPON_MASTER_BATTLE_AURA);
-		//SetDisplayWeaponIds(0, 0)	// Axe + Shield
+		//SetDisplayWeaponIds(0, 0, 0, 0, 0, 0)	// Axe + Shield
 		pWeaponMaster->ApplyAura(SHADOWMOON_WEAPON_MASTER_DEFENSIVE_STANCE);
 		pWeaponMaster->ApplyAura(SHADOWMOON_WEAPON_MASTER_DEFENSIVE_AURA);
 	}
@@ -1400,7 +1401,7 @@ void SpellFunc_BerserkerStance(SpellDesc *pThis, MoonScriptCreatureAI *pCreature
 	if (pWeaponMaster != NULL)
 	{
 		pWeaponMaster->RemoveAura(SHADOWMOON_WEAPON_MASTER_DEFENSIVE_AURA);
-		//SetDisplayWeaponIds(0, 0)	// Sword
+		//SetDisplayWeaponIds(0, 0, 0, 0, 0, 0)	// Sword
 		pWeaponMaster->ApplyAura(SHADOWMOON_WEAPON_MASTER_BERSERKER_STANCE);
 		pWeaponMaster->ApplyAura(SHADOWMOON_WEAPON_MASTER_BERSEKER_AURA);
 		pWeaponMaster->Emote("Berserker stance! Attack them recklessly!", Text_Say, 0);
@@ -2575,7 +2576,7 @@ public:
 			{
 				//Aura *aura = new Aura(spells[7].info, 30000, _unit, RTarget);
 				//if (aura)
-				//	RTarget->AddAura(aura, NULL);
+				//	RTarget->AddAura(aura);
 				RTarget->CastSpell(RTarget, spells[7].info, spells[7].instant);
 
 				LastThreat = _unit->GetAIInterface()->getThreatByPtr(RTarget);
@@ -3195,10 +3196,11 @@ public:
 			}
 
 			//_unit->CastSpell(_unit, SpellId, true);
-			Aura *aura = new Aura(dbcSpell.LookupEntry(SpellId), 15000, _unit, _unit);
+			Aura *aura = new Aura();
 			if (aura)
 			{
-				_unit->AddAura(aura, NULL);
+				aura->Init(dbcSpell.LookupEntry(SpellId), 15000, _unit, _unit);
+				_unit->AddAura(aura);
 			}
 
 			AuraChange = t + 15;
@@ -3865,7 +3867,7 @@ public:
 			if(pUnit->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_FEIGN_DEATH))
 				continue;
 
-			if(pUnit->m_auracount[SPELL_AURA_MOD_INVISIBILITY])
+			if(pUnit->m_invisible)
 				continue;
 			
 			if(!pUnit->isAlive() || _unit == pUnit)
@@ -5591,7 +5593,7 @@ class AkamaAI : public MoonScriptBossAI
 		}
 
 		_unit->SetUInt32Value(UNIT_NPC_FLAGS, 1);
-		_unit->SetDuelWield(true);
+		_unit->SetDualWield(true);
 
 		mUdaloAI = mOlumAI = NULL;
 		mIllidanAI = NULL;
@@ -6055,8 +6057,7 @@ class AkamaAI : public MoonScriptBossAI
 			mScenePart = 1;
 			break;
 		case 19:
-			_unit->m_auracount[SPELL_AURA_MOD_INVISIBILITY];	// Ascent's
-			//_unit->m_auracount[SPELL_AURA_MOD_INVISIBILITY] = true;						// Arc's
+			_unit->m_invisible = true;						// Arc's
 			_unit->UpdateVisibility();
 			break;
 		case 20:
@@ -6097,8 +6098,7 @@ class AkamaAI : public MoonScriptBossAI
 			if(z_diff > 5.0f)
 				continue;
 
-			if(_unit->m_auracount[SPELL_AURA_MOD_INVISIBILITY])	// Ascent's
-			//if(_unit->m_auracount[SPELL_AURA_MOD_INVISIBILITY] = true)					// Arc's)
+			if(pUnit->m_invisible)
 				continue;
 
 			if(!pUnit->isAlive())
@@ -6407,8 +6407,7 @@ class MaievAI : public MoonScriptBossAI
 				if (pAkama != NULL)
 				{
 					AkamaAI *pAkamaAI = (AkamaAI*)(static_cast<MoonScriptCreatureAI*>(pAkama->GetScript()));
-					pAkama->m_auracount[SPELL_AURA_MOD_INVISIBILITY];	// Ascent's
-					//pAkama->m_auracount[SPELL_AURA_MOD_INVISIBILITY] = true;						// Arc's
+					pAkama->m_invisible = true;						// Arc's
 					pAkama->UpdateVisibility();
 					if (!pAkamaAI->GetCanMove())
 					{
@@ -6594,9 +6593,9 @@ class IllidanStormrageAI : public MoonScriptBossAI
 			AddWaypoint(CreateWaypoint(i, 0, Flag_Fly, ForIllidan[i]));
 		}
 
-		_unit->SetUInt32Value(UNIT_FIELD_RANGEDATTACKTIME, 1800);
+		_unit->SetUInt32Value(UNIT_FIELD_BASEATTACKTIME_01, 1800);
 		_unit->SetUInt32Value(UNIT_NPC_EMOTESTATE, 0);
-		_unit->SetDuelWield(true);
+		_unit->SetDualWield(true);
 
 		mFoA1 = mFoA2 = NULL;
 		mAllow = true;

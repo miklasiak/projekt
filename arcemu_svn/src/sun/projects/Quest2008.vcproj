@@ -21,7 +21,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="..\..\..\bin\debug\script_bin"
-			IntermediateDirectory="2003_int_debug_Sunquestscripts"
+			IntermediateDirectory="2008_int_debug_Sunquestscripts"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
@@ -45,7 +45,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/MP"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\ascent-shared;..\..\ascent-shared\g3dlite;..\..\ascent-shared\vmap;..\..\ascent-world;..\..\..\dep\include;..\..\..\dep\src"
+				AdditionalIncludeDirectories="..\..\arcemu-shared;..\..\arcemu-world;..\..\..\dep\include;..\..\..\dep\src"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;SCRIPTLIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -66,7 +66,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ascent-world.lib"
+				AdditionalDependencies="arcemu-world.lib"
 				OutputFile="../../../bin/debug/script_bin/SunQuestScripts.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="..\..\..\bin\debug"
@@ -128,7 +128,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/MP"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\ascent-shared;..\..\ascent-shared\g3dlite;..\..\ascent-shared\vmap;..\..\ascent-world;..\..\..\dep\include;..\..\..\dep\src"
+				AdditionalIncludeDirectories="..\..\arcemu-shared;..\..\arcemu-world;..\..\..\dep\include;..\..\..\dep\src"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;SCRIPTLIB;X64;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -149,7 +149,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ascent-world.lib"
+				AdditionalDependencies="arcemu-world.lib"
 				OutputFile="../../../bin/debug_x64/script_bin/SunQuestScripts.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="..\..\..\bin\debug_x64"
@@ -186,7 +186,7 @@
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="..\..\..\bin\release\script_bin"
-			IntermediateDirectory="2003_int_release_Sunquestscripts"
+			IntermediateDirectory="2008_int_release_Sunquestscripts"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
@@ -209,7 +209,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\ascent-shared;..\..\ascent-shared\g3dlite;..\..\ascent-shared\vmap;..\..\ascent-world;..\..\..\dep\include;..\..\..\dep\src"
+				AdditionalIncludeDirectories="..\..\arcemu-shared;..\..\arcemu-world;..\..\..\dep\include;..\..\..\dep\src"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;SCRIPTLIB"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
@@ -228,7 +228,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ascent-world.lib"
+				AdditionalDependencies="arcemu-world.lib"
 				OutputFile="../../../bin/release/script_bin/SunQuestScripts.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\bin\release"
@@ -291,7 +291,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\ascent-shared;..\..\ascent-shared\g3dlite;..\..\ascent-shared\vmap;..\..\ascent-world;..\..\..\dep\include;..\..\..\dep\src"
+				AdditionalIncludeDirectories="..\..\arcemu-shared;..\..\arcemu-world;..\..\..\dep\include;..\..\..\dep\src"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;SCRIPTLIB;X64;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
@@ -310,7 +310,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ascent-world.lib"
+				AdditionalDependencies="arcemu-world.lib"
 				OutputFile="../../../bin/release_x64/script_bin/SunQuestScripts.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\bin\release_x64"

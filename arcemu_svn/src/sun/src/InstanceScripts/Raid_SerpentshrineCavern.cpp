@@ -83,7 +83,7 @@ public:
 		m_spellcheck[1] = false;
 
 		//frost attack type	
-		_unit->proto->AttackType = 4;
+		_unit->GetProto()->AttackType = 4;
 		//frost immunity
 		_unit->SchoolImmunityList[SCHOOL_FROST] = 1;
 	}
@@ -225,7 +225,7 @@ public:
 				_unit->SetUInt32Value(UNIT_FIELD_DISPLAYID, 5498);
 				_unit->SendChatMessage(CHAT_MSG_MONSTER_YELL, LANG_UNIVERSAL, "Aaghh, the poison...");
 				_unit->PlaySoundToSet(11297);
-				_unit->proto->AttackType = 3;
+				_unit->GetProto()->AttackType = 3;
 				_unit->SchoolImmunityList[SCHOOL_FROST] = 0;
 				_unit->SchoolImmunityList[SCHOOL_NATURE] = 1;
 
@@ -309,7 +309,7 @@ public:
 				_unit->SetUInt32Value(UNIT_FIELD_DISPLAYID, 20162);
 				_unit->SendChatMessage(CHAT_MSG_MONSTER_YELL, LANG_UNIVERSAL, "Better, much better.");
 				_unit->PlaySoundToSet(11290);
-				_unit->proto->AttackType = 4;
+				_unit->GetProto()->AttackType = 4;
 				_unit->SchoolImmunityList[SCHOOL_FROST] = 1;
 				_unit->SchoolImmunityList[SCHOOL_NATURE] = 0;
 
@@ -645,7 +645,7 @@ public:
 			{
 				creature = static_cast<Creature*>((*itr));
 
-				if(creature->creature_info && creature->creature_info->Id == CN_GREYHEART_SPELLBINDER && creature->isAlive())
+				if(creature->GetCreatureInfo() && creature->GetCreatureInfo()->Id == CN_GREYHEART_SPELLBINDER && creature->isAlive())
 					LeotherasEventGreyheartToKill[_unit->GetInstanceID()]++;
 			}
 		}
@@ -754,12 +754,12 @@ public:
 	void SwitchToHumanForm()
 	{
 		_unit->SetUInt32Value(UNIT_FIELD_DISPLAYID, 20514);
-		_unit->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, _unit->proto->Item1SlotDisplay);
-		_unit->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY_01, _unit->proto->Item2SlotDisplay);
-		_unit->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO, _unit->proto->Item1Info1);
-		_unit->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO_01, _unit->proto->Item1Info2);
-		_unit->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO_02, _unit->proto->Item2Info1);
-		_unit->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO_03, _unit->proto->Item2Info2);
+		_unit->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, _unit->GetProto()->Item1SlotDisplay);
+		_unit->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY_01, _unit->GetProto()->Item2SlotDisplay);
+		_unit->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO, _unit->GetProto()->Item1Info1);
+		_unit->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO_01, _unit->GetProto()->Item1Info2);
+		_unit->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO_02, _unit->GetProto()->Item2Info1);
+		_unit->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO_03, _unit->GetProto()->Item2Info2);
 	}
 
 	void SwitchToDemonForm()
@@ -1216,7 +1216,7 @@ bool ChaosBlast(uint32 i, Spell * pSpell)
 	if ( pSpell == NULL || pSpell->u_caster == NULL )
 		return true;
 
-	pSpell->u_caster->CastSpell( static_cast<Unit*>(pSpell->m_targets.m_target), dbcSpell.LookupEntry( CHAOS_BLAST_EFFECT ), true );
+	pSpell->u_caster->CastSpell( pSpell->m_targets.m_unitTarget, dbcSpell.LookupEntry( CHAOS_BLAST_EFFECT ), true );
 	return true;
 }
 
@@ -1726,7 +1726,7 @@ public:
 			if(pUnit->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_FEIGN_DEATH))
 				continue;
 
-			if(pUnit->m_auracount[SPELL_AURA_MOD_INVISIBILITY])
+			if(pUnit->m_invisible)
 				continue;
 			
 			if(!pUnit->isAlive() || _unit == pUnit)
@@ -1998,11 +1998,11 @@ public:
 			{
 				creature = static_cast<Creature*>((*itr));
 
-				if(creature && creature->creature_info && 
-					(creature->creature_info->Id == CN_ENCHANTED_ELEMENTAL || 
-					creature->creature_info->Id == CN_TAINTED_ELEMENTAL ||
-					creature->creature_info->Id == CN_COILFANG_STRIDER ||
-					creature->creature_info->Id == CN_COILFANG_ELITE)
+				if(creature && creature->GetCreatureInfo() && 
+					(creature->GetCreatureInfo()->Id == CN_ENCHANTED_ELEMENTAL || 
+					creature->GetCreatureInfo()->Id == CN_TAINTED_ELEMENTAL ||
+					creature->GetCreatureInfo()->Id == CN_COILFANG_STRIDER ||
+					creature->GetCreatureInfo()->Id == CN_COILFANG_ELITE)
 					&& creature->isAlive())
 					creature->Despawn(500, 0);
 			}
@@ -2228,7 +2228,7 @@ public:
 				{
 					creature = static_cast<Creature*>((*itr));
 
-					if(creature->creature_info && creature->creature_info->Id == CN_ENCHANTED_ELEMENTAL && creature->isAlive())
+					if(creature->GetCreatureInfo() && creature->GetCreatureInfo()->Id == CN_ENCHANTED_ELEMENTAL && creature->isAlive())
 						creature->Despawn(0, 0);
 				}
 			}

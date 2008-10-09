@@ -112,6 +112,7 @@ Unit::Unit()
 {
 	int i;
 
+	m_chain = NULL;
 	m_attackTimer = 0;
 	m_attackTimer_1 = 0;
 	m_dualWield = false;
@@ -363,6 +364,9 @@ Unit::~Unit()
 	//start to remove badptrs, if you delete from the heap null the ptr's damn!
 	RemoveAllAuras();
 
+	if (m_chain)
+		m_chain->RemoveUnit(this);
+	
 	if( SM_CriticalChance != NULL ) {
 		delete [] SM_CriticalChance;
 		SM_CriticalChance = NULL;
@@ -7398,6 +7402,21 @@ uint32 Unit::DoDamageSplitTarget(uint32 res, uint32 school_type, bool melee_dmg)
 	}
 
 	return res;
+}
+
+void UnitChain::AddUnit(Unit* u)
+{
+	m_units.insert(u);
+	u->m_chain = this;
+}
+ 
+void UnitChain::RemoveUnit(Unit* u)
+{
+	m_units.erase(u);
+	u->m_chain = NULL;
+
+	if (m_units.size() == 0 && !m_persist)
+		delete this;
 }
 
 Group *Unit::GetGroup()

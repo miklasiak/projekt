@@ -25,7 +25,7 @@
 bool Charge(uint32 i, Spell* pSpell)
 {
     uint32 rage_to_gen;
-    switch(pSpell->m_spellInfo->Id)
+    switch(pSpell->GetProto()->Id)
     {
     case 100:   // Charge Rank 1
         rage_to_gen = 90;
@@ -88,7 +88,7 @@ bool Charge(uint32 i, Spell* pSpell)
 
 bool Execute(uint32 i, Spell* pSpell)
 {
-    //uint32 uSpellId = pSpell->m_spellInfo->Id;
+    uint32 uSpellId = pSpell->GetProto()->Id;
     uint32 base_dmg = pSpell->damage;
     /*
     Attempt to finish off a wounded foe, causing 125 damage and converting each extra point
@@ -108,14 +108,12 @@ bool Execute(uint32 i, Spell* pSpell)
 
     // get the caster's rage points, and convert them
     // formula is 3 damage * spell rank * rage points
-    uint32 add_damage = (3 * pSpell->m_spellInfo->RankNumber);
+    uint32 add_damage = (3 * pSpell->GetProto()->RankNumber);
     add_damage *= pSpell->u_caster->GetUInt32Value(UNIT_FIELD_POWER2) / 10;   // rage is *10 always
     
     // send spell damage log
-	//pSpell->u_caster->SpellNonMeleeDamageLog(target, 20647, base_dmg + add_damage, false);
-	SpellEntry *sp_for_the_logs = dbcSpell.LookupEntry(20647);
-	pSpell->u_caster->Strike( target, MELEE, sp_for_the_logs, base_dmg + add_damage, 0, 0, true, true );
-	// zero rage
+    pSpell->u_caster->SpellNonMeleeDamageLog(target, 20647, base_dmg + add_damage, false);
+    // zero rage
     pSpell->u_caster->SetUInt32Value(UNIT_FIELD_POWER2, 0);
     return true;
 }
@@ -128,22 +126,9 @@ bool Bloodrage(uint32 i, Spell* pSpell)
   return true;
 }
 
-class VictoryRush : public SpellScript
-{
-public:
-	ADD_SPELL_FACTORY_FUNCTION(VictoryRush);
-	VictoryRush(Spell* pSpell) : SpellScript(pSpell) {}
-	void CalculateEffect(uint32 EffectIndex, Unit* target, int32* value)
-	{
-		if(EffectIndex == 0 && _spell->u_caster != NULL)
-			*value = (*value * _spell->u_caster->GetAP())/100;
-	}
-};
-
 /* Module info */
 void SetupWarriorSpells(ScriptMgr * mgr)
 {
-	mgr->register_spell_script(34428, &VictoryRush::Create);
     /**** Charge ****/
     mgr->register_dummy_spell(100, &Charge);      // Rank 1
     mgr->register_dummy_spell(6178, &Charge);     // Rank 2

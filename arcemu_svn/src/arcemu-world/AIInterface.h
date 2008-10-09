@@ -157,6 +157,7 @@ enum AiEvents
 {
 	EVENT_ENTERCOMBAT,
 	EVENT_LEAVECOMBAT,
+	EVENT_DAMAGEDEALT,
 	EVENT_DAMAGETAKEN,
 	EVENT_FEAR,
 	EVENT_UNFEAR,
@@ -232,6 +233,8 @@ public:
 
 	AIInterface();
 	virtual ~AIInterface();
+
+	void HandleChainAggro(Unit* u);
 
 	// Misc
 	void Init(Unit *un, AIType at, MovementType mt);

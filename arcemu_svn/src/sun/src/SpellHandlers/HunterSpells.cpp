@@ -42,79 +42,14 @@ bool Readiness(uint32 i, Spell * pSpell)
 {
     if(!pSpell->p_caster)
 		return true;
-    pSpell->p_caster->ClearCooldownsOnLine(50 , pSpell->m_spellInfo->Id);//Beast Mastery
-    pSpell->p_caster->ClearCooldownsOnLine(163, pSpell->m_spellInfo->Id);//Marksmanship
-    pSpell->p_caster->ClearCooldownsOnLine(51 , pSpell->m_spellInfo->Id);//Survival
+    pSpell->p_caster->ClearCooldownsOnLine(50 , pSpell->GetProto()->Id);//Beast Mastery
+    pSpell->p_caster->ClearCooldownsOnLine(163, pSpell->GetProto()->Id);//Marksmanship
+    pSpell->p_caster->ClearCooldownsOnLine(51 , pSpell->GetProto()->Id);//Survival
     return true;
 }
-
-class RevivePet : public SpellScript
-{
-public:
-	ADD_SPELL_FACTORY_FUNCTION(RevivePet);
-	RevivePet(Spell* pSpell) : SpellScript(pSpell) {}
-	SpellCastError CanCast(bool tolerate)
-	{
-		if (_spell->p_caster == NULL || _spell->p_caster->GetSummon() == NULL)
-			return SPELL_FAILED_NO_PET;
-			
-		if (!_spell->p_caster->GetSummon()->isDead())
-			return SPELL_FAILED_TARGET_NOT_DEAD;
-
-		return SPELL_CANCAST_OK;
-	}
-};
-
-class SteadyShot : public SpellScript
-{
-public:
-	ADD_SPELL_FACTORY_FUNCTION(SteadyShot);
-	SteadyShot(Spell* pSpell) : SpellScript(pSpell) {}
-	void CalculateEffect(uint32 EffectIndex, Unit* target, int32* value)
-	{
-		if(EffectIndex == 0 && _spell->u_caster != NULL)
-		{
-			if( _spell->p_caster != NULL )
-			{
-				Item *it;
-				if(_spell->p_caster->GetItemInterface())
-				{
-					it = _spell->p_caster->GetItemInterface()->GetInventoryItem(EQUIPMENT_SLOT_RANGED);
-					if(it)
-					{
-						float weapondmg = it->GetProto()->Damage[0].Min + RandomFloat( it->GetProto()->Damage[0].Max );
-						*value += float2int32(150 + weapondmg/float(it->GetProto()->Delay/1000.0f)*2.8f);
-					}
-				}
-			}
-			if(target && target->IsDazed())
-				*value += 175;
-			*value += (uint32)(_spell->u_caster->GetRAP()*0.2);
-		}
-	}
-};
-
-class MongooseBite : public SpellScript
-{
-public:
-	ADD_SPELL_FACTORY_FUNCTION(MongooseBite);
-	MongooseBite(Spell* pSpell) : SpellScript(pSpell) {}
-	void CalculateEffect(uint32 EffectIndex, Unit* target, int32* value)
-	{
-		if( _spell->u_caster != NULL )
-			*value += _spell->u_caster->GetAP()/5;
-	}
-};
 
 void SetupHunterSpells(ScriptMgr * mgr)
 {
     mgr->register_dummy_spell(24531, &Refocus);
     mgr->register_dummy_spell(23989, &Readiness);
-	mgr->register_spell_script(982, &RevivePet::Create);
-	mgr->register_spell_script(34128, &SteadyShot::Create);
-	mgr->register_spell_script(1495, &MongooseBite::Create);
-	mgr->register_spell_script(14269, &MongooseBite::Create);
-	mgr->register_spell_script(14270, &MongooseBite::Create);
-	mgr->register_spell_script(14271, &MongooseBite::Create);
-	mgr->register_spell_script(36916, &MongooseBite::Create);
 }

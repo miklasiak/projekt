@@ -1638,7 +1638,7 @@ public:
 			if(pUnit->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_FEIGN_DEATH))
 				continue;
 
-			if(pUnit->m_auracount[SPELL_AURA_MOD_INVISIBILITY])
+			if(pUnit->m_invisible)
 				continue;
 			
 			if(!pUnit->isAlive() || _unit == pUnit)

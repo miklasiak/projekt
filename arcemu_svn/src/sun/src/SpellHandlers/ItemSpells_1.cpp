@@ -183,7 +183,7 @@ bool BanishExile(uint32 i, Spell * pSpell)
 	Unit* target = pSpell->GetUnitTarget();
 	if(!pSpell->p_caster || !target) return true;
 
-	pSpell->p_caster->SpellNonMeleeDamageLog(target, pSpell->m_spellInfo->Id, target->GetUInt32Value(UNIT_FIELD_HEALTH), true);
+	pSpell->p_caster->SpellNonMeleeDamageLog(target, pSpell->GetProto()->Id, target->GetUInt32Value(UNIT_FIELD_HEALTH), true);
 	return true;
 }
 
@@ -300,12 +300,12 @@ bool SummonCritterDummy(uint32 i, Spell *pSpell)
 
 	uint32 currentCritterID = 0;
 
-	if(pSpell->p_caster->critterPet && pSpell->p_caster->critterPet->GetCreatureName())
-		currentCritterID = pSpell->p_caster->critterPet->GetCreatureName()->Id;
+	if(pSpell->p_caster->critterPet && pSpell->p_caster->critterPet->GetCreatureInfo())
+		currentCritterID = pSpell->p_caster->critterPet->GetCreatureInfo()->Id;
 
 	uint32 newspell = 0;
 
-	switch(pSpell->m_spellInfo->Id)
+	switch(pSpell->GetProto()->Id)
 	{
 		case 26469: // Snowman Kit
 		{
@@ -497,8 +497,6 @@ void SetupItemSpells_1(ScriptMgr * mgr)
 	mgr->register_dummy_spell(32001, &MinionsOfGurok);			// Minions of gurok
 	mgr->register_dummy_spell(29200, &PurifyBoarMeat);			// Purify Boar meat spell
 	mgr->register_dummy_spell(35036, &WarpRiftGenerator);       // Summon a Warp Rift in Void Ridge
-
-
 
 // REGISTER NEW DUMMY SPELLS ABOVE THIS LINE
 // *****************************************************************************

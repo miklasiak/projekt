@@ -533,10 +533,11 @@ public:
 				{
 					if (i == 1)
 					{
-						Aura *aura = new Aura(spells[1].info, 5000, _unit, _unit);
+						Aura *aura = new Aura();
 						if (aura != NULL)
 						{
-							_unit->AddAura(aura, NULL);
+							aura->Init(spells[1].info, 5000, _unit, _unit);
+							_unit->AddAura(aura);
 						}
 					}
 
@@ -1075,10 +1076,11 @@ public:
 
 			if (i == 3)
 			{
-				Aura *aura = new Aura(spells[3].info, 20000, _unit, RTarget);
+				Aura *aura = new Aura();
 				if (aura != NULL)
 				{
-					RTarget->AddAura(aura, NULL);
+					aura->Init(spells[3].info, 20000, _unit, RTarget);
+					RTarget->AddAura(aura);
 				}
 
 				TargetTable.clear();
@@ -1234,7 +1236,7 @@ public:
 			if(z_diff > 2.5f)
 				continue;
 
-			if(pUnit->m_auracount[SPELL_AURA_MOD_INVISIBILITY])
+			if(pUnit->m_invisible)
 				continue;
 			
 			if(!pUnit->isAlive() || _unit == pUnit)

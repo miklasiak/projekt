@@ -2558,7 +2558,9 @@ void Object::DealDamage(Unit *pVictim, uint32 damage, uint32 targetEvent, uint32
 		}*/	
 
 		pVictim->SetUInt32Value( UNIT_FIELD_HEALTH, health - damage );
-	}
+		if (IsCreature() && !IsPet())
+			static_cast<Unit*>(this)->GetAIInterface()->HandleEvent(EVENT_DAMAGEDEALT, pVictim, damage);
+	} 
 }
 
 void Object::SpellNonMeleeDamageLog(Unit *pVictim, uint32 spellID, uint32 damage, bool allowProc, bool static_damage, bool no_remove_auras)
@@ -3099,4 +3101,15 @@ uint32 Object::GetTeam()
 	return static_cast<uint32>(-1);
 }
 
-
+void Object::SetSpawnPosition(const LocationVector & v)
+{
+	SetSpawnPosition(v.x, v.y, v.z, v.o);
+}
+ 
+void Object::SetSpawnPosition(float newX, float newY, float newZ, float newOrientation)
+{
+	m_spawnLocation.x=newX;
+	m_spawnLocation.y=newY;
+	m_spawnLocation.z=newZ;
+	m_spawnLocation.o=newOrientation;
+}

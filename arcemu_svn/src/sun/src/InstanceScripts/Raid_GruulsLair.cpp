@@ -481,7 +481,7 @@ class GruulTheDragonkillerAI : public MoonScriptCreatureAI
 						Player *pPlayer = static_cast<Player*>(*itr);
 						if (!pPlayer->isAlive())
 							continue;
-						if (pPlayer->m_auracount[SPELL_AURA_MOD_INVISIBILITY])
+						if (pPlayer->m_invisible)
 							continue;
 						if (pPlayer->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_FEIGN_DEATH))
 							continue;
