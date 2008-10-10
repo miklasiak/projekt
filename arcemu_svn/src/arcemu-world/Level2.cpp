@@ -68,6 +68,7 @@ bool ChatHandler::HandleInvisibleCommand(const char *args, WorldSession *m_sessi
 		pChar->m_invisible = false;
 		pChar->bInvincible = false;
 		pChar->RemoveAura(32754);
+
 		pChar->Social_TellFriendsOnline();
 		if( pChar->m_bg )
 		{

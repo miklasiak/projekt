@@ -5,7 +5,6 @@
 
 
 #include "StdAfx.h"
-#include "Setup.h"
 
 #define GOLD_AMOUNT 1000000  //it is in copper
                     
