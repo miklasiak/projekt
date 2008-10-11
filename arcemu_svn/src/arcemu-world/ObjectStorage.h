@@ -43,6 +43,7 @@ void Storage_Cleanup();
 bool Storage_ReloadTable(const char * TableName);
 void Storage_LoadAdditionalTables();
 
+bool LoadAdditionalTable(const char * TableName, const char * SecondName);
 extern SERVER_DECL set<string> ExtraMapCreatureTables;
 extern SERVER_DECL set<string> ExtraMapGameObjectTables;
 

@@ -1,3 +1,8 @@
+r100
+- precompiled map extractor
+- precompiled vmap extractor + vmap assembler + collision
+- applied custom table reload patch
+-------------------------------------------------------------------------------------
 r99
 - Changed ARCEmu-World/Logonserver rXXX powered by Evolution Cores
 -------------------------------------------------------------------------------------
