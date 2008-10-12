@@ -1,3 +1,6 @@
+r101
+- added BLua commands
+-------------------------------------------------------------------------------------
 r100
 - precompiled map extractor
 - precompiled vmap extractor + vmap assembler + collision
