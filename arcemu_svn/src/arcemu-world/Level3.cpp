@@ -820,7 +820,7 @@ bool ChatHandler::HandleRemoveAurasCommand(const char *args, WorldSession *m_ses
 	if(!plr) return false;
 
 	BlueSystemMessage(m_session, "Removing all auras...");
-	for(uint32 i = 0; i < MAX_AURAS; ++i)
+	for(uint32 i = MAX_REMOVABLE_AURAS_START; i < MAX_REMOVABLE_AURAS_END; ++i)
 	{
 		if(plr->m_auras[i] != 0) plr->m_auras[i]->Remove();
 	}
@@ -1149,13 +1149,10 @@ bool ChatHandler::HandleFlyCommand(const char* args, WorldSession* m_session)
 	return true;
 }
 
-vector<pair<string,string> > AddedTables;
-
 bool ChatHandler::HandleDBReloadCommand(const char* args, WorldSession* m_session)
 {
 	char str[200];
 	int ret = 0;
-	int ret2 = 1;
 
 	if(!*args || strlen(args) < 3)
 		return false;
@@ -1183,40 +1180,10 @@ bool ChatHandler::HandleDBReloadCommand(const char* args, WorldSession* m_sessio
 	else
 	{
 		ret = Storage_ReloadTable(args);
-		string strData = Config.MainConfig.GetStringDefault("Startup", "LoadAdditionalTables", "");
-		if(!strData.empty())
-		{
-			vector<string> strs = StrSplit(strData, ",");
-			if(!strs.empty())
-			{
-				for(vector<string>::iterator itr = strs.begin(); itr != strs.end(); ++itr)
-				{
-					char s1[200];
-					char s2[200];
-					if(sscanf((*itr).c_str(), "%s %s", s1, s2) != 2)
-						continue;
-					if(s2 == args)
-					{
-						if(LoadAdditionalTable(s2, s1)) 
-						{
-							ret2 = 1;
-							pair<string,string> tmppair;
-							tmppair.first = string(s1);
-							tmppair.second = string(s2);
-							AddedTables.push_back(tmppair);
-						}
-						else
-							ret2 = 0;
-					}
-				}
-			}
-		}
 	}
 
 	if (ret == 0)
 		snprintf(str, 256, "%sDatabase reload failed.", MSG_COLOR_LIGHTRED);
-	else if (ret2 == 0)
-		snprintf(str, 256, "%sCustom database reload failed.", MSG_COLOR_LIGHTRED);
 	else
 		snprintf(str, 256, "%sDatabase reload completed in %u ms.", MSG_COLOR_LIGHTBLUE, (unsigned int)(getMSTime() - mstime));
 	sWorld.SendWorldText(str, 0);
@@ -2132,7 +2099,6 @@ bool ChatHandler::HandleCreatureSpawnCommand(const char *args, WorldSession *m_s
 
 	CreatureProto * proto = CreatureProtoStorage.LookupEntry(entry);
 	CreatureInfo * info = CreatureNameStorage.LookupEntry(entry);
-
 	if(proto == 0 || info == 0)
 	{
 		RedSystemMessage(m_session, "Invalid entry id.");

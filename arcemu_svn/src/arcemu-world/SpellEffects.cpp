@@ -475,7 +475,8 @@ void Spell::SpellEffectInstantKill(uint32 i)
 	}
 	//instant kill effects don't have a log
 	//m_caster->SpellNonMeleeDamageLog(unitTarget, GetProto()->Id, unitTarget->GetUInt32Value(UNIT_FIELD_HEALTH), true);
-	m_caster->DealDamage(unitTarget, unitTarget->GetUInt32Value(UNIT_FIELD_HEALTH), 0, 0, 0);
+	// cebernic: the value of instant kill must be higher than normal health,cuz anti health regenerated.
+	m_caster->DealDamage(unitTarget, unitTarget->GetUInt32Value(UNIT_FIELD_HEALTH)*2, 0, 0, 0);
 }
 
 void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
@@ -834,14 +835,15 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 				return;
 
 			Aura * pAura;
-			for(uint32 i = MAX_POSITIVE_AURAS; i < MAX_AURAS; ++i)
+			for(uint32 i = MAX_NEGATIVE_AURAS_EXTEDED_START; i < MAX_NEGATIVE_AURAS_EXTEDED_END; ++i)
 			{
 				pAura = unitTarget->m_auras[i];
-				if( pAura != NULL && !pAura->IsPassive() && !pAura->IsPositive() && !(pAura->GetSpellProto()->Attributes & ATTRIBUTES_IGNORE_INVULNERABILITY) &&
-					pAura->GetSpellProto()->School != 0 )
-				{
+				if( pAura != NULL && !pAura->IsPassive() 
+					&& !pAura->IsPositive() 
+					&& !(pAura->GetSpellProto()->Attributes & ATTRIBUTES_IGNORE_INVULNERABILITY) 
+					&& pAura->GetSpellProto()->School != 0 
+					)
 					pAura->Remove();
-				}
 			}
 		}break;
 	/*************************
@@ -1211,14 +1213,12 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 				return;
 
 			uint32 count = 0;
-			for(uint32 x = 0; x < MAX_AURAS; ++x)
-			{
+			for(uint32 x = MAX_NEGATIVE_AURAS_EXTEDED_START; x < MAX_NEGATIVE_AURAS_EXTEDED_END; ++x)
 				if(unitTarget->m_auras[x] && unitTarget->m_auras[x]->GetSpellId() == 28734)
 				{
 					unitTarget->m_auras[x]->Remove();
 					++count;
 				}
-			}
 
 			uint32 gain = (uint32)(count * (2.17*p_caster->getLevel()+9.136));
 			p_caster->Energize( unitTarget, 28730, gain, POWER_TYPE_MANA );
@@ -2089,7 +2089,7 @@ void Spell::SpellEffectHeal(uint32 i) // Heal
 				{
 					uint32 new_dmg = 0;
 					//consume rejuvenetaion and regrowth
-					Aura * taura = unitTarget->FindAuraPosByNameHash( SPELL_HASH_REGROWTH ); //Regrowth
+					Aura * taura = unitTarget->FindAuraByNameHash( SPELL_HASH_REGROWTH ); //Regrowth
 					if( taura != NULL && taura->GetSpellProto() != NULL)
 					{
 						uint32 amplitude = taura->GetSpellProto()->EffectAmplitude[1] / 1000;
@@ -2114,7 +2114,7 @@ void Spell::SpellEffectHeal(uint32 i) // Heal
 					}
 					else
 					{
-						taura = unitTarget->FindAuraPosByNameHash( SPELL_HASH_REJUVENATION );//Rejuvenation
+						taura = unitTarget->FindAuraByNameHash( SPELL_HASH_REJUVENATION );//Rejuvenation
 						if( taura != NULL && taura->GetSpellProto() != NULL )
 						{
 							uint32 amplitude = taura->GetSpellProto()->EffectAmplitude[0] / 1000;
@@ -3141,8 +3141,10 @@ void Spell::SpellEffectOpenLockItem(uint32 i)
 		}
 	}
 
-	if( gameObjTarget->GetUInt32Value( GAMEOBJECT_TYPE_ID ) == GAMEOBJECT_TYPE_DOOR)
-		gameObjTarget->SetUInt32Value(GAMEOBJECT_FLAGS, 33);
+	// cebernic: atm doors works fine.
+	if( gameObjTarget->GetUInt32Value( GAMEOBJECT_TYPE_ID ) == GAMEOBJECT_TYPE_DOOR
+		|| gameObjTarget->GetUInt32Value( GAMEOBJECT_TYPE_ID ) == GAMEOBJECT_TYPE_GOOBER )
+		gameObjTarget->SetUInt32Value(GAMEOBJECT_FLAGS, gameObjTarget->GetUInt32Value( GAMEOBJECT_FLAGS ) | 1);
 
 	if(gameObjTarget->GetMapMgr()->GetMapInfo()->type==INSTANCE_NULL)//dont close doors for instances
 		sEventMgr.AddEvent(gameObjTarget,&GameObject::EventCloseDoor, EVENT_GAMEOBJECT_DOOR_CLOSE,10000,1,0);
@@ -3487,15 +3489,15 @@ void Spell::SpellEffectDispel(uint32 i) // Dispel
 	uint32 start,end;
 	if(isAttackable(u_caster,unitTarget))
 	{
-		start=0;
-		end=MAX_POSITIVE_AURAS;
+		start=MAX_POSITIVE_AURAS_EXTEDED_START;
+		end=MAX_POSITIVE_AURAS_EXTEDED_END;
 		if (unitTarget->SchoolImmunityList[GetProto()->School])
 			return;
 	}
 	else
 	{
-		start=MAX_POSITIVE_AURAS;
-		end=MAX_AURAS;
+		start=MAX_NEGATIVE_AURAS_EXTEDED_START;
+		end=MAX_NEGATIVE_AURAS_EXTEDED_END;
 	}
 	
 	WorldPacket data(SMSG_SPELLDISPELLOG, 16);
@@ -6009,14 +6011,12 @@ void Spell::SpellEffectDummyMelee( uint32 i ) // Normalized Weapon damage +
 		//count the number of sunder armors on target
 		uint32 sunder_count=0;
 		SpellEntry *spellInfo=dbcSpell.LookupEntry(25225);
-		for(uint32 x = MAX_POSITIVE_AURAS; x < MAX_AURAS; ++x)
-		{
+		for(uint32 x = MAX_NEGATIVE_AURAS_EXTEDED_START; x < MAX_NEGATIVE_AURAS_EXTEDED_END; ++x)
 			if(unitTarget->m_auras[x] && unitTarget->m_auras[x]->GetSpellProto()->NameHash==SPELL_HASH_SUNDER_ARMOR)
 			{
 				sunder_count++;
 				spellInfo=unitTarget->m_auras[x]->GetSpellProto();
 			}
-		}
 		if(!spellInfo)
 			return; //omg how did this happen ?
 		//we should also cast sunder armor effect on target with or without dmg
@@ -6032,7 +6032,7 @@ void Spell::SpellEffectDummyMelee( uint32 i ) // Normalized Weapon damage +
 	}
 	else if( GetProto()->NameHash == SPELL_HASH_CRUSADER_STRIKE ) // Crusader Strike - refreshes *all* judgements, not just your own
 	{
-		for( int x = MAX_POSITIVE_AURAS ; x <= MAX_AURAS ; x ++ ) // there are only debuff judgements anyway :P
+		for( int x = MAX_NEGATIVE_AURAS_EXTEDED_START ; x <= MAX_NEGATIVE_AURAS_EXTEDED_END ; x ++ ) // there are only debuff judgements anyway :P
 		{
 			if( unitTarget->m_auras[x] && unitTarget->m_auras[x]->GetSpellProto()->BGR_one_buff_from_caster_on_1target == SPELL_TYPE_INDEX_JUDGEMENT )
 			{
@@ -6164,8 +6164,8 @@ void Spell::SpellEffectSpellSteal( uint32 i )
 	uint32 start, end;
 	if(isAttackable(u_caster,unitTarget))
 	{
-		start=0;
-		end=MAX_POSITIVE_AURAS;
+		start=MAX_POSITIVE_AURAS_EXTEDED_START;
+		end=MAX_POSITIVE_AURAS_EXTEDED_END;
 	}
 	else
 		return;
@@ -6192,7 +6192,7 @@ void Spell::SpellEffectSpellSteal( uint32 i )
 				uint32 aurdur = ( aur->GetDuration()>120000 ? 120000 : aur->GetDuration() );
 				Aura *aura = AuraPool.PooledNew();
 				aura->Init(aur->GetSpellProto(), aurdur, u_caster, u_caster );
-				uint32 aur_removed = unitTarget->RemoveAllPosAuraByNameHash( aur->GetSpellProto()->NameHash );
+				uint32 aur_removed = unitTarget->RemoveAllAuraByNameHash( aur->GetSpellProto()->NameHash );
 				for ( uint32 i = 0; i < 3; i++ )
 				{
 					if ( aura->GetSpellProto()->Effect[i] )
