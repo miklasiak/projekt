@@ -20,6 +20,9 @@
 #include "StdAfx.h"
 #include "Setup.h"
 #include "EAS/EasyFunctions.h"
+#define MAX_AURAS 56
+#define MAX_POSITIVE_AURAS 40
+#define MAX_PASSIVE_AURAS 281
 
 class FragmentedMagic : public CreatureAIScript
 {
