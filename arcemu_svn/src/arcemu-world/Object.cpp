@@ -2159,8 +2159,6 @@ void Object::DealDamage(Unit *pVictim, uint32 damage, uint32 targetEvent, uint32
 			}
 		}
 		
-		/* Remove all Auras */
-		pVictim->DropAurasOnDeath();
 
 		/* Stop players from casting */
 		std::set<Player*>::iterator itr;
@@ -2559,6 +2557,7 @@ void Object::DealDamage(Unit *pVictim, uint32 damage, uint32 targetEvent, uint32
 		}*/	
 
 		pVictim->SetUInt32Value( UNIT_FIELD_HEALTH, health - damage );
+	
 		if (IsCreature() && !IsPet())
 			static_cast<Unit*>(this)->GetAIInterface()->HandleEvent(EVENT_DAMAGEDEALT, pVictim, damage);
 	} 

@@ -237,7 +237,8 @@ void Spell::Init(Object* Caster, SpellEntry *info, bool triggered, Aura* aur)
 
 Spell::~Spell()
 {
-	// cebernic: vector clear doesn't need anymore,it have own release func.
+		for(uint32 x=0;x<3;x++)
+			m_targetUnits[x].clear();
 }
 
 void Spell::Virtual_Destructor()
@@ -251,14 +252,6 @@ void Spell::Virtual_Destructor()
 
 	if (m_spellInfo_override !=NULL)
 		delete[] m_spellInfo_override;
-
-	// resize the capactiy
-	for(uint32 x=0;x<3;x++)
-	{
-		vector<uint64>(m_targetUnits[x]).swap(m_targetUnits[x]);
-	}
-
-//	sEventMgr.RemoveEvents( this ); //do even spells have events ?
 }
 
 //i might forget conditions here. Feel free to add them
@@ -1160,9 +1153,6 @@ uint8 Spell::prepare( SpellCastTargets * targets )
 	//   m_castTime -= 100;	  // session update time
 
 
-	if( !m_triggeredSpell && p_caster != NULL && p_caster->CooldownCheat )
-		p_caster->ClearCooldownForSpell( GetProto()->Id );
-
 	m_spellState = SPELL_STATE_PREPARING;
 
 	if( m_triggeredSpell )
@@ -1250,6 +1240,8 @@ uint8 Spell::prepare( SpellCastTargets * targets )
 
 void Spell::cancel()
 {
+	if ( GetProto() == NULL ) return; //low chance
+
 	if (m_spellState == SPELL_STATE_FINISHED)
 		return;
 
@@ -1972,6 +1964,16 @@ void Spell::finish()
 		}
 		i_caster->GetOwner()->Cooldown_AddItem( i_caster->GetProto() , x );
 	}
+
+
+  // cebernic added it
+  // moved this from ::prepare() 
+  // With preparing got ClearCooldownForspell, it makes too early for player client.
+	// Now .cheat cooldown works perfectly.
+	if( !m_triggeredSpell && p_caster != NULL && p_caster->CooldownCheat )
+		p_caster->ClearCooldownForSpell( GetProto()->Id );
+
+
 	/*
 	We set current spell only if this spell has cast time or is channeling spell
 	otherwise it's instant spell and we delete it right after completion
@@ -2950,6 +2952,11 @@ bool Spell::IsSeal()
 
 uint8 Spell::CanCast(bool tolerate)
 {
+  // cebernic,can get this.
+  if ( !GetProto() ) return SPELL_FAILED_SPELL_UNAVAILABLE;
+  // how this happended ? cebernic
+  if ( GetProto()->School < NORMAL_DAMAGE || GetProto()->School > ARCANE_DAMAGE ) return SPELL_FAILED_SPELL_UNAVAILABLE;
+
 	uint32 i;
 	if(objmgr.IsSpellDisabled(GetProto()->Id))
 		return SPELL_FAILED_SPELL_UNAVAILABLE;
@@ -4398,8 +4405,7 @@ exit:
 			ScriptOverrideList::iterator itrSO;
 			for(itrSO = itr->second->begin(); itrSO != itr->second->end(); ++itrSO)
 			{
-				//DK:FIXME->yeni bir map olu�tur
-                // Capt: WHAT THE FUCK DOES THIS MEAN....
+        // Capt: WHAT THE FUCK DOES THIS MEAN....
 				// Supa: WHAT THE FUCK DOES THIS MEAN?
 				value += RandomUInt((*itrSO)->damage);
 			}
