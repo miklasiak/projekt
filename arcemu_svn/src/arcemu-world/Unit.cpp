@@ -366,7 +366,7 @@ Unit::~Unit()
 
 	if (m_chain)
 		m_chain->RemoveUnit(this);
-		
+	
 	if( SM_CriticalChance != NULL ) {
 		delete [] SM_CriticalChance;
 		SM_CriticalChance = NULL;
@@ -4172,8 +4172,17 @@ void Unit::AddAura(Aura *aur)
 		//check if we already have this aura by this caster -> update duration
 		if( aur->IsPositive() )
 		{
-			StartCheck = MAX_PASSIVE_AURAS_START; //also check talents to make sure they will not stack. Maybe not required ?
-			CheckLimit = MAX_POSITIVE_AURAS_EXTEDED_END;
+			//talents and stuff
+			if( aur->IsPassive() )
+			{
+				StartCheck = MAX_PASSIVE_AURAS_START; 
+				CheckLimit = MAX_PASSIVE_AURAS_END;
+			}
+			else
+			{
+				StartCheck = MAX_POSITIVE_AURAS_EXTEDED_START; //also check talents to make sure they will not stack. Maybe not required ?
+				CheckLimit = MAX_POSITIVE_AURAS_EXTEDED_END;
+			}
 		}
 		else
 		{
