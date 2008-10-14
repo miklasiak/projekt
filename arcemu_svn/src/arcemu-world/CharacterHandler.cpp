@@ -854,11 +854,11 @@ void WorldSession::FullLogin(Player * plr)
 
 	// Send revision (if enabled)
 #ifdef WIN32
-	_player->BroadcastMessage("Server: %sArcEmu r%u by %sEvolution-Cores %s(Please report ALL bugs to http://evolution-cores.ath.cx)", MSG_COLOR_WHITE, BUILD_REVISION, 
-		MSG_COLOR_RED, MSG_COLOR_LIGHTBLUE);		
+	_player->BroadcastMessage("Server: %sArcEmu r%u by %sEvolution-Cores %s(Please report ALL bugs to http://evolution-cores.ath.cx)", MSG_COLOR_WHITE, BUILD_REVISION, MSG_COLOR_RED
+		MSG_COLOR_LIGHTBLUE);		
 #else
-	_player->BroadcastMessage("Server: %sArcEmu r%u by %sEvolution-Cores %s(Please report ALL bugs to http://evolution-cores.ath.cx)", MSG_COLOR_WHITE, BUILD_REVISION, 
-		MSG_COLOR_RED, MSG_COLOR_LIGHTBLUE);	
+	_player->BroadcastMessage("Server: %sArcEmu r%u by %sEvolution-Cores %s(Please report ALL bugs to http://evolution-cores.ath.cx)", MSG_COLOR_WHITE, BUILD_REVISION, MSG_COLOR_RED
+		MSG_COLOR_LIGHTBLUE);
 #endif
 
 	if(sWorld.SendStatsOnJoin)

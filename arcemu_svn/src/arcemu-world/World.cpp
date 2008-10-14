@@ -1208,6 +1208,7 @@ void World::Rehash(bool load)
 	Log.log_level = Config.MainConfig.GetIntDefault("LogLevel", "Screen", 1);
 	gm_skip_attunement = Config.MainConfig.GetBoolDefault("Server", "SkipAttunementsForGM", true);
 	Collision = Config.MainConfig.GetBoolDefault("Server", "Collision", 0);
+	DisableFearMovement = Config.MainConfig.GetBoolDefault("Server", "DisableFearMovement", 0);
 #ifndef CLUSTERING
 	SocketRecvBufSize = Config.MainConfig.GetIntDefault("WorldSocket", "RecvBufSize", WORLDSOCKET_RECVBUF_SIZE);
 	SocketSendBufSize = Config.MainConfig.GetIntDefault("WorldSocket", "SendBufSize", WORLDSOCKET_SENDBUF_SIZE);
@@ -1338,6 +1339,9 @@ void World::Rehash(bool load)
 
 	if(!flood_lines || !flood_seconds)
 		flood_lines = flood_seconds = 0;
+
+
+	m_CustomCharterGiver = (uint32)Config.OptionalConfig.GetIntDefault("Optional", "CustomCharterGiver",0);
 
 	map_unload_time=Config.MainConfig.GetIntDefault("Server", "MapUnloadTime", 0);
 

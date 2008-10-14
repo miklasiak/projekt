@@ -243,9 +243,8 @@ void AIInterface::HandleEvent(uint32 event, Unit* pUnit, uint32 misc1)
 						}
 					}
 				}
-				
-				HandleChainAggro(pUnit);
 
+				HandleChainAggro(pUnit);
 				//give 1 threat to this unit if were not on the threat list
 				if (m_aiTargets.find(pUnit->GetGUID())==m_aiTargets.end())
 				{
@@ -260,7 +259,7 @@ void AIInterface::HandleEvent(uint32 event, Unit* pUnit, uint32 misc1)
 				if (m_aiTargets.find(pUnit->GetGUID())==m_aiTargets.end())
 				{
 					m_aiTargets.insert(TargetMap::value_type(pUnit->GetGUID(), 1));
-				} 
+				}
 			}break;
 		case EVENT_LEAVECOMBAT:
 			{
@@ -3136,6 +3135,14 @@ void AIInterface::_UpdateMovement(uint32 p_time)
 			float Fx;
 			float Fy;
 			float Fz;
+
+			if( sWorld.DisableFearMovement )
+			{
+				if( m_Unit->GetMapId() == 529|| m_Unit->GetMapId() == 566 || m_Unit->GetMapId() == 489 || m_Unit->GetMapId() == 572 || m_Unit->GetMapId() == 562 || m_Unit->GetMapId() == 559 )
+				{
+					return;	
+				}
+			}
 			// Calculate new angle to target.
 			float Fo = m_Unit->calcRadAngle(UnitToFear->GetPositionX(), UnitToFear->GetPositionY(), m_Unit->GetPositionX(), m_Unit->GetPositionY());
 			double fAngleAdd = RandomDouble(((M_PI/2) * 2)) - (M_PI/2);

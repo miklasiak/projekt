@@ -3487,7 +3487,7 @@ void Spell::SpellEffectDispel(uint32 i) // Dispel
 
 	Aura *aur;
 	uint32 start,end;
-	if(isAttackable(u_caster,unitTarget))
+	if(isAttackable(u_caster,unitTarget) || GetProto()->EffectMiscValue[i] == DISPEL_STEALTH ) // IsAttackable returns false for stealthed
 	{
 		start=MAX_POSITIVE_AURAS_EXTEDED_START;
 		end=MAX_POSITIVE_AURAS_EXTEDED_END;
@@ -4160,7 +4160,7 @@ void Spell::SpellEffectPowerBurn(uint32 i) // power burn
 
 void Spell::SpellEffectThreat(uint32 i) // Threat
 {
-	if(!unitTarget || !unitTarget->isAlive() )
+	if( !unitTarget || !unitTarget->isAlive() || !unitTarget->IsCreature() )
 		return;
 
 	bool chck = unitTarget->GetAIInterface()->modThreatByPtr(u_caster,GetProto()->EffectBasePoints[i]);

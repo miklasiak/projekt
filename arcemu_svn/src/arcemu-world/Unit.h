@@ -1271,6 +1271,7 @@ public:
 	DynamicObject * dynObj;
 
 	uint32 AddAuraVisual(uint32 spellid, uint32 count, bool positive);
+	uint32 AddAuraVisual(uint32 spellid, uint32 count, bool positive, uint32 &skip_client_update);
 	void SetAuraSlotLevel(uint32 slot, bool positive);
 
 	void RemoveAuraVisual(uint32 spellid, uint32 count);

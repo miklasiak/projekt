@@ -24,6 +24,8 @@
 #define GOSSIP_EXARCH_NASUUN_2    "What do you know about the magical gates at the Sunwell Plateau being brought down?"
 #define GOSSIP_EXARCH_NASUUN_3    "I have something else to ask you about."
 
+//#define USE_THE_STATUS	// Decoment this is for the status
+
 class ExarchNasuun_Gossip : public GossipScript
 {
 public:
@@ -31,9 +33,13 @@ public:
     {
         GossipMenu *Menu;
         objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 12227, plr);
-        Menu->AddItem( 0, GOSSIP_EXARCH_NASUUN_1, 1);  // this is the status
-		Menu->AddItem( 0, GOSSIP_EXARCH_NASUUN_2, 2);
-        
+		
+		#ifdef USE_THE_STATUS
+			Menu->AddItem( 0, GOSSIP_EXARCH_NASUUN_1, 1);  // this is the status
+			Menu->AddItem( 0, GOSSIP_EXARCH_NASUUN_2, 2);
+		#else
+			Menu->AddItem( 0, GOSSIP_EXARCH_NASUUN_2, 3);
+        #endif
         if(AutoSend)
             Menu->SendTo(plr);
     }
@@ -52,13 +58,19 @@ public:
 
         case 1:
 			{
-				objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 1, plr); // Text of status [The Alchemy lab is not quite yet ready, $N. Mar'nah says she is (percentual) percent done with its assembly.$Bhowever.$B$BIf you wold like to help her with that, you will find her inside the inn at the Sun's Reach Harbor.]
+				objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 12303, plr); // Text of status [The Alchemy lab is not quite yet ready, $N. Mar'nah says she is (percentual) percent done with its assembly.$Bhowever.$B$BIf you wold like to help her with that, you will find her inside the inn at the Sun's Reach Harbor.]
 				Menu->AddItem( 0, GOSSIP_EXARCH_NASUUN_3, 0);
 				Menu->SendTo(plr);
             }break;
 		case 2:
 			{
 				objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 12305, plr);
+				Menu->AddItem( 0, GOSSIP_EXARCH_NASUUN_3, 0);
+				Menu->SendTo(plr);
+            }break;
+		case 3:
+			{
+				objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 12623, plr);
 				Menu->AddItem( 0, GOSSIP_EXARCH_NASUUN_3, 0);
 				Menu->SendTo(plr);
             }break;

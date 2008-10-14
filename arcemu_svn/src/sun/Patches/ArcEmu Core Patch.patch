@@ -1,20 +1,21 @@
-Index: arcemu-world/AIInterface.cpp
+Index: src/arcemu-world/AIInterface.cpp
 ===================================================================
---- arcemu-world/AIInterface.cpp	(revision 1212)
-+++ arcemu-world/AIInterface.cpp	(working copy)
-@@ -242,9 +242,25 @@
+--- src/arcemu-world/AIInterface.cpp	(revision 1324)
++++ src/arcemu-world/AIInterface.cpp	(working copy)
+@@ -242,10 +242,26 @@
+ 							 m_Unit->GetMapMgr()->AddCombatInProgress(m_Unit->GetGUID());
  						}
  					}
- 				}
-+				
-+				HandleChainAggro(pUnit);
++ 				}
 +
++				HandleChainAggro(pUnit);
++				
 +				//give 1 threat to this unit if were not on the threat list
 +				if (m_aiTargets.find(pUnit->GetGUID())==m_aiTargets.end())
 +				{
 +					m_aiTargets.insert(TargetMap::value_type(pUnit->GetGUID(), 1));
-+				}
-+
+ 				}
++				
  				//Zack : Put mob into combat animation. Take out weapons and start to look serious :P
  				m_Unit->smsg_AttackStart( pUnit );
  			}break;
@@ -23,20 +24,22 @@ Index: arcemu-world/AIInterface.cpp
 +				if (m_aiTargets.find(pUnit->GetGUID())==m_aiTargets.end())
 +				{
 +					m_aiTargets.insert(TargetMap::value_type(pUnit->GetGUID(), 1));
-+				} 
++				}
 +			}break;
  		case EVENT_LEAVECOMBAT:
  			{
  				if( pUnit == NULL ) return;
-@@ -386,6 +402,7 @@
+@@ -386,7 +402,8 @@
+ 
  				if( static_cast< Creature* >( m_Unit )->has_combat_text )
  					objmgr.HandleMonsterSayEvent( static_cast< Creature* >( m_Unit ), MONSTER_SAY_EVENT_ON_DAMAGE_TAKEN );
- 
+-
++				
 +				HandleChainAggro(pUnit);
  				CALL_SCRIPT_EVENT(m_Unit, OnDamageTaken)(pUnit, float(misc1));
  				if(!modThreatByPtr(pUnit, misc1))
  				{
-@@ -1932,7 +1949,7 @@
+@@ -1933,7 +1950,7 @@
  			continue;
  		}
  
@@ -45,7 +48,7 @@ Index: arcemu-world/AIInterface.cpp
  		{
  			if( m_Unit->GetDistanceSq(pUnit) < dist)
  			{
-@@ -4331,3 +4348,23 @@
+@@ -4340,3 +4357,23 @@
  #endif
  	}
  }
@@ -70,11 +73,11 @@ Index: arcemu-world/AIInterface.cpp
 +	}
 +}
 \ No newline at end of file
-Index: arcemu-world/AIInterface.h
+Index: src/arcemu-world/AIInterface.h
 ===================================================================
---- arcemu-world/AIInterface.h	(revision 1156)
-+++ arcemu-world/AIInterface.h	(working copy)
-@@ -156,6 +156,7 @@
+--- src/arcemu-world/AIInterface.h	(revision 1324)
++++ src/arcemu-world/AIInterface.h	(working copy)
+@@ -157,6 +157,7 @@
  {
  	EVENT_ENTERCOMBAT,
  	EVENT_LEAVECOMBAT,
@@ -82,7 +85,7 @@ Index: arcemu-world/AIInterface.h
  	EVENT_DAMAGETAKEN,
  	EVENT_FEAR,
  	EVENT_UNFEAR,
-@@ -232,6 +233,8 @@
+@@ -233,6 +234,8 @@
  	AIInterface();
  	virtual ~AIInterface();
  
@@ -91,11 +94,11 @@ Index: arcemu-world/AIInterface.h
  	// Misc
  	void Init(Unit *un, AIType at, MovementType mt);
  	void Init(Unit *un, AIType at, MovementType mt, Unit *owner); // used for pets
-Index: arcemu-world/Object.cpp
+Index: src/arcemu-world/Object.cpp
 ===================================================================
---- arcemu-world/Object.cpp	(revision 1212)
-+++ arcemu-world/Object.cpp	(working copy)
-@@ -2558,7 +2558,9 @@
+--- src/arcemu-world/Object.cpp	(revision 1324)
++++ src/arcemu-world/Object.cpp	(working copy)
+@@ -2557,7 +2557,9 @@
  		}*/	
  
  		pVictim->SetUInt32Value( UNIT_FIELD_HEALTH, health - damage );
@@ -106,7 +109,7 @@ Index: arcemu-world/Object.cpp
  }
  
  void Object::SpellNonMeleeDamageLog(Unit *pVictim, uint32 spellID, uint32 damage, bool allowProc, bool static_damage, bool no_remove_auras)
-@@ -3099,4 +3101,15 @@
+@@ -3098,4 +3100,14 @@
  	return static_cast<uint32>(-1);
  }
  
@@ -121,13 +124,12 @@ Index: arcemu-world/Object.cpp
 +	m_spawnLocation.x=newX;
 +	m_spawnLocation.y=newY;
 +	m_spawnLocation.z=newZ;
-+	m_spawnLocation.o=newOrientation;
 +}
 \ No newline at end of file
-Index: arcemu-world/Object.h
+Index: src/arcemu-world/Object.h
 ===================================================================
---- arcemu-world/Object.h	(revision 1212)
-+++ arcemu-world/Object.h	(working copy)
+--- src/arcemu-world/Object.h	(revision 1324)
++++ src/arcemu-world/Object.h	(working copy)
 @@ -184,6 +184,8 @@
  	bool IsBeingTeleported() { return mSemaphoreTeleport; }
  	void SetSemaphoreTeleport(bool semphsetting) { mSemaphoreTeleport = semphsetting; }
@@ -137,10 +139,10 @@ Index: arcemu-world/Object.h
  	bool SetPosition( float newX, float newY, float newZ, float newOrientation, bool allowPorting = false );
  	bool SetPosition( const LocationVector & v, bool allowPorting = false);
  	void SetRotation( uint64 guid );
-Index: arcemu-world/Unit.cpp
+Index: src/arcemu-world/Unit.cpp
 ===================================================================
---- arcemu-world/Unit.cpp	(revision 1212)
-+++ arcemu-world/Unit.cpp	(working copy)
+--- src/arcemu-world/Unit.cpp	(revision 1324)
++++ src/arcemu-world/Unit.cpp	(working copy)
 @@ -112,6 +112,7 @@
  {
  	int i;
@@ -149,41 +151,50 @@ Index: arcemu-world/Unit.cpp
  	m_attackTimer = 0;
  	m_attackTimer_1 = 0;
  	m_dualWield = false;
-@@ -363,6 +364,9 @@
+@@ -362,6 +363,9 @@
+ {
  	//start to remove badptrs, if you delete from the heap null the ptr's damn!
  	RemoveAllAuras();
- 
++	
 +	if (m_chain)
 +		m_chain->RemoveUnit(this);
-+		
+ 
  	if( SM_CriticalChance != NULL ) {
  		delete [] SM_CriticalChance;
- 		SM_CriticalChance = NULL;
-@@ -7327,6 +7331,20 @@
+@@ -7271,7 +7275,21 @@
+ 
  	return res;
  }
- 
 +void UnitChain::AddUnit(Unit* u)
 +{
 +	m_units.insert(u);
 +	u->m_chain = this;
 +}
-+ 
+ 
 +void UnitChain::RemoveUnit(Unit* u)
 +{
 +	m_units.erase(u);
 +	u->m_chain = NULL;
-+
++	
 +	if (m_units.size() == 0 && !m_persist)
 +		delete this;
 +}
++
  Group *Unit::GetGroup()
  {
  	if( IsPlayer() )
+@@ -7279,4 +7297,4 @@
+ 	else if( IsCreature() )
+		return static_cast<Creature *>(this)->GetGroup();
+ 	return NULL;
+-}
++}
+\ No newline at end of file
+Index: src/arcemu-world/Unit.h
 ===================================================================
---- arcemu-world/Unit.h	(revision 1156)
-+++ arcemu-world/Unit.h	(working copy)
-@@ -675,6 +675,18 @@
+--- src/arcemu-world/Unit.h	(revision 1324)
++++ src/arcemu-world/Unit.h	(working copy)
+@@ -688,6 +688,18 @@
  	void ClearMyHealers();
  };
  
@@ -202,7 +213,7 @@ Index: arcemu-world/Unit.cpp
  //====================================================================
  //  Unit
  //  Base object for Players and Creatures
-@@ -693,6 +705,8 @@
+@@ -706,6 +718,8 @@
  	// a lua script cannot create a unit.
  	Unit(lua_State * L) { ASSERT(false); }*/
  

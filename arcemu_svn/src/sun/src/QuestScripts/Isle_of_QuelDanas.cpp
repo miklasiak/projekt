@@ -331,13 +331,83 @@ public:
 	}
 };
 
+// The Battle for the Sun's Reach Armory
+class TheBattleForTheSunReachArmory : public CreatureAIScript
+{
+public:
+	ADD_CREATURE_FACTORY_FUNCTION(TheBattleForTheSunReachArmory);
+    TheBattleForTheSunReachArmory(Creature* pCreature) : CreatureAIScript(pCreature)  {}
+
+	void OnDied(Unit * mKiller)
+	{
+		if (mKiller->IsPlayer())
+		{
+			QuestLogEntry *qle = ((Player*)mKiller)->GetQuestLogForEntry(11537);
+			if( qle == NULL )
+			{
+				qle = ((Player*)mKiller)->GetQuestLogForEntry(11538);
+				if( qle == NULL )
+					return;
+			}
+
+			if( qle->GetMobCount( 1 ) < qle->GetQuest()->required_mobcount[ 1 ] )
+			{
+				uint32 newcount = qle->GetMobCount( 1 ) + 1;
+				qle->SetMobCount( 1, newcount );
+				qle->SendUpdateAddKill( 1 );
+				qle->UpdatePlayerFields();
+				return;
+			}
+		}
+	}
+};
+
+bool ImpaleEmissary(uint32 i, Spell* pSpell)
+{
+	if(pSpell->u_caster->IsPlayer() == false)
+	return true;
+
+	Player *pPlayer = static_cast<Player*>(pSpell->u_caster);
+	if( pPlayer == NULL )
+		return true;
+
+	QuestLogEntry *pQuest = pPlayer->GetQuestLogForEntry(11537);
+	if( pQuest == NULL )
+	{
+		pQuest = pPlayer->GetQuestLogForEntry(11538);
+		if( pQuest == NULL )
+			return true;
+	}
+	
+	Creature *mEmissary = pPlayer->GetMapMgr()->GetInterface()->GetCreatureNearestCoords(pPlayer->GetPositionX(), pPlayer->GetPositionY(), pPlayer->GetPositionZ(), 25003);
+	if( mEmissary == NULL )
+		return true;
+		
+	if( pQuest->GetMobCount( 0 ) < pQuest->GetQuest()->required_mobcount[ 0 ] )
+	{
+		uint32 newcount = pQuest->GetMobCount( 0 ) + 1;
+		pQuest->SetMobCount( 0, newcount );
+		pQuest->SendUpdateAddKill( 0 );
+		pQuest->UpdatePlayerFields();
+		mEmissary->Despawn(0, 3*60*1000);
+	}
+	return true;
+}
+
 void SetupIsleOfQuelDanas(ScriptMgr * mgr)
 {
-	mgr->register_dummy_spell(45109, &OrbOfMurlocControl);
 	mgr->register_gameobject_script(187578, &ScryingOrb::Create);
+
+	mgr->register_dummy_spell(45109, &OrbOfMurlocControl);
 	mgr->register_dummy_spell(44997, &ConvertingSentry);
 	mgr->register_dummy_spell(45115, &ShipBombing);
 	
+	mgr->register_creature_script(24999, &TheBattleForTheSunReachArmory::Create);
+	mgr->register_creature_script(25001, &TheBattleForTheSunReachArmory::Create);
+	mgr->register_creature_script(25002, &TheBattleForTheSunReachArmory::Create);
+
+	mgr->register_dummy_spell(45030, &ImpaleEmissary);
+
 	//GOSSIP
 	GossipScript * AyrenCloudbreakerGossip = (GossipScript*) new AyrenCloudbreaker_Gossip;
 	mgr->register_gossip_script(25059, AyrenCloudbreakerGossip);

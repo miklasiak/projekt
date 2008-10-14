@@ -20,7 +20,7 @@
 
 #include "StdAfx.h"
 
-#define BANNER "ArcEmu %s r%u/%s-%s-%s :: World Server powered by Evolution Cores"
+#define BANNER "ArcEmu %s r%u/%s-%s-%s :: World Server"
 
 #ifndef WIN32
 #include <sched.h>
