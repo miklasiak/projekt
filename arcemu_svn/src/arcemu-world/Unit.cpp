@@ -363,10 +363,10 @@ Unit::~Unit()
 {
 	//start to remove badptrs, if you delete from the heap null the ptr's damn!
 	RemoveAllAuras();
-
+	
 	if (m_chain)
 		m_chain->RemoveUnit(this);
-	
+
 	if( SM_CriticalChance != NULL ) {
 		delete [] SM_CriticalChance;
 		SM_CriticalChance = NULL;
@@ -3402,7 +3402,11 @@ void Unit::Strike( Unit* pVictim, uint32 weapon_damage_type, SpellEntry* ability
 				if(spell_flat_modifers!=0 || spell_pct_modifers!=0)
 					printf("!!!!!spell dmg bonus mod flat %d , spell dmg bonus pct %d , spell dmg bonus %d, spell group %u\n",spell_flat_modifers,spell_pct_modifers,dmg.full_damage,ability->SpellGroupType);
 #endif
+			} else {
+				SM_FIValue(((Unit*)this)->SM_FMiscEffect,&dmg.full_damage,(uint64)1<<63);
+				SM_PIValue(((Unit*)this)->SM_PMiscEffect,&dmg.full_damage,(uint64)1<<63);
 			}
+
 			dmg.full_damage += pVictim->DamageTakenMod[dmg.school_type];
 			if( weapon_damage_type == RANGED )
 			{
@@ -4379,7 +4383,7 @@ bool Unit::RemoveAura(uint32 spellId)
 		{
 			m_auras[x]->Remove();
 //			sLog.outDebug("removing aura %u from slot %u",spellId,x);
-			return true;
+			return true; // cebernic: who did this? Removeaura just once?....
 		}
 	return false;
 }
@@ -4395,9 +4399,9 @@ bool Unit::RemoveAuras(uint32 * SpellIds)
 	{
 		if(m_auras[x])
 		{
-			for(y=0;SpellIds[y] != 0;++y)
+			for(y=0;SpellIds[y] != 0;y++)
 			{
-				if(m_auras[x]->GetSpellId()==SpellIds[y])
+				if( m_auras[x] && m_auras[x]->GetSpellId()==SpellIds[y] )
 				{
 					m_auras[x]->Remove();
 					res = true;
@@ -4583,7 +4587,7 @@ bool Unit::SetAurDuration(uint32 spellId,Unit* caster,uint32 duration)
 	{
 		WorldPacket data(5);
 		data.SetOpcode(SMSG_UPDATE_AURA_DURATION);
-		data << (uint8)(aur)->GetAuraSlot() << duration;
+		data << (uint8)(aur)->m_visualSlot << duration; // cebernic: GetAuraSlot replaced due to Zack's patch...*sigh*..
 		static_cast< Player* >( this )->GetSession()->SendPacket( &data );
 	}
 
@@ -4609,7 +4613,7 @@ bool Unit::SetAurDuration(uint32 spellId,uint32 duration)
 	{
 		WorldPacket data(5);
 		data.SetOpcode(SMSG_UPDATE_AURA_DURATION);
-		data << (uint8)(aur)->GetAuraSlot() << duration;
+		data << (uint8)(aur)->m_visualSlot << duration;
 		static_cast< Player* >( this )->GetSession()->SendPacket( &data );
 	}
 	WorldPacket data(SMSG_SET_AURA_SINGLE,21);
@@ -5318,7 +5322,7 @@ bool Unit::HasAura(uint32 spellid)
 
 void Unit::DropAurasOnDeath()
 {
-	for(uint32 x=MAX_TOTAL_AURAS_START;x<MAX_TOTAL_AURAS_END;x++)
+	for(uint32 x=MAX_REMOVABLE_AURAS_START;x<MAX_REMOVABLE_AURAS_END;x++)
         if(m_auras[x])
         {
             if(m_auras[x] && m_auras[x]->GetSpellProto()->AttributesExC & CAN_PERSIST_AND_CASTED_WHILE_DEAD)
@@ -5375,7 +5379,7 @@ void Unit::UpdateSpeed()
 
 bool Unit::HasActiveAura(uint32 spellid)
 {
-	for(uint32 x=MAX_REMOVABLE_AURAS_START;x<MAX_REMOVABLE_AURAS_END;x++)
+	for(uint32 x=MAX_TOTAL_AURAS_START;x<MAX_TOTAL_AURAS_END;x++)
 		if(m_auras[x] && m_auras[x]->GetSpellId()==spellid)
 			return true;
 
@@ -5384,7 +5388,7 @@ bool Unit::HasActiveAura(uint32 spellid)
 
 bool Unit::HasActiveAura(uint32 spellid,uint64 guid)
 {
-	for(uint32 x=MAX_REMOVABLE_AURAS_START;x<MAX_REMOVABLE_AURAS_END;x++)
+	for(uint32 x=MAX_TOTAL_AURAS_START;x<MAX_TOTAL_AURAS_END;x++)
 		if(m_auras[x] && m_auras[x]->GetSpellId()==spellid && m_auras[x]->m_casterGuid==guid)
 			return true;
 

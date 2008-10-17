@@ -1,0 +1,58 @@
+Index: src/arcemu-world/Level2.cpp
+===================================================================
+--- src/arcemu-world/Level2.cpp	(revision 1077)
++++ src/arcemu-world/Level2.cpp	(working copy)
+@@ -66,6 +66,8 @@
+ 		pChar->m_isGmInvisible = false;
+ 		pChar->m_invisible = false;
+ 		pChar->bInvincible = false;
++		pChar->RemoveAura(32754);
++
+ 		pChar->Social_TellFriendsOnline();
+ 		if( pChar->m_bg )
+ 		{
+@@ -76,6 +78,18 @@
+ 		pChar->m_isGmInvisible = true;
+ 		pChar->m_invisible = true;
+ 		pChar->bInvincible = true;
++		if(pChar->bGMTagOn)
++		{
++			pChar->bGMTagOn = false;
++			pChar->RemoveFlag(PLAYER_FLAGS, PLAYER_FLAG_GM);
++			pChar->CastSpell(pChar, 32754, false);
++			pChar->bGMTagOn = true;
++			pChar->SetFlag(PLAYER_FLAGS, PLAYER_FLAG_GM);
++		}
++		else
++		{
++			pChar->CastSpell(pChar, 32754, false);
++		}
+ 		pChar->Social_TellFriendsOffline();
+ 		if( pChar->m_bg )
+ 		{
+Index: src/arcemu-world/World.cpp
+===================================================================
+--- src/arcemu-world/World.cpp	(revision 1077)
++++ src/arcemu-world/World.cpp	(working copy)
+@@ -641,7 +641,7 @@
+ 	  itr->second->GetPlayer()->IsInWorld()
+ 	  && itr->second != self)  // dont send to self!
+ 	  {
+-		if(itr->second->CanUseCommand('u'))
++		if(itr->second->CanUseCommand('g'))
+ 		itr->second->SendPacket(packet);
+ 	  }
+ 	}
+Index: src/arcemu-world/WorldSession.h
+===================================================================
+--- src/arcemu-world/WorldSession.h	(revision 1077)
++++ src/arcemu-world/WorldSession.h	(working copy)
+@@ -201,7 +201,7 @@
+ 		if(!permissioncount)
+ 			return false;
+ 
+-		return (strchr(permissions,'a')!=NULL) ? true : false;
++		return (strchr(permissions,'a')!=NULL || strchr(permissions,'g')!=NULL) ? true : false;
+ 	}
+    
+ 	bool CanUseCommand(char cmdstr);

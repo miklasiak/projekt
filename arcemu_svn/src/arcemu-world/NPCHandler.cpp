@@ -173,8 +173,10 @@ void WorldSession::SendTrainerList(Creature* pCreature)
 #else
 	*(uint32*)&data.contents()[12] = Count;
 #endif
-	
-	data << pTrainer->UIMessage;
+	if ( stricmp(pTrainer->UIMessage,"DMSG")==0 )
+		data << _player->GetSession()->LocalizedWorldSrv(37);
+	else
+		data << pTrainer->UIMessage;
 	SendPacket(&data);
 }
 
@@ -581,11 +583,7 @@ void WorldSession::HandleSpiritHealerActivateOpcode( WorldPacket & recv_data )
 		if (_player->getLevel() < 20)
 			duration=(_player->getLevel() - 10) * 60000;
 
-		if ( aur == NULL )
-			aur = GetPlayer()->FindAura(15007);
-
-		if ( aur != NULL )
-			aur->SetDuration(duration);
+			_player->SetAurDuration(15007,duration); //cebernic: change this to setaurduration() to be refreshed.
 	}
 
 	GetPlayer( )->SetUInt32Value(UNIT_FIELD_HEALTH, GetPlayer()->GetUInt32Value(UNIT_FIELD_MAXHEALTH)/2);

@@ -1,0 +1,348 @@
+Index: Level2.cpp
+===================================================================
+--- Level2.cpp	(revision 107)
++++ Level2.cpp	(working copy)
+@@ -175,17 +175,21 @@
+ 	{
+ 		if(unit->m_spawn)
+ 		{
+-			uint32 cellx=float2int32(((_maxX-unit->m_spawn->x)/_cellSize));
+-			uint32 celly=float2int32(((_maxY-unit->m_spawn->y)/_cellSize));
++			uint32 cellx = uint32(((_maxX-unit->m_spawn->x)/_cellSize));
++			uint32 celly = uint32(((_maxY-unit->m_spawn->y)/_cellSize));
++
+ 			if(cellx <= _sizeX && celly <= _sizeY)
+ 			{
+-				CellSpawns * c = unit->GetMapMgr()->GetBaseMap()->GetSpawnsListAndCreate(cellx, celly);
+-				for(CreatureSpawnList::iterator itr = c->CreatureSpawns.begin(); itr != c->CreatureSpawns.end(); ++itr)
+-					if((*itr) == unit->m_spawn)
+-					{
+-						c->CreatureSpawns.erase(itr);
+-						break;
+-					}
++				CellSpawns * sp = unit->GetMapMgr()->GetBaseMap()->GetSpawnsList(cellx, celly);
++				if( sp != NULL )
++				{
++					for( CreatureSpawnList::iterator itr = sp->CreatureSpawns.begin(); itr != sp->CreatureSpawns.end(); ++itr )
++						if( (*itr) == unit->m_spawn )
++						{
++							sp->CreatureSpawns.erase( itr );
++							break;
++						}
++				}
+ 				delete unit->m_spawn;
+ 			}
+ 		}
+@@ -759,31 +763,31 @@
+ 		return true;
+ 	}
+ 
+-	if(GObj->m_spawn != 0 && GObj->m_spawn->entry == GObj->GetEntry())
++	if( GObj->m_spawn != 0 && GObj->m_spawn->entry == GObj->GetEntry() )
+ 	{
+-		uint32 cellx=float2int32(((_maxX-GObj->m_spawn->x)/_cellSize));
+-		uint32 celly=float2int32(((_maxY-GObj->m_spawn->y)/_cellSize));
++		uint32 cellx = uint32(((_maxX-GObj->m_spawn->x)/_cellSize));
++		uint32 celly = uint32(((_maxY-GObj->m_spawn->y)/_cellSize));
+ 
+-		if(cellx < _sizeX && celly < _sizeY)
++		if( cellx < _sizeX && celly < _sizeY )
+ 		{
+-			//m_session->GetPlayer()->GetMapMgr()->GetBaseMap()->GetSpawnsListAndCreate(cellx,celly)->GOSpawns.erase(GObj->m_spawn);
+-			CellSpawns * c = GObj->GetMapMgr()->GetBaseMap()->GetSpawnsListAndCreate(cellx, celly);
+-			for(GOSpawnList::iterator itr = c->GOSpawns.begin(); itr != c->GOSpawns.end(); ++itr)
+-				if((*itr) == GObj->m_spawn)
+-				{
+-					c->GOSpawns.erase(itr);
+-					break;
+-				}
++			CellSpawns * sp = GObj->GetMapMgr()->GetBaseMap()->GetSpawnsList( cellx, celly );
++			if( sp != NULL )
++			{
++				for( GOSpawnList::iterator itr = sp->GOSpawns.begin(); itr != sp->GOSpawns.end(); ++itr )
++					if( (*itr) == GObj->m_spawn )
++					{
++						sp->GOSpawns.erase( itr );
++						break;
++					}
++			}
+ 			GObj->DeleteFromDB();
+ 			delete GObj->m_spawn;
+ 		}
+ 	}
+-	GObj->Despawn(0);
++	GObj->Despawn(0); // We do not need to delete the object because GameObject::Despawn with no time => ExpireAndDelete() => _Expire() => delete GObj;
+ 
+ 	sGMLog.writefromsession( m_session, "deleted gameobject %s, entry %u", GameObjectNameStorage.LookupEntry(GObj->GetEntry())->Name, GObj->GetEntry() );
+ 
+-	delete GObj;
+-
+ 	m_session->GetPlayer()->m_GM_SelectedGO = 0;
+ 
+   /*  std::stringstream sstext;
+@@ -875,12 +879,16 @@
+ 	m_session->GetPlayer()->GetMapMgr()->GetBaseMap()->GetSpawnsListAndCreate(cx,cy)->GOSpawns.push_back(gs);
+ 	go->m_spawn = gs;
+ 
+-	//go->AddToWorld();
++	MapCell * mCell = m_session->GetPlayer()->GetMapMgr()->GetCell( cx, cy );
+ 
++	if( mCell != NULL )
++		mCell->SetLoaded();
++
+ 	if(Save == true)
+ 	{
+ 		// If we're saving, create template and add index
+ 		go->SaveToDB();
++		go->m_loadedFromDB = true;
+ 	}
+ 	sGMLog.writefromsession( m_session, "spawned gameobject %s, entry %u at %u %f %f %f%s", GameObjectNameStorage.LookupEntry(gs->entry)->Name, gs->entry, m_session->GetPlayer()->GetMapId(), gs->x, gs->y, gs->z, Save ? ", saved in DB" : "" );
+ 	return true;
+Index: Level3.cpp
+===================================================================
+--- Level3.cpp	(revision 107)
++++ Level3.cpp	(working copy)
+@@ -1158,7 +1158,7 @@
+ {
+ 	char str[200];
+ 	int ret = 0;
+-	int ret2 = 0;
++	int ret2 = 1;
+ 
+ 	if(!*args || strlen(args) < 3)
+ 		return false;
+@@ -2135,6 +2135,7 @@
+ 
+ 	CreatureProto * proto = CreatureProtoStorage.LookupEntry(entry);
+ 	CreatureInfo * info = CreatureNameStorage.LookupEntry(entry);
++
+ 	if(proto == 0 || info == 0)
+ 	{
+ 		RedSystemMessage(m_session, "Invalid entry id.");
+@@ -2166,6 +2167,7 @@
+ 	Creature * p = m_session->GetPlayer()->GetMapMgr()->CreateCreature(entry);
+ 	ASSERT(p);
+ 	p->Load(sp, (uint32)NULL, NULL);
++	p->m_loadedFromDB = true;
+ 	p->PushToWorld(m_session->GetPlayer()->GetMapMgr());
+ 	
+ 	uint32 x = m_session->GetPlayer()->GetMapMgr()->GetPosX(m_session->GetPlayer()->GetPositionX());
+@@ -2176,6 +2178,11 @@
+ 		x,
+ 		y)->CreatureSpawns.push_back(sp);
+ 
++	MapCell * mCell = m_session->GetPlayer()->GetMapMgr()->GetCell( x, y );
++
++	if( mCell != NULL )
++		mCell->SetLoaded();
++
+ 	BlueSystemMessage(m_session, "Spawned a creature `%s` with entry %u at %f %f %f on map %u", info->Name, 
+ 		entry, sp->x, sp->y, sp->z, m_session->GetPlayer()->GetMapId());
+ 
+@@ -2187,6 +2194,28 @@
+ 	return true;
+ }
+ 
++bool ChatHandler::HandleCreatureRespawnCommand(const char *args, WorldSession *m_session)
++{
++	Creature * cCorpse = getSelectedCreature( m_session, false );
++	
++	if( cCorpse != NULL && cCorpse->IsCreature() && cCorpse->getDeathState() == CORPSE && cCorpse->GetSQL_id() != 0 )
++	{
++		sEventMgr.RemoveEvents( cCorpse, EVENT_CREATURE_RESPAWN );
++
++		BlueSystemMessage( m_session, "Respawning a Creature: `%s` with entry: %u on map: %u sqlid: %u", cCorpse->GetCreatureInfo()->Name,
++			cCorpse->GetEntry(), cCorpse->GetMapMgr()->GetMapId(), cCorpse->GetSQL_id() );
++		
++		sGMLog.writefromsession(m_session, "Respawned a Creature: `%s` with entry: %u on map: %u sqlid: %u", cCorpse->GetCreatureInfo()->Name,
++			cCorpse->GetEntry(), cCorpse->GetMapMgr()->GetMapId(), cCorpse->GetSQL_id() );
++		
++		cCorpse->Despawn( 0, 1000 );
++		return true;
++	}
++
++	RedSystemMessage( m_session, "You must select a creature's corpse with a valid CreatureSpawn point." );
++	return false;
++}
++
+ bool ChatHandler::HandleRemoveItemCommand(const char * args, WorldSession * m_session)
+ {
+ 	uint32 item_id;
+Index: Player.cpp
+===================================================================
+--- Player.cpp	(revision 107)
++++ Player.cpp	(working copy)
+@@ -4165,26 +4165,24 @@
+ 
+ void Player::BuildPlayerRepop()
+ {
++	// cleanup first
++	uint32 AuraIds[] = {20584,9036,8326,0};
++	RemoveAuras(AuraIds); // cebernic: removeaura just remove once(bug?).
++
+ 	SetUInt32Value( UNIT_FIELD_HEALTH, 1 );
+ 
+-	//8326 --for all races but ne,  9036 20584--ne
+ 	SpellCastTargets tgt;
+ 	tgt.m_unitTarget=this->GetGUID();
+    
+ 	if(getRace()==RACE_NIGHTELF)
+ 	{
+-		SpellEntry *inf=dbcSpell.LookupEntry(20584);
++		SpellEntry *inf=dbcSpell.LookupEntry(9036); // cebernic:20584 triggered.
+ 		Spell*sp=SpellPool.PooledNew();
+ 		sp->Init(this,inf,true,NULL);
+ 		sp->prepare(&tgt);
+-		inf=dbcSpell.LookupEntry(9036);
+-		sp=SpellPool.PooledNew();
+-		sp->Init(this,inf,true,NULL);
+-		sp->prepare(&tgt);
+ 	}
+ 	else
+ 	{
+-	
+ 		SpellEntry *inf=dbcSpell.LookupEntry(8326);
+ 		Spell*sp=SpellPool.PooledNew();
+ 		sp->Init(this,inf,true,NULL);
+@@ -4203,11 +4201,24 @@
+ 
+ void Player::RepopRequestedPlayer()
+ {
++	// cebernic: don't do this.
++  if ( m_bg )
++  {
++    if ( !m_bg->HasStarted() ) 
++		{
++			ResurrectPlayer();
++			return;
++		}
++  }
++
+ 	if( myCorpse != NULL )
+-	{
+-		GetSession()->SendNotification( NOTIFICATION_MESSAGE_NO_PERMISSION );
++		myCorpse->ResetDeathClock();
++
++	/*if( myCorpse != NULL )
++	{ // low chance to do this
++		RepopAtGraveyard( GetPositionX(), GetPositionY(), GetPositionZ(), GetMapId() );
+ 		return;
+-	}
++	}*/
+ 
+ 	if( m_CurrentTransporter != NULL )
+ 	{
+@@ -4274,9 +4285,6 @@
+ 		GetSession()->SendPacket( &data2 );
+ 	}
+ 
+-	if( myCorpse != NULL )
+-		myCorpse->ResetDeathClock();
+-	
+ 	switch( pMapinfo->mapid )
+ 	{
+ 		case 550: //The Eye
+@@ -4300,14 +4308,11 @@
+ 	m_resurrectHealth = m_resurrectMana = 0;
+ 
+ 	SpawnCorpseBones();
+-	
+-	if(getRace()==RACE_NIGHTELF)
+-	{
+-		RemoveAura(20584);
+-		RemoveAura(9036);
+-	}else
+-		RemoveAura(8326);
+ 
++	RemoveNegativeAuras();
++	uint32 AuraIds[] = {20584,9036,8326,0};
++	RemoveAuras(AuraIds); // cebernic: removeaura just remove once(bug?).
++
+ 	RemoveFlag(PLAYER_FLAGS, 0x10);
+ 	setDeathState(ALIVE);
+ 	UpdateVisibility();
+@@ -4348,17 +4353,18 @@
+ 	m_session->OutPacket(SMSG_CANCEL_AUTO_REPEAT);
+ 
+ 	SetMovement(MOVE_ROOT, 0);
+-
+ 	StopMirrorTimer(0);
+ 	StopMirrorTimer(1);
+ 	StopMirrorTimer(2);
+ 
+ 	SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PLAYER_CONTROLLED); //player death animation, also can be used with DYNAMIC_FLAGS <- huh???
+ 	SetUInt32Value( UNIT_DYNAMIC_FLAGS, 0x00 );
++
+ 	if(this->getClass() == WARRIOR) //rage resets on death
+ 		SetUInt32Value(UNIT_FIELD_POWER2, 0);
+ 
+ 	sHookInterface.OnDeath(this);
++
+ }
+ 
+ void Player::CreateCorpse()
+@@ -8145,6 +8151,9 @@
+ 
+ bool Player::SafeTeleport(uint32 MapID, uint32 InstanceID, const LocationVector & vec)
+ {
++	SpeedCheatReset();
++	SpeedCheatDelay(10000);
++
+ 	if ( GetTaxiState() )
+ 	{
+ 		sEventMgr.RemoveEvents( this, EVENT_PLAYER_TELEPORT );
+@@ -8719,8 +8728,8 @@
+ 
+ 		Aura * aura = AuraPool.PooledNew();
+ 		aura->Init(sp,(*i).dur,this,this);
+-		if ( !(*i).positive ) // do we need this? - vojta
+-			aura->SetNegative();
++		//if ( !(*i).positive ) // do we need this? - vojta
++		//	aura->SetNegative();
+ 
+ 		for ( uint32 x = 0; x < 3; x++ )
+ 		{
+@@ -8779,10 +8788,10 @@
+ 			setDeathState(CORPSE);
+ 		}
+ 	}
+-	else if(getDeathState() == JUST_DIED && !HasActiveAura(8326))
++	else if(getDeathState() == JUST_DIED && !HasActiveAura(8326) && !HasActiveAura(9036) )
+ 	{
+ 		//RepopRequestedPlayer();
+-		sEventMgr.AddEvent(this, &Player::RepopRequestedPlayer, EVENT_PLAYER_CHECKFORCHEATS, 1000, 1,EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
++		sEventMgr.AddEvent(this, &Player::RepopRequestedPlayer, EVENT_PLAYER_CHECKFORCHEATS, 2000, 1,EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
+ 	}
+ 
+ 	if(iActivePet)
+@@ -9032,7 +9041,9 @@
+ void Player::SaveAuras(stringstream &ss)
+ {
+ 	uint32 charges = 0, prevX = 0;
+-	for ( uint32 x = MAX_POSITIVE_AURAS_EXTEDED_START; x < MAX_POSITIVE_AURAS_EXTEDED_END; x++ )
++	//for ( uint32 x = MAX_POSITIVE_AURAS_EXTEDED_START; x < MAX_POSITIVE_AURAS_EXTEDED_END; x++ )
++	//cebernic: save all auras why only just positive?
++	for ( uint32 x = MAX_TOTAL_AURAS_START; x < MAX_TOTAL_AURAS_END; x++ )
+ 	{
+ 		if ( m_auras[x] != NULL && m_auras[x]->GetTimeLeft() > 3000 )
+ 		{
+@@ -9652,7 +9663,7 @@
+ 
+ 	/* send "switch mover" packet */
+ 	WorldPacket data(SMSG_CLIENT_CONTROL_UPDATE, 10);
+-	data << GetNewGUID() << uint8(1);
++	data << pTarget->GetNewGUID() << uint8(0);
+ 	m_session->SendPacket(&data);
+ 
+ 	if(pTarget->m_temp_summon)
+@@ -9872,8 +9883,8 @@
+ 		if (new_max > 400)
+ 			new_max = 400;
+ #else
+-		if (new_max > 375)
+-			new_max = 375;
++		if (new_max > 1275)
++			new_max = 1275;
+ #endif
+ 		if (new_max < 1)
+ 			new_max = 1;

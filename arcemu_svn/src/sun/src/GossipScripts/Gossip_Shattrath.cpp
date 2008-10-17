@@ -108,8 +108,11 @@ public:
 		case 1:
 			if(plr->GetStanding(989) >=21000)
 			{
-				plr->SafeTeleport( 1, 0, -8170.441406f, -4751.321777f, 33.457771f, 5.136f);
+				//plr->SafeTeleport( 1, 0, -8170.441406f, -4751.321777f, 33.457771f, 5.136f);
+				plr->Gossip_Complete();
+				Zephyr->CastSpell(plr, dbcSpell.LookupEntry(37778), true);
 			}else{
+				plr->Gossip_Complete();
 				plr->BroadcastMessage("You need to be Revered with the faction Keepers of Time!"); // Dunno what the correct text is ^^
 			}
 			break;

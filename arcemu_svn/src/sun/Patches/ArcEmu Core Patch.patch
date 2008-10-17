@@ -1,7 +1,7 @@
-Index: src/arcemu-world/AIInterface.cpp
+Index: AIInterface.cpp
 ===================================================================
---- src/arcemu-world/AIInterface.cpp	(revision 1324)
-+++ src/arcemu-world/AIInterface.cpp	(working copy)
+--- AIInterface.cpp	(revision 1330)
++++ AIInterface.cpp	(working copy)
 @@ -242,10 +242,26 @@
  							 m_Unit->GetMapMgr()->AddCombatInProgress(m_Unit->GetGUID());
  						}
@@ -72,11 +72,10 @@ Index: src/arcemu-world/AIInterface.cpp
 +		}
 +	}
 +}
-\ No newline at end of file
-Index: src/arcemu-world/AIInterface.h
+Index: AIInterface.h
 ===================================================================
---- src/arcemu-world/AIInterface.h	(revision 1324)
-+++ src/arcemu-world/AIInterface.h	(working copy)
+--- AIInterface.h	(revision 1330)
++++ AIInterface.h	(working copy)
 @@ -157,6 +157,7 @@
  {
  	EVENT_ENTERCOMBAT,
@@ -94,10 +93,10 @@ Index: src/arcemu-world/AIInterface.h
  	// Misc
  	void Init(Unit *un, AIType at, MovementType mt);
  	void Init(Unit *un, AIType at, MovementType mt, Unit *owner); // used for pets
-Index: src/arcemu-world/Object.cpp
+Index: Object.cpp
 ===================================================================
---- src/arcemu-world/Object.cpp	(revision 1324)
-+++ src/arcemu-world/Object.cpp	(working copy)
+--- Object.cpp	(revision 1330)
++++ Object.cpp	(working copy)
 @@ -2557,7 +2557,9 @@
  		}*/	
  
@@ -125,11 +124,10 @@ Index: src/arcemu-world/Object.cpp
 +	m_spawnLocation.y=newY;
 +	m_spawnLocation.z=newZ;
 +}
-\ No newline at end of file
-Index: src/arcemu-world/Object.h
+Index: Object.h
 ===================================================================
---- src/arcemu-world/Object.h	(revision 1324)
-+++ src/arcemu-world/Object.h	(working copy)
+--- Object.h	(revision 1330)
++++ Object.h	(working copy)
 @@ -184,6 +184,8 @@
  	bool IsBeingTeleported() { return mSemaphoreTeleport; }
  	void SetSemaphoreTeleport(bool semphsetting) { mSemaphoreTeleport = semphsetting; }
@@ -139,10 +137,10 @@ Index: src/arcemu-world/Object.h
  	bool SetPosition( float newX, float newY, float newZ, float newOrientation, bool allowPorting = false );
  	bool SetPosition( const LocationVector & v, bool allowPorting = false);
  	void SetRotation( uint64 guid );
-Index: src/arcemu-world/Unit.cpp
+Index: Unit.cpp
 ===================================================================
---- src/arcemu-world/Unit.cpp	(revision 1324)
-+++ src/arcemu-world/Unit.cpp	(working copy)
+--- Unit.cpp	(revision 1330)
++++ Unit.cpp	(working copy)
 @@ -112,6 +112,7 @@
  {
  	int i;
@@ -161,16 +159,16 @@ Index: src/arcemu-world/Unit.cpp
  
  	if( SM_CriticalChance != NULL ) {
  		delete [] SM_CriticalChance;
-@@ -7271,7 +7275,21 @@
- 
+@@ -7276,6 +7280,21 @@
  	return res;
  }
+ 
 +void UnitChain::AddUnit(Unit* u)
 +{
 +	m_units.insert(u);
 +	u->m_chain = this;
 +}
- 
++ 
 +void UnitChain::RemoveUnit(Unit* u)
 +{
 +	m_units.erase(u);
@@ -183,17 +181,10 @@ Index: src/arcemu-world/Unit.cpp
  Group *Unit::GetGroup()
  {
  	if( IsPlayer() )
-@@ -7279,4 +7297,4 @@
- 	else if( IsCreature() )
-		return static_cast<Creature *>(this)->GetGroup();
- 	return NULL;
--}
-+}
-\ No newline at end of file
-Index: src/arcemu-world/Unit.h
+Index: Unit.h
 ===================================================================
---- src/arcemu-world/Unit.h	(revision 1324)
-+++ src/arcemu-world/Unit.h	(working copy)
+--- Unit.h	(revision 1330)
++++ Unit.h	(working copy)
 @@ -688,6 +688,18 @@
  	void ClearMyHealers();
  };

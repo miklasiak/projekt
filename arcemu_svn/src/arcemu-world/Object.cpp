@@ -2559,7 +2559,7 @@ void Object::DealDamage(Unit *pVictim, uint32 damage, uint32 targetEvent, uint32
 		pVictim->SetUInt32Value( UNIT_FIELD_HEALTH, health - damage );
 		if (IsCreature() && !IsPet())
 			static_cast<Unit*>(this)->GetAIInterface()->HandleEvent(EVENT_DAMAGEDEALT, pVictim, damage);
-	} 
+	}
 }
 
 void Object::SpellNonMeleeDamageLog(Unit *pVictim, uint32 spellID, uint32 damage, bool allowProc, bool static_damage, bool no_remove_auras)
@@ -3003,6 +3003,9 @@ void Object::Activate(MapMgr * mgr)
 
 void Object::Deactivate(MapMgr * mgr)
 {
+	if ( mgr == NULL )
+		return;
+
 	switch(m_objectTypeId)
 	{
 	case TYPEID_UNIT:

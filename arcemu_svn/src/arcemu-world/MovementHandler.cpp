@@ -316,6 +316,24 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 			_player->m_isMoving = true;
 	}
 	
+
+	/************************************************************************/
+	/* Anti-Fly Hack Checks                                                 */
+	/************************************************************************/
+	if( sWorld.antihack_flight && ( recv_data.GetOpcode() == CMSG_MOVE_FLY_START_AND_END || recv_data.GetOpcode() == CMSG_FLY_PITCH_DOWN_AFTER_UP ) && _player->flying_aura == 0 )	
+	{
+		if( sWorld.no_antihack_on_gm && _player->GetSession()->HasGMPermissions() )
+		{
+			// Do nothing.
+		}
+		else
+		{
+			_player->BroadcastMessage( "Flyhack detected. In case the server is wrong then make a report how to reproduce this case. You will be logged out in 5 seconds." );
+			sEventMgr.AddEvent( _player, &Player::_Kick, EVENT_PLAYER_KICK, 5000, 1, 0 );
+		}
+	} 
+
+
 	//update the detector
 	if( sWorld.antihack_speed && !_player->GetTaxiState() && _player->m_TransporterGUID == 0 )
 	{

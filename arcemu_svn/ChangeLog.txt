@@ -1,3 +1,8 @@
+r108
+- updated arcemu rev 1355
+- applied patches + created own patch
+- updated sun rev 362
+-------------------------------------------------------------------------------------
 r107
 - Added folder sonstiges and Packetaufbau
 -------------------------------------------------------------------------------------

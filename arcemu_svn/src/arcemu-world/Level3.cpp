@@ -1158,7 +1158,7 @@ bool ChatHandler::HandleDBReloadCommand(const char* args, WorldSession* m_sessio
 {
 	char str[200];
 	int ret = 0;
-	int ret2 = 0;
+	int ret2 = 1;
 
 	if(!*args || strlen(args) < 3)
 		return false;
@@ -2135,6 +2135,7 @@ bool ChatHandler::HandleCreatureSpawnCommand(const char *args, WorldSession *m_s
 
 	CreatureProto * proto = CreatureProtoStorage.LookupEntry(entry);
 	CreatureInfo * info = CreatureNameStorage.LookupEntry(entry);
+
 	if(proto == 0 || info == 0)
 	{
 		RedSystemMessage(m_session, "Invalid entry id.");
@@ -2166,6 +2167,7 @@ bool ChatHandler::HandleCreatureSpawnCommand(const char *args, WorldSession *m_s
 	Creature * p = m_session->GetPlayer()->GetMapMgr()->CreateCreature(entry);
 	ASSERT(p);
 	p->Load(sp, (uint32)NULL, NULL);
+	p->m_loadedFromDB = true;
 	p->PushToWorld(m_session->GetPlayer()->GetMapMgr());
 	
 	uint32 x = m_session->GetPlayer()->GetMapMgr()->GetPosX(m_session->GetPlayer()->GetPositionX());
@@ -2176,6 +2178,11 @@ bool ChatHandler::HandleCreatureSpawnCommand(const char *args, WorldSession *m_s
 		x,
 		y)->CreatureSpawns.push_back(sp);
 
+	MapCell * mCell = m_session->GetPlayer()->GetMapMgr()->GetCell( x, y );
+
+	if( mCell != NULL )
+		mCell->SetLoaded();
+
 	BlueSystemMessage(m_session, "Spawned a creature `%s` with entry %u at %f %f %f on map %u", info->Name, 
 		entry, sp->x, sp->y, sp->z, m_session->GetPlayer()->GetMapId());
 
@@ -2185,6 +2192,28 @@ bool ChatHandler::HandleCreatureSpawnCommand(const char *args, WorldSession *m_s
 	sGMLog.writefromsession(m_session, "spawned a %s at %u %f %f %f", info->Name, m_session->GetPlayer()->GetMapId(),sp->x,sp->y,sp->z);
 
 	return true;
+}
+
+bool ChatHandler::HandleCreatureRespawnCommand(const char *args, WorldSession *m_session)
+{
+	Creature * cCorpse = getSelectedCreature( m_session, false );
+	
+	if( cCorpse != NULL && cCorpse->IsCreature() && cCorpse->getDeathState() == CORPSE && cCorpse->GetSQL_id() != 0 )
+	{
+		sEventMgr.RemoveEvents( cCorpse, EVENT_CREATURE_RESPAWN );
+
+		BlueSystemMessage( m_session, "Respawning a Creature: `%s` with entry: %u on map: %u sqlid: %u", cCorpse->GetCreatureInfo()->Name,
+			cCorpse->GetEntry(), cCorpse->GetMapMgr()->GetMapId(), cCorpse->GetSQL_id() );
+		
+		sGMLog.writefromsession(m_session, "Respawned a Creature: `%s` with entry: %u on map: %u sqlid: %u", cCorpse->GetCreatureInfo()->Name,
+			cCorpse->GetEntry(), cCorpse->GetMapMgr()->GetMapId(), cCorpse->GetSQL_id() );
+		
+		cCorpse->Despawn( 0, 1000 );
+		return true;
+	}
+
+	RedSystemMessage( m_session, "You must select a creature's corpse with a valid CreatureSpawn point." );
+	return false;
 }
 
 bool ChatHandler::HandleRemoveItemCommand(const char * args, WorldSession * m_session)
