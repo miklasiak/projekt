@@ -20,6 +20,16 @@
 #include "StdAfx.h"
 #include "Setup.h"
 
+// Event of Hallowen control
+#define EVENT_HALLOWEEN		// Decomment this for enable the event on Innkeepers
+
+#ifdef	EVENT_HALLOWEEN
+	#define SPELL_TRICK_OR_TREATED  24755
+	#define SPELL_TREAT             24715
+	#define TRICK_OR_TREAT			"Trick or Treat!"
+#endif
+// -------------------------
+
 class InnkeeperGossip : public GossipScript
 {
 public:
@@ -49,6 +59,11 @@ void InnkeeperGossip::GossipHello(Object * pObject, Player* Plr, bool AutoSend)
 			TextID = Text;
 	}
     objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), TextID, Plr);
+
+	#ifdef	EVENT_HALLOWEEN
+	  if(!Plr->HasAura(SPELL_TRICK_OR_TREATED))
+	     Menu->AddItem( 0, TRICK_OR_TREAT, 4 );
+	#endif
 
     if( pObject->GetUInt32Value(UNIT_NPC_FLAGS) & UNIT_NPC_FLAG_VENDOR )
         Menu->AddItem( 1, "I would like to browse your goods.", 1 );
@@ -82,6 +97,57 @@ void InnkeeperGossip::GossipSelectOption(Object * pObject, Player* Plr, uint32 I
         objmgr.CreateGossipMenuForPlayer(&Menu, pCreature->GetGUID(), 1853, Plr);
         Menu->AddItem(5, "Make this inn your home.", 2);
         Menu->SendTo(Plr);
+        break;
+	case 4:     // EVENT OF HALLOWEEN
+		if(!Plr->HasAura(SPELL_TRICK_OR_TREATED))
+		{
+			pCreature->CastSpell(Plr, SPELL_TRICK_OR_TREATED, true);
+
+			// either trick or treat, 50% chance
+			if(rand()%2)
+			{
+				Plr->CastSpell(Plr, SPELL_TREAT, true);
+			}
+			else
+			{
+				int32 trickspell=0;
+				switch (rand()%9)
+				{
+					case 0:
+					    trickspell=24753;                       // cannot cast, random 30sec
+						break;
+					case 1:
+						trickspell=24713;                       // lepper gnome costume
+						break;
+					case 2:
+						if(Plr->getGender() == 0){
+							trickspell=24735;                   // male ghost costume
+						}else{
+							trickspell=24736;                   // female ghostcostume
+						}
+	                    break;
+	                case 3:
+						if(Plr->getGender() == 0){
+							trickspell=24711;                   // male ninja costume
+						}else{
+							trickspell=24710;                   // female ninja costume
+						}
+		                break;
+	                case 4:
+						if(Plr->getGender() == 0){
+							trickspell=24708;                   // male pirate costume
+						}else{
+							trickspell=24709;                   // female pirate costume
+						}
+	                    break;
+	                case 5:
+	                    trickspell=24723;                       // skeleton costume
+	                    break;
+	            }
+	            pCreature->CastSpell(Plr, trickspell, true);
+			}	
+		}
+		Plr->Gossip_Complete();
         break;
     }
 }

@@ -105,7 +105,7 @@ public:
     }
 };
 
-void SetupMoongladeScript(ScriptMgr * mgr)
+void SetupMoongladeGossip(ScriptMgr * mgr)
 {
 	GossipScript * SilvaFilnavethGossip = (GossipScript*) new SilvaFilnaveth_Gossip;
 	GossipScript * BunthenPlainswindGossip = (GossipScript*) new BunthenPlainswind_Gossip;

@@ -366,7 +366,7 @@ bool Carcass(uint32 i, Spell* pSpell) // Becoming a Shadoweave Tailor
 	if ( NetherDrake == NULL )
 		return true;
 
-	if ( NetherDrake->HasActiveAura(38502) )
+	if ( NetherDrake->HasAura(38502) )
 		return true;
 
 	if( pQuest!=NULL && pQuest->GetMobCount( 0 ) < pQuest->GetQuest()->required_mobcount[0] )

@@ -1,7 +1,7 @@
 /*
- * Moon++ Scripts for Ascent MMORPG Server
+ * Sun++ Scripts for Ascent MMORPG Server
  * Copyright (C) 2005-2007 Ascent Team <http://www.ascentemu.com/>
- * Copyright (C) 2007-2008 Moon++ Team <http://www.moonplusplus.info/>
+ * Copyright (C) 2007-2008 Moon++ Team <http://www.sunplusplus.info/>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,19 +17,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GOSSIP_SCRIPTS_SETUP_H
-#define GOSSIP_SCRIPTS_SETUP_H
+#include "StdAfx.h"
+#include "Setup.h"
+#define SKIP_ALLOCATOR_SHARING 1
+#include <ScriptSetup.h>
 
-void SetupInnkeepers(ScriptMgr * mgr);
-void SetupGuardGossip(ScriptMgr * mgr);
-void SetupTrainerScript(ScriptMgr * mgr);
-void SetupMulgoreGossip(ScriptMgr * mgr);
-void SetupShattrathGossip(ScriptMgr * mgr);
-void SetupTanarisGossip(ScriptMgr * mgr);
-void SetupMoongladeGossip(ScriptMgr * mgr);
-void SetupStormwindGossip(ScriptMgr * mgr);
-void SetupTheramoreGossip(ScriptMgr * mgr);
-void SetupDarkmoonFaireGossip(ScriptMgr * mgr);
-void SetupDarkmoonFaireBarker(ScriptMgr * mgr);
+extern "C" SCRIPT_DECL uint32 _exp_get_script_type()
+{
+	return SCRIPT_TYPE_MISC;
+}
+
+extern "C" SCRIPT_DECL void _exp_script_register(ScriptMgr* mgr)	// Comment any script to disable it
+{
+	SetupWinterVeil(mgr);
+	SetupHalloween(mgr);
+}
+
+#ifdef WIN32
+
+BOOL APIENTRY DllMain( HANDLE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved )
+{
+    return TRUE;
+}
 
 #endif

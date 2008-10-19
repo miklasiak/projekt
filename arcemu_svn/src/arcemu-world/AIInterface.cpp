@@ -244,7 +244,8 @@ void AIInterface::HandleEvent(uint32 event, Unit* pUnit, uint32 misc1)
 					}
 				}
 
-				HandleChainAggro(pUnit);
+			HandleChainAggro(pUnit);
+				
 				//give 1 threat to this unit if were not on the threat list
 				if (m_aiTargets.find(pUnit->GetGUID())==m_aiTargets.end())
 				{
@@ -3467,7 +3468,7 @@ AI_Spell *AIInterface::getSpell()
 					// cast the buff at requested percent only if we don't have it already
 					if(sp->procChance >= 100 || Rand(sp->procChance))
 					{
-						if(!m_Unit->HasActiveAura(sp->spell->Id))
+						if(!m_Unit->HasBuff(sp->spell->Id))
 						{
 							return sp;
 						}
@@ -3794,6 +3795,19 @@ bool AIInterface::modThreatByPtr(Unit* obj, int32 mod)
 		}
 	}
 	return true;
+}
+
+void AIInterface::RemoveThreatByGUID(uint64 guid)
+{
+	if (!m_aiTargets.size())
+		return;
+
+	if(  m_Unit->GetMapMgr() == NULL )
+		return; 
+
+	Unit *obj = m_Unit->GetMapMgr()->GetUnit(guid);
+	if(obj)
+		RemoveThreatByPtr(obj);
 }
 
 void AIInterface::RemoveThreatByPtr(Unit* obj)
