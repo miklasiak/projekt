@@ -9901,8 +9901,8 @@ void Player::_UpdateMaxSkillCounts()
 		if (new_max > 400)
 			new_max = 400;
 #else
-		if (new_max > 375)
-			new_max = 375;
+		if (new_max > 1275)
+			new_max = 1275;
 #endif
 		if (new_max < 1)
 			new_max = 1;
