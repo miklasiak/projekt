@@ -1,3 +1,7 @@
+r109-r112
+- updated arcemu rev 1377
+- updated sun rev 374
+-------------------------------------------------------------------------------------
 r108
 - updated arcemu rev 1355
 - applied patches + created own patch
