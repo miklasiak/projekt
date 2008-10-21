@@ -31,5 +31,6 @@ void SetupStormwindGossip(ScriptMgr * mgr);
 void SetupTheramoreGossip(ScriptMgr * mgr);
 void SetupDarkmoonFaireGossip(ScriptMgr * mgr);
 void SetupDarkmoonFaireBarker(ScriptMgr * mgr);
+void SetupTeldrassilGossip(ScriptMgr * mgr);
 
 #endif

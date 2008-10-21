@@ -1,3 +1,33 @@
+Index: src/LUAScripting/Makefile.am
+===================================================================
+--- src/LUAScripting/Makefile.am	(revision 375)
++++ src/LUAScripting/Makefile.am	(working copy)
+@@ -1,6 +1,6 @@
+-INCLUDES += -I$(srcdir) -I$(srcdir)/../../../../dep/include -I$(srcdir)/../../../ascent-shared
+-INCLUDES += -I$(srcdir)/../../../ascent-world -I$(srcdir)/../../../../dep/src
+-INCLUDES += -I$(srcdir)/../../../ascent-shared/g3dlite -I$(srcdir)/../../../ascent-shared/vmap
++INCLUDES += -I$(srcdir) -I$(srcdir)/../../../../dep/include -I$(srcdir)/../../../arcemu-shared
++INCLUDES += -I$(srcdir)/../../../arcemu-world -I$(srcdir)/../../../../dep/src
++INCLUDES += -I$(srcdir)/../../../arcemu-shared/g3dlite -I$(srcdir)/../../../arcemu-shared/vmap
+ 
+ AM_CXXFLAGS = -DSCRIPTLIB
+ 
+
+Index: src/EventScripts/Makefile.am
+===================================================================
+--- src/EventScripts/Makefile.am	(revision 375)
++++ src/EventScripts/Makefile.am	(working copy)
+@@ -1,6 +1,6 @@
+-INCLUDES += -I$(srcdir) -I$(srcdir)/../../../../dep/include -I$(srcdir)/../../../ascent-shared
+-INCLUDES += -I$(srcdir)/../../../ascent-shared/g3dlite -I$(srcdir)/../../../ascent-shared/vmap
+-INCLUDES += -I$(srcdir)/../../../ascent-world -I$(srcdir)/../../../../dep/src
++INCLUDES += -I$(srcdir) -I$(srcdir)/../../../../dep/include -I$(srcdir)/../../../arcemu-shared
++INCLUDES += -I$(srcdir)/../../../arcemu-shared/g3dlite -I$(srcdir)/../../../arcemu-shared/vmap
++INCLUDES += -I$(srcdir)/../../../arcemu-world -I$(srcdir)/../../../../dep/src
+ 
+ AM_CXXFLAGS = -DSCRIPTLIB
+ 
+
 Index: projects/SunEventScripts.vcproj
 ===================================================================
 --- projects/SunEventScripts.vcproj	(revision 366)
@@ -1461,7 +1491,7 @@ Index: projects/TournamentScripts2008.vcproj
  				AdditionalLibraryDirectories="..\..\..\bin\release"
 Index: scripts2008.sln
 ===================================================================
---- scripts2008.sln	(revision 336)
+--- scripts2008.sln	(revision 376)
 +++ scripts2008.sln	(working copy)
 @@ -14,8 +14,6 @@
  EndProject
@@ -1469,9 +1499,10 @@ Index: scripts2008.sln
  EndProject
 -Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ExtraScripts", "projects\ExtraScripts2008.vcproj", "{DF7A3434-324E-418F-8F82-98A2C62366C6}"
 -EndProject
+ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SunEventScripts", "projects\SunEventScripts.vcproj", "{FAA6A79F-079F-428F-80CC-D8D2F8E841BE}"
+ EndProject
  Global
- 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
- 		Debug|Win32 = Debug|Win32
+
 Index: src/GossipScripts/Makefile.am
 ===================================================================
 --- src/GossipScripts/Makefile.am	(revision 336)
@@ -1962,14 +1993,6 @@ Index: src/InstanceScripts/Raid_TheEye.cpp
  			_unit->SendChatMessageAlternateEntry(CN_DARKENER, CHAT_MSG_MONSTER_EMOTE, LANG_UNIVERSAL, msg);
  			return true;
  		}
-Index: src/Makefile.am
-===================================================================
---- src/Makefile.am	(revision 336)
-+++ src/Makefile.am	(working copy)
-@@ -1,2 +1,2 @@
- SUBDIRS = GossipScripts InstanceScripts MiscScripts QuestScripts \
--SpellHandlers ServerStatusPlugin LUAScripting ExtraScripts
-+SpellHandlers ServerStatusPlugin LUAScripting
 Index: src/MiscScripts/Creatures.cpp
 ===================================================================
 --- src/MiscScripts/Creatures.cpp	(revision 336)

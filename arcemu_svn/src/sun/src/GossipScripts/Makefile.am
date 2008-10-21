@@ -20,4 +20,5 @@ Gossip_Stormwind.cpp\
 Gossip_Moonglade.cpp\
 Gossip_DarkmoonFaire.cpp\
 Gossip_Theramore.cpp\
+Gossip_Teldrassil.cpp\
 Setup.cpp

@@ -402,6 +402,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\GossipScripts\Gossip_Teldrassil.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\src\GossipScripts\Gossip_Theramore.cpp"
 				>
 			</File>

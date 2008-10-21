@@ -1,3 +1,6 @@
+r114
+- updated sun rev 381
+-------------------------------------------------------------------------------------
 r113
 - forgot to change max skill
 - made patch for max skill
