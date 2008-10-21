@@ -244,8 +244,8 @@ void AIInterface::HandleEvent(uint32 event, Unit* pUnit, uint32 misc1)
 					}
 				}
 
-			HandleChainAggro(pUnit);
-				
+				HandleChainAggro(pUnit);
+
 				//give 1 threat to this unit if were not on the threat list
 				if (m_aiTargets.find(pUnit->GetGUID())==m_aiTargets.end())
 				{
@@ -993,14 +993,6 @@ void AIInterface::_UpdateCombat(uint32 p_time)
 		SetNextTarget( GetMostHated() );
 
 	uint16 agent = m_aiCurrentAgent;
-	bool elite;
-
-	if(m_Unit->GetTypeId() == TYPEID_UNIT &&
-		static_cast<Creature*>(m_Unit)->GetCreatureInfo() && static_cast<Creature*>(m_Unit)->GetCreatureInfo()->Rank != ELITE_NORMAL) {
-		elite = true;
-	} else {
-		elite = false;
-	}
 
 	// If creature is very far from spawn point return to spawnpoint
 	// If at instance dont return -- this is wrong ... instance creatures always returns to spawnpoint, dunno how do you got this ideia. 
@@ -1009,7 +1001,6 @@ void AIInterface::_UpdateCombat(uint32 p_time)
 		&& m_AIState != STATE_EVADE
 		&& m_AIState != STATE_SCRIPTMOVE
 		&& !m_is_in_instance
-		&& !elite
 		&& (m_outOfCombatRange && m_Unit->GetDistanceSq(m_returnX,m_returnY,m_returnZ) > m_outOfCombatRange) )
 	{
 		HandleEvent( EVENT_LEAVECOMBAT, m_Unit, 0 );
@@ -4371,16 +4362,15 @@ void AIInterface::SetNextTarget (uint64 nextTarget)
 	}
 }
 
-void AIInterface::HandleChainAggro(Unit* u)
+void AIInterface::HandleChainAggro(Unit *u)
 {
 	if (!m_Unit->IsInWorld() || !m_Unit->isAlive() || m_Unit->m_chain == NULL)
 		return;
-
 	for (std::set<Unit*>::iterator itr=m_Unit->m_chain->m_units.begin(); itr!=m_Unit->m_chain->m_units.end(); ++itr)
 	{
 		if (!(*itr)->IsInWorld() || !(*itr)->isAlive() || (m_Unit->m_chain->m_chainrange != 0 && m_Unit->CalcDistance(*itr) > m_Unit->m_chain->m_chainrange))
 			continue;
-
+		
 		if ((*itr)->GetAIInterface()->GetAITargets()->find(u->GetGUID()) == (*itr)->GetAIInterface()->GetAITargets()->end())
 		{
 			if((*itr)->GetAIInterface()->getAIState() == STATE_IDLE || (*itr)->GetAIInterface()->getAIState() == STATE_FOLLOWING)

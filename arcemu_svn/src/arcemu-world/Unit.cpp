@@ -364,9 +364,9 @@ Unit::~Unit()
 	//start to remove badptrs, if you delete from the heap null the ptr's damn!
 	RemoveAllAuras();
 
-	if (m_chain)
+	if( m_chain != NULL )
 		m_chain->RemoveUnit(this);
-	
+
 	if( SM_CriticalChance != NULL ) {
 		delete [] SM_CriticalChance;
 		SM_CriticalChance = NULL;
@@ -942,13 +942,23 @@ uint32 Unit::HandleProc( uint32 flag, Unit* victim, SpellEntry* CastingSpell, ui
 		uint32 origId = itr2->origId;
 		SpellEntry* ospinfo = dbcSpell.LookupEntry( origId );//no need to check if exists or not since we were not able to register this trigger if it would not exist :P
 
+		if( itr2->procFlags & PROC_ON_CAST_SPECIFIC_SPELL || itr2->procFlags & PROC_ON_CAST_SPELL) {
+			if( CastingSpell == NULL )
+				continue;
+
+			if (itr2->groupRelation) {
+				if (!(itr2->groupRelation & CastingSpell->SpellGroupType))
+					continue;
+			}
+		}
+
 		//this requires some specific spell check,not yet implemented
 		//this sucks and should be rewrote
 		if( itr2->procFlags & PROC_ON_CAST_SPECIFIC_SPELL )
 		{
 			if( CastingSpell == NULL )
 				continue;
-			
+
 			//this is wrong, dummy is too common to be based on this, we should use spellgroup or something
 			if( spe->spellIconID != CastingSpell->spellIconID )
 			{
@@ -7314,12 +7324,12 @@ void UnitChain::AddUnit(Unit* u)
 	m_units.insert(u);
 	u->m_chain = this;
 }
- 
+
 void UnitChain::RemoveUnit(Unit* u)
 {
 	m_units.erase(u);
 	u->m_chain = NULL;
-	
+
 	if (m_units.size() == 0 && !m_persist)
 		delete this;
 }

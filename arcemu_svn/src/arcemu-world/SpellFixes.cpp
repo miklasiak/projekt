@@ -445,7 +445,6 @@ void ApplyNormalFixes()
 		// Read every SpellEntry row
 		SpellEntry * sp = dbcSpell.LookupRow(x);
 
-		uint32 result = 0;
 		uint32 rank = 0;
 		uint32 namehash = 0;
 
@@ -1968,7 +1967,7 @@ void ApplyNormalFixes()
 	//////////////////////////////////////////
 
 	// Insert warrior spell fixes here
-		
+
 		//Warrior - Enrage Procflags
 		sp = dbcSpell.LookupEntryForced( 12317 );
 		if(sp != NULL)
@@ -5525,7 +5524,7 @@ void ApplyNormalFixes()
 		{
 			sp->Effect[2] = SPELL_EFFECT_TRIGGER_SPELL;
 			sp->EffectTriggerSpell[2] = 27648;
-			sp->EffectImplicitTargetA[2] = EFF_TARGET_SELF;
+			sp->EffectImplicitTargetA[2] = EFF_TARGET_ALL_ENEMIES_AROUND_CASTER; // cebernic: for enemies not self
 		}
 
 		//Energized 
@@ -6117,5 +6116,15 @@ void ApplyNormalFixes()
 			sp->EffectTriggerSpell[0] = 24379;
 			sp->c_is_flags = SPELL_FLAG_IS_FORCEDBUFF;
 		}
-		
+
+		sp = dbcSpell.LookupEntryForced ( 5246 ); // why self?
+		if( sp != NULL )
+		{
+			sp->procFlags = PROC_ON_CAST_SPELL;
+			sp->EffectApplyAuraName[0] = SPELL_AURA_PROC_TRIGGER_SPELL;
+			sp->Effect[0] = SPELL_EFFECT_TRIGGER_SPELL;
+			sp->EffectTriggerSpell[0] = 20511; // cebernic: this just real spell
+			sp->EffectImplicitTargetA[0] = EFF_TARGET_NONE;
+		}
+
 }

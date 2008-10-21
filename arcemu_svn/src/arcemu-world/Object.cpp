@@ -1070,18 +1070,21 @@ void Object::AddToWorld()
 			// If set: Owns player the instance?
 			if(mapMgr->pInstance->m_creatorGuid != 0 && mapMgr->pInstance->m_creatorGuid != plr->GetLowGUID())
 				return;
-			// Is instance empty or owns our group the instance?
-			if(mapMgr->pInstance->m_creatorGroup != 0 && mapMgr->pInstance->m_creatorGroup != group->GetID())
-			{
-				// Player not in group or another group is already playing this instance.
-				sChatHandler.SystemMessageToPlr(plr, "Another group is already inside this instance of the dungeon.");
-				if(plr->GetSession()->GetPermissionCount() > 0)
-					sChatHandler.BlueSystemMessageToPlr(plr, "Enable your GameMaster flag to ignore this rule.");
-				return; 
+
+			if (group != NULL) {
+				// Is instance empty or owns our group the instance?
+				if(mapMgr->pInstance->m_creatorGroup != 0 && mapMgr->pInstance->m_creatorGroup != group->GetID())
+				{
+					// Player not in group or another group is already playing this instance.
+					sChatHandler.SystemMessageToPlr(plr, "Another group is already inside this instance of the dungeon.");
+					if(plr->GetSession()->GetPermissionCount() > 0)
+						sChatHandler.BlueSystemMessageToPlr(plr, "Enable your GameMaster flag to ignore this rule.");
+					return; 
+				}
+				else if(mapMgr->pInstance->m_creatorGroup == 0)
+					// Players group now "owns" the instance.
+					mapMgr->pInstance->m_creatorGroup = group->GetID(); 
 			}
-			else if(group != NULL && mapMgr->pInstance->m_creatorGroup == 0)
-				// Players group now "owns" the instance.
-				mapMgr->pInstance->m_creatorGroup = group->GetID(); 
 		}
 	}
 
@@ -2557,6 +2560,7 @@ void Object::DealDamage(Unit *pVictim, uint32 damage, uint32 targetEvent, uint32
 		}*/	
 
 		pVictim->SetUInt32Value( UNIT_FIELD_HEALTH, health - damage );
+		
 		if (IsCreature() && !IsPet())
 			static_cast<Unit*>(this)->GetAIInterface()->HandleEvent(EVENT_DAMAGEDEALT, pVictim, damage);
 	}
@@ -3107,10 +3111,14 @@ void Object::SetSpawnPosition(const LocationVector & v)
 {
 	SetSpawnPosition(v.x, v.y, v.z, v.o);
 }
- 
+
 void Object::SetSpawnPosition(float newX, float newY, float newZ, float newOrientation)
 {
 	m_spawnLocation.x=newX;
 	m_spawnLocation.y=newY;
 	m_spawnLocation.z=newZ;
 }
+
+
+
+

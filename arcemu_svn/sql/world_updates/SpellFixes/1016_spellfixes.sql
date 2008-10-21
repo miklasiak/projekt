@@ -242,3 +242,22 @@ INSERT INTO spellfixes(spellId, groupRelation0) VALUES(18705, 0x2000000) ON DUPL
 INSERT INTO spellfixes(spellId, groupRelation0) VALUES(18706, 0x2000000) ON DUPLICATE KEY UPDATE groupRelation0=VALUES(groupRelation0);
 INSERT INTO spellfixes(spellId, groupRelation0) VALUES(18707, 0x2000000) ON DUPLICATE KEY UPDATE groupRelation0=VALUES(groupRelation0);
 
+-- [Warrior] Improved Revenge
+INSERT INTO spellfixes(spellId, groupRelation0) VALUES(12797, 0x400) ON DUPLICATE KEY UPDATE groupRelation0=VALUES(groupRelation0);
+INSERT INTO spellfixes(spellId, groupRelation0) VALUES(12799, 0x400) ON DUPLICATE KEY UPDATE groupRelation0=VALUES(groupRelation0);
+INSERT INTO spellfixes(spellId, groupRelation0) VALUES(12800, 0x400) ON DUPLICATE KEY UPDATE groupRelation0=VALUES(groupRelation0);
+
+-- [Hunter] Improved Concussive Shot
+INSERT INTO spellfixes(spellId, groupRelation0) VALUES(19407, 0x200) ON DUPLICATE KEY UPDATE groupRelation0=VALUES(groupRelation0);
+INSERT INTO spellfixes(spellId, groupRelation0) VALUES(19412, 0x200) ON DUPLICATE KEY UPDATE groupRelation0=VALUES(groupRelation0);
+INSERT INTO spellfixes(spellId, groupRelation0) VALUES(19413, 0x200) ON DUPLICATE KEY UPDATE groupRelation0=VALUES(groupRelation0);
+INSERT INTO spellfixes(spellId, groupRelation0) VALUES(19414, 0x200) ON DUPLICATE KEY UPDATE groupRelation0=VALUES(groupRelation0);
+INSERT INTO spellfixes(spellId, groupRelation0) VALUES(19415, 0x200) ON DUPLICATE KEY UPDATE groupRelation0=VALUES(groupRelation0);
+
+-- [Mage] Improved Counterspell
+INSERT INTO spellfixes(spellId, groupRelation0) VALUES(11255, 0x4000) ON DUPLICATE KEY UPDATE groupRelation0=VALUES(groupRelation0);
+INSERT INTO spellfixes(spellId, groupRelation0) VALUES(12598, 0x4000) ON DUPLICATE KEY UPDATE groupRelation0=VALUES(groupRelation0);
+
+-- [Warrior] Improved Shield Bash
+INSERT INTO spellfixes(spellId, groupRelation0) VALUES(12311, 0x800) ON DUPLICATE KEY UPDATE groupRelation0=VALUES(groupRelation0);
+INSERT INTO spellfixes(spellId, groupRelation0) VALUES(12958, 0x800) ON DUPLICATE KEY UPDATE groupRelation0=VALUES(groupRelation0);

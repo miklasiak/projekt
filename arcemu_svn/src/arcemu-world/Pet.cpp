@@ -1514,6 +1514,7 @@ void Pet::ApplyPetLevelAbilities()
 	uint32 level = getLevel();
 	if( level > PLAYER_LEVEL_CAP )
 		level = PLAYER_LEVEL_CAP;
+	else if (level < 0) level = 1;
 	static uint32 family_aura[36] = { 0, 17223, 17210, 17129, 17208, 7000, 17212, 17209, 17211, 17214, 0, 17217, 17220, 0, 0, 0, 0, 0, 0, 0, 17218, 17221, 0, 0, 17206, 17215, 17216, 17222, 0, 0, 34887, 35257, 35254, 35258, 35253, 35383 };
 		
 	RemoveAura( family_aura[ pet_family ] );//If the pet gained a level, we need to remove the auras to re-calculate everything.
@@ -1903,8 +1904,10 @@ void Pet::HandleAutoCastEvent( AutoCastEvents Type )
 		it2 = itr++;
 		sp = *it2;
 
-		if( sp->spell == NULL )
+		if( sp->spell == NULL || sp->autocast_type != Type ) {
+			sLog.outError("Found corrupted spell at m_autoCastSpells, skipping");
 			continue;
+		}
 
 		if( sp->spelltargetType == TTYPE_OWNER )
 		{

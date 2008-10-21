@@ -3952,6 +3952,7 @@ void Player::_ApplyItemMods(Item* item, int8 slot, bool apply, bool justdrokedow
 				ts.caster = this->GetGUID();
 				ts.procFlags = PROC_ON_MELEE_ATTACK;
 				ts.deleted = false;
+				ts.groupRelation = 0;
 				m_procSpells.push_front( ts );			
 			}
 		}
@@ -4223,7 +4224,7 @@ void Player::RepopRequestedPlayer()
 		return;
 	}
 
-	MapInfo * pMapinfo;
+	MapInfo * pMapinfo = NULL;
 
 	// Set death state to corpse, that way players will lose visibility
 	setDeathState( CORPSE );
@@ -4283,17 +4284,17 @@ void Player::RepopRequestedPlayer()
 		GetSession()->SendPacket( &data2 );
 	}
 
-
-	switch( pMapinfo->mapid )
-	{
-		case 550: //The Eye
-		case 552: //The Arcatraz
-		case 553: //The Botanica
-		case 554: //The Mechanar
-			ResurrectPlayer();
-			break;
+	if (pMapinfo) {
+		switch( pMapinfo->mapid )
+		{
+			case 550: //The Eye
+			case 552: //The Arcatraz
+			case 553: //The Botanica
+			case 554: //The Mechanar
+				ResurrectPlayer();
+				break;
+		}
 	}
-
 }
 
 void Player::ResurrectPlayer()
@@ -6661,7 +6662,7 @@ void Player::EventTaxiInterpolate()
 void Player::TaxiStart(TaxiPath *path, uint32 modelid, uint32 start_node)
 {
 	int32 mapchangeid = -1;
-	float mapchangex,mapchangey,mapchangez = 0.0f;
+	float mapchangex = 0.0f,mapchangey = 0.0f,mapchangez = 0.0f;
 	uint32 cn = m_taxiMapChangeNode;
 
 	m_taxiMapChangeNode = 0;
@@ -8870,14 +8871,14 @@ void Player::OnWorldPortAck()
 		if(pMapinfo->HasFlag(WMI_INSTANCE_WELCOME) && GetMapMgr())
 		{
 			std::string welcome_msg;
-			welcome_msg = "Welcome to ";
+			welcome_msg = string(GetSession()->LocalizedWorldSrv(62))+" ";
 			welcome_msg += string(GetSession()->LocalizedMapName(pMapinfo->mapid));
 			welcome_msg += ". ";
 			if(pMapinfo->type != INSTANCE_NONRAID && !(pMapinfo->type == INSTANCE_MULTIMODE && iInstanceType >= MODE_HEROIC) && m_mapMgr->pInstance)
 			{
 				/*welcome_msg += "This instance is scheduled to reset on ";
 				welcome_msg += asctime(localtime(&m_mapMgr->pInstance->m_expiration));*/
-				welcome_msg += "This instance is scheduled to reset on ";
+				welcome_msg += string(GetSession()->LocalizedWorldSrv(66))+" ";
 				welcome_msg += ConvertTimeStampToDataTime((uint32)m_mapMgr->pInstance->m_expiration);
 			}
 			sChatHandler.SystemMessage(m_session, welcome_msg.c_str());
@@ -9059,9 +9060,8 @@ bool Player::CanSignCharter(Charter * charter, Player * requester)
 void Player::SaveAuras(stringstream &ss)
 {
 	uint32 charges = 0, prevX = 0;
-	//for ( uint32 x = MAX_POSITIVE_AURAS_EXTEDED_START; x < MAX_POSITIVE_AURAS_EXTEDED_END; x++ )
 	//cebernic: save all auras why only just positive?
-	for ( uint32 x = MAX_TOTAL_AURAS_START; x < MAX_TOTAL_AURAS_END; x++ )
+	for ( uint32 x = MAX_POSITIVE_AURAS_EXTEDED_START; x < MAX_NEGATIVE_AURAS_EXTEDED_END; x++ )
 	{
 		if ( m_auras[x] != NULL && m_auras[x]->GetTimeLeft() > 3000 )
 		{
