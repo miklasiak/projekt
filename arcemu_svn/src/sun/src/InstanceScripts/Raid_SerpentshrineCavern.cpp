@@ -846,7 +846,11 @@ public:
 					if(!FinalPhaseTimer)
 					{
 						_unit->SetStandState(STANDSTATE_STAND);
-						shadow = _unit->GetMapMgr()->GetInterface()->SpawnCreature(CN_SHADOW_OF_LEOTHERAS, _unit->GetPositionX(), _unit->GetPositionY(), _unit->GetPositionZ(), _unit->GetOrientation(), true, false, 0, 0); 
+						shadow = _unit->GetMapMgr()->GetInterface()->GetCreatureNearestCoords(_unit->GetPositionX(), _unit->GetPositionY(), _unit->GetPositionZ(),CN_SHADOW_OF_LEOTHERAS);
+						
+						if (shadow == NULL)
+							shadow = _unit->GetMapMgr()->GetInterface()->SpawnCreature(CN_SHADOW_OF_LEOTHERAS, _unit->GetPositionX(), _unit->GetPositionY(), _unit->GetPositionZ(), _unit->GetOrientation(), true, false, 0, 0);
+						
 						FinalPhaseTimer = 5;
 						FinalPhaseSubphase++;
 					}
@@ -2448,39 +2452,33 @@ private:
 	AI_Spell *spell_poison_spit;
 };
 
-class TaintedCore : public GossipScript
+class TaintedCoreGO : public GameObjectAIScript
 {
 public:
-	void GossipHello(Object * pObject, Player* Plr, bool AutoSend)
+	TaintedCoreGO(GameObject *pGameObject) : GameObjectAIScript(pGameObject)
 	{
-		//WORKAROUND
-		GameObject *shield = Plr->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords(Plr->GetPositionX(), Plr->GetPositionY(), Plr->GetPositionZ(), 185051);
-		if(shield && shield->GetDistance2dSq(Plr) < 25)
+	}
+
+	void OnActivate(Player *pPlayer)
+	{
+		Creature *Vashj = NULL;
+		Vashj = pPlayer->GetMapMgr()->GetInterface()->GetCreatureNearestCoords(29.798161f, -923.358276f, 42.900517f, CN_LADY_VASHJ);
+		if( Vashj != NULL && static_cast<VashjAI*>(Vashj->GetScript())->Phase == 2 )
 		{
-			//deal 5% life 
-			Creature *Vashj = NULL;
-			Vashj = Plr->GetMapMgr()->GetInterface()->GetCreatureNearestCoords(29.798161f, -923.358276f, 42.900517f, CN_LADY_VASHJ);
-			if(Vashj)
-			{
-				if(static_cast<VashjAI*>(Vashj->GetScript())->Phase == 2)
-				{
-					Vashj->ModUnsigned32Value(UNIT_FIELD_HEALTH, -((Vashj->GetUInt32Value(UNIT_FIELD_MAXHEALTH)/100)*5) );
-
-					//despawn channel
-					Creature *channel = NULL;
-					channel = Plr->GetMapMgr()->GetInterface()->GetCreatureNearestCoords(shield->GetPositionX(), shield->GetPositionY(), shield->GetPositionZ(), CN_SHIELD_GENERATOR_CHANNEL);
-					if(channel)
-						channel->Despawn(0, 0);
-
-					Plr->GetItemInterface()->RemoveItemAmt(31088, 1);
-				}
-			}
+			Vashj->ModUnsigned32Value(UNIT_FIELD_HEALTH, -((Vashj->GetUInt32Value(UNIT_FIELD_MAXHEALTH)/100)*5) );
+			Creature *channel = NULL;
+			channel = pPlayer->GetMapMgr()->GetInterface()->GetCreatureNearestCoords(pPlayer->GetPositionX(), pPlayer->GetPositionY(), pPlayer->GetPositionZ(), CN_SHIELD_GENERATOR_CHANNEL);
+			if(channel != NULL && channel->IsInWorld() )
+				channel->Despawn(0, 0);
 		}
 	}
 
-	void GossipSelectOption(Object * pObject, Player* Plr, uint32 Id, uint32 IntId, const char * Code) { }
-	void GossipEnd(Object * pObject, Player* Plr) { GossipScript::GossipEnd(pObject, Plr); }
-	void Destroy() { delete this; }
+	void Destroy()
+	{
+		delete this;
+	}
+
+	static GameObjectAIScript *Create(GameObject *pGameObject) { return new TaintedCoreGO(pGameObject); }
 };
 
 class ToxicSporeBatAI : public CreatureAIScript
@@ -3119,8 +3117,9 @@ void SetupSerpentshrineCavern(ScriptMgr * mgr)
 	mgr->register_creature_script(CN_COILFANG_STRIDER, &CoilfangStriderAI::Create);
 	mgr->register_creature_script(CN_ENCHANTED_ELEMENTAL, &EnchantedElementalAI::Create);
 	mgr->register_creature_script(CN_TAINTED_ELEMENTAL, &TaintedElementalAI::Create);
-	GossipScript * tc = (GossipScript*) new TaintedCore;
-	mgr->register_item_gossip_script(31088, tc);
+
+	// Shield Generator
+	mgr->register_gameobject_script(185051, &TaintedCoreGO::Create);
 
 	//Trash mobs
 	mgr->register_creature_script(CN_COILFANG_AMBUSHER, &CoilfangAmbusherAI::Create);

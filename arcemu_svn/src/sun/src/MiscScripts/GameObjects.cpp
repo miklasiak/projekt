@@ -1100,6 +1100,20 @@ public:
 		pPlayer->SafeTeleport(530, 4080, 12558.393555f, -6774.535645f, 15.027822f, 0.035100f);		 // Sunwell quit portal
 	}
 };
+/**********************************************************************************************************************/
+
+class TheRavensClaw : public GameObjectAIScript
+{
+public:
+	TheRavensClaw(GameObject* goinstance) : GameObjectAIScript(goinstance) {}
+	static GameObjectAIScript *Create(GameObject * GO) { return new TheRavensClaw(GO); }
+
+	void OnActivate(Player * pPlayer)
+	{
+		if ( pPlayer->GetMapMgr()->iInstanceMode == MODE_HEROIC )
+			Creature *boss = sEAS.SpawnCreature(pPlayer, 23035, -87.3546, 288.006, 26.4832, 0, 0);
+	}
+};
 /*--------------------------------------------------------------------------------------------------------*/
 
 void SetupGoHandlers(ScriptMgr * mgr)
@@ -1153,4 +1167,5 @@ void SetupGoHandlers(ScriptMgr * mgr)
 	mgr->register_gameobject_script(187431, &OrbOfTransLocQuelTop::Create);
 	mgr->register_gameobject_script(188173, &OrbSunwell::Create);
 	mgr->register_gameobject_script(181433, &HealingTheLake::Create);
+	mgr->register_gameobject_script(185554, &TheRavensClaw::Create);
 }

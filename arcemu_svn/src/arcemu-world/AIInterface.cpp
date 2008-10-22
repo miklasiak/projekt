@@ -243,24 +243,8 @@ void AIInterface::HandleEvent(uint32 event, Unit* pUnit, uint32 misc1)
 						}
 					}
 				}
-
-				HandleChainAggro(pUnit);
-
-				//give 1 threat to this unit if were not on the threat list
-				if (m_aiTargets.find(pUnit->GetGUID())==m_aiTargets.end())
-				{
-					m_aiTargets.insert(TargetMap::value_type(pUnit->GetGUID(), 1));
-				}
-
 				//Zack : Put mob into combat animation. Take out weapons and start to look serious :P
 				m_Unit->smsg_AttackStart( pUnit );
-			}break;
-		case EVENT_DAMAGEDEALT:
-			{
-				if (m_aiTargets.find(pUnit->GetGUID())==m_aiTargets.end())
-				{
-					m_aiTargets.insert(TargetMap::value_type(pUnit->GetGUID(), 1));
-				}
 			}break;
 		case EVENT_LEAVECOMBAT:
 			{
@@ -403,7 +387,6 @@ void AIInterface::HandleEvent(uint32 event, Unit* pUnit, uint32 misc1)
 				if( static_cast< Creature* >( m_Unit )->has_combat_text )
 					objmgr.HandleMonsterSayEvent( static_cast< Creature* >( m_Unit ), MONSTER_SAY_EVENT_ON_DAMAGE_TAKEN );
 
-				HandleChainAggro(pUnit);
 				CALL_SCRIPT_EVENT(m_Unit, OnDamageTaken)(pUnit, float(misc1));
 				if(!modThreatByPtr(pUnit, misc1))
 				{
@@ -1034,7 +1017,7 @@ void AIInterface::_UpdateCombat(uint32 p_time)
 	}
 #endif
 
-	if (sWorld.Collision) {
+	/*if (sWorld.Collision) {
 		float target_land_z=0.0f;
 		if ( m_Unit->GetMapMgr() != NULL && GetNextTarget() != NULL )
 		{
@@ -1061,7 +1044,7 @@ void AIInterface::_UpdateCombat(uint32 p_time)
 				}
 			}
 		}
-	}
+	}*/
 
 	if ( GetNextTarget() != NULL && GetNextTarget()->GetTypeId() == TYPEID_UNIT && m_AIState == STATE_EVADE)
 		HandleEvent( EVENT_LEAVECOMBAT, m_Unit, 0);
@@ -1941,7 +1924,7 @@ bool AIInterface::FindFriends(float dist)
 			continue;
 		}
 
-		if( isCombatSupport( m_Unit, pUnit ) )//Not sure
+		if( isCombatSupport( m_Unit, pUnit ) && ( pUnit->GetAIInterface()->getAIState() == STATE_IDLE || pUnit->GetAIInterface()->getAIState() == STATE_SCRIPTIDLE ) )//Not sure
 		{
 			if( m_Unit->GetDistanceSq(pUnit) < dist)
 			{
@@ -4359,24 +4342,5 @@ void AIInterface::SetNextTarget (uint64 nextTarget)
 #ifdef ENABLE_GRACEFULL_HIT
 		have_graceful_hit=false;
 #endif
-	}
-}
-
-void AIInterface::HandleChainAggro(Unit *u)
-{
-	if (!m_Unit->IsInWorld() || !m_Unit->isAlive() || m_Unit->m_chain == NULL)
-		return;
-	for (std::set<Unit*>::iterator itr=m_Unit->m_chain->m_units.begin(); itr!=m_Unit->m_chain->m_units.end(); ++itr)
-	{
-		if (!(*itr)->IsInWorld() || !(*itr)->isAlive() || (m_Unit->m_chain->m_chainrange != 0 && m_Unit->CalcDistance(*itr) > m_Unit->m_chain->m_chainrange))
-			continue;
-		
-		if ((*itr)->GetAIInterface()->GetAITargets()->find(u->GetGUID()) == (*itr)->GetAIInterface()->GetAITargets()->end())
-		{
-			if((*itr)->GetAIInterface()->getAIState() == STATE_IDLE || (*itr)->GetAIInterface()->getAIState() == STATE_FOLLOWING)
-				(*itr)->GetAIInterface()->HandleEvent(EVENT_ENTERCOMBAT, u, 0);
-			else
-				(*itr)->GetAIInterface()->GetAITargets()->insert(TargetMap::value_type(u->GetGUID(), 1));
-		}
 	}
 }

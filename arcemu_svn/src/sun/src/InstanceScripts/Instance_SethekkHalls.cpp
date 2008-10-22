@@ -1407,6 +1407,76 @@ protected:
 	int nrspells;
 };
 
+////////////////////////////////////////////////////
+// Lakka AI
+#define CN_LAKKA		18956
+
+static Coords LakkaWaypoint[]= 
+{
+	{ },
+	{ -157.200f, 159.922f, 0.010f, 0.104f, Flag_Walk },
+	{ -128.318f, 172.483f, 0.009f, 0.222f, Flag_Walk },
+	{ -73.749f, 173.171f, 0.009f, 6.234f, Flag_Walk },
+};
+
+class LakkaAI : public MoonScriptCreatureAI
+{
+public:
+    ADD_CREATURE_FACTORY_FUNCTION(LakkaAI);
+	LakkaAI(Creature* pCreature) : MoonScriptCreatureAI(pCreature)
+	{
+		SetMoveType(Move_DontMoveWP);
+
+		//WPs
+		for (int i = 1; i < 4; ++i)
+		{
+			AddWaypoint(CreateWaypoint(i, 0, LakkaWaypoint[i].mAddition, LakkaWaypoint[i]));
+		}
+	}
+	
+	void OnReachWP(uint32 iWaypointId, bool bForwards)
+	{
+		switch (iWaypointId)
+		{
+			case 1:
+				{
+					SetMoveType(Move_WantedWP);
+					SetWaypointToMove(2);
+					Player *pPlayer			= NULL;
+					QuestLogEntry *pQuest	= NULL;
+					for(set<Object*>::iterator itr = _unit->GetInRangeSetBegin(); itr != _unit->GetInRangeSetEnd(); ++itr) 
+					{
+						if((*itr)->GetTypeId() == TYPEID_PLAYER)
+						{
+							pPlayer = static_cast<Player*>((*itr));
+							if (pPlayer != NULL)
+							{
+								pQuest = pPlayer->GetQuestLogForEntry(10097);
+								if ( pQuest != NULL && pQuest->GetMobCount(1)<1 )
+								{
+									pQuest->SetMobCount(1, 1);
+									pQuest->SendUpdateAddKill(1);
+									pQuest->UpdatePlayerFields();
+								}
+							}
+						}
+					}
+				}
+				break;
+			case 3:
+				{
+					Despawn(100, 0);
+				}
+				break;
+			default:
+				{				
+					SetMoveType(Move_WantedWP);
+					SetWaypointToMove(1);
+				}
+		}
+	}
+};
+
 /*****************************/
 /*                           */
 /*         Boss AIs          */
@@ -1572,6 +1642,24 @@ public:
     {
 		_unit->SendChatMessage(CHAT_MSG_MONSTER_YELL, LANG_UNIVERSAL, "No more life, no more pain!"); // It's talking so <censored>
 		_unit->PlaySoundToSet(10508);
+
+		GameObject *LakkasCage = _unit->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords(-160.813f, 157.043f, 0.194095f, 183051);
+		Creature *mLakka = _unit->GetMapMgr()->GetInterface()->GetCreatureNearestCoords(-160.813f, 157.043f, 0.194095f, 18956);
+
+		if (LakkasCage != NULL)
+		{
+			LakkasCage->SetUInt32Value(GAMEOBJECT_STATE, 0);
+			LakkasCage->SetUInt32Value(GAMEOBJECT_FLAGS, LakkasCage->GetUInt32Value(GAMEOBJECT_FLAGS)-1);
+		}
+
+		if ( mLakka != NULL && mLakka->GetScript() )
+		{
+			MoonScriptCreatureAI *pLakkaAI = static_cast<MoonScriptCreatureAI*>(mLakka->GetScript());
+			mLakka->GetAIInterface()->SetAIState(STATE_SCRIPTMOVE);
+			pLakkaAI->SetMoveType(Move_WantedWP);
+			pLakkaAI->SetWaypointToMove(1);
+			pLakkaAI->SetBehavior(Behavior_Default);
+		}
 
 		RemoveAIUpdateEvent();
     }
@@ -1785,6 +1873,10 @@ public:
     {
 		_unit->SendChatMessage(CHAT_MSG_MONSTER_YELL, LANG_UNIVERSAL, "Ikiss will not... die!");
 		_unit->PlaySoundToSet(10560);
+		
+		GameObject *IkissDoor = _unit->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords(43.079f, 149.505f, 0.034f, 183398);
+		if (IkissDoor != NULL)
+			IkissDoor->SetUInt32Value(GAMEOBJECT_STATE, 0);
 
 		RemoveAIUpdateEvent();
     }
@@ -2227,6 +2319,7 @@ void SetupSethekkHalls(ScriptMgr * mgr)
 	mgr->register_creature_script(CN_SETHEKK_TALON_LORD, &SETHEKKTALONLORDAI::Create);
     mgr->register_creature_script(CN_DARKWEAVER_SYTH, &DARKWEAVERSYTHAI::Create);
     mgr->register_creature_script(CN_TALON_KING_IKISS, &TALONKINGIKISSAI::Create);
+    mgr->register_creature_script(CN_LAKKA, &LakkaAI::Create);
 	//mgr->register_creature_script(CN_ANZU, &ANZUAI::Create);
 }
 

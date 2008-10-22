@@ -801,11 +801,10 @@ void WorldSession::FullLogin(Player * plr)
 #endif
 		OutPacket(SMSG_TRIGGER_CINEMATIC, 4, &racecinematic);
 
-		if ( sWorld.m_AdditionalFun ) //cebernic: tells people who 's newbie :D
-		{
-			const int classtext[] ={0,5,6,8,9,11,0,4,3,7,0,10};
-			sWorld.SendLocalizedWorldText(true,"{65}",classtext[ (uint32)plr->getClass() ] , plr->GetName() , (plr->GetTeam() ? "{63}":"{64}") );
-		}
+#ifdef _TEST_EXTENDED_FEATURES_
+	const int classtext[] ={0,5,6,8,9,11,0,4,3,7,0,10};
+	sWorld.SendLocalizedWorldText(true,"{65}",classtext[ (uint32)plr->getClass() ] , plr->GetName() , (plr->GetTeam() ? "{63}":"{64}") );
+#endif
 
 	}
 
@@ -863,7 +862,7 @@ void WorldSession::FullLogin(Player * plr)
 	// Send revision (if enabled)
 #ifdef WIN32
 	_player->BroadcastMessage("Server: %sArcEmu r%u by %sEvolution-Cores %s(Please report ALL bugs to http://evolution-cores.ath.cx)", MSG_COLOR_WHITE, BUILD_REVISION, MSG_COLOR_RED
-		MSG_COLOR_LIGHTBLUE);	
+		MSG_COLOR_LIGHTBLUE);		
 #else
 	_player->BroadcastMessage("Server: %sArcEmu r%u by %sEvolution-Cores %s(Please report ALL bugs to http://evolution-cores.ath.cx)", MSG_COLOR_WHITE, BUILD_REVISION, MSG_COLOR_RED
 		MSG_COLOR_LIGHTBLUE);

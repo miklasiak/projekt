@@ -914,21 +914,6 @@ bool StoppingtheSpread(uint32 i, Spell* pSpell)
   return true;
 }
 
-bool EternalVigilance(uint32 i, Spell* pSpell)
-{
-  Player *p_caster = pSpell->p_caster;
-  if(!p_caster)
-	  return true;
-
-  QuestLogEntry *qle = p_caster->GetQuestLogForEntry(11001);
-  if(qle == NULL)
-	  return true;
-
-  Creature *boss = sEAS.SpawnCreature(p_caster, 23035, -87.3546, 288.006, 26.4832, 0, 0);
- 
-  return true;
-}
-
 bool TheBaitforLarkorwi(uint32 i, Spell* pSpell)
 {
   Player *pPlayer = (Player*)pSpell->u_caster;
@@ -1541,7 +1526,6 @@ void SetupQuestItems(ScriptMgr * mgr)
 	mgr->register_dummy_spell(39224, &Showdown);
 	mgr->register_dummy_spell(39239, &EvilDrawsNear);
 	mgr->register_dummy_spell(39246, &TheBigBoneWorm);
-	mgr->register_dummy_spell(40098, &EternalVigilance);
 	mgr->register_dummy_spell(42390, &LayWreath);
 	mgr->register_dummy_spell(43723, &CookingPot);
 
