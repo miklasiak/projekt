@@ -19,6 +19,7 @@
 
 #include "StdAfx.h"
 #include "Setup.h"
+#include "Base.h"
 
 /************************************************************************/
 /* Instance_SethekkHalls.cpp Script										*/

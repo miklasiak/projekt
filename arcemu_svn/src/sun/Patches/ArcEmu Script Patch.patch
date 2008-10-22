@@ -28,6 +28,97 @@ Index: src/EventScripts/Makefile.am
  AM_CXXFLAGS = -DSCRIPTLIB
  
 
+Index: src/GossipScripts/Makefile.am
+===================================================================
+--- src/GossipScripts/Makefile.am	(revision 336)
++++ src/GossipScripts/Makefile.am	(working copy)
+@@ -1,6 +1,6 @@
+-INCLUDES = -I$(top_srcdir)/src/ascent-logonserver \
+-   -I$(top_srcdir)/src/ascent-realmserver -I$(top_srcdir)/src/ascent-shared -I$(top_srcdir)/src/ascent-voicechat \
+-   -I$(top_srcdir)/src/ascent-world -I$(srcdir) -I$(srcdir)/../../../../dep/include \
++INCLUDES = -I$(top_srcdir)/src/arcemu-logonserver \
++   -I$(top_srcdir)/src/arcemu-realmserver -I$(top_srcdir)/src/arcemu-shared -I$(top_srcdir)/src/arcemu-voicechat \
++   -I$(top_srcdir)/src/arcemu-world -I$(srcdir) -I$(srcdir)/../../../../dep/include \
+    -I$(srcdir)/../../../../dep/src -I$(srcdir)/../../../../src
+ INCLUDES += -I$(srcdir)/../../../ascent-shared/g3dlite -I$(srcdir)/../../../ascent-shared/vmap
+ 
+Index: src/InstanceScripts/Makefile.am
+===================================================================
+--- src/InstanceScripts/Makefile.am	(revision 336)
++++ src/InstanceScripts/Makefile.am	(working copy)
+@@ -1,6 +1,6 @@
+-INCLUDES = -I$(top_srcdir)/src/ascent-logonserver \
+-   -I$(top_srcdir)/src/ascent-realmserver -I$(top_srcdir)/src/ascent-shared -I$(top_srcdir)/src/ascent-voicechat \
+-   -I$(top_srcdir)/src/ascent-world -I$(srcdir) -I$(srcdir)/../../../../dep/include \
++INCLUDES = -I$(top_srcdir)/src/arcemu-logonserver \
++   -I$(top_srcdir)/src/arcemu-realmserver -I$(top_srcdir)/src/arcemu-shared -I$(top_srcdir)/src/arcemu-voicechat \
++   -I$(top_srcdir)/src/arcemu-world -I$(srcdir) -I$(srcdir)/../../../../dep/include \
+    -I$(srcdir)/../../../../dep/src -I$(srcdir)/../../../../src
+ INCLUDES += -I$(srcdir)/../../../ascent-shared/g3dlite -I$(srcdir)/../../../ascent-shared/vmap
+ 
+Index: src/MiscScripts/Makefile.am
+===================================================================
+--- src/MiscScripts/Makefile.am	(revision 336)
++++ src/MiscScripts/Makefile.am	(working copy)
+@@ -1,6 +1,6 @@
+-INCLUDES = -I$(top_srcdir)/src/ascent-logonserver \
+-   -I$(top_srcdir)/src/ascent-realmserver -I$(top_srcdir)/src/ascent-shared -I$(top_srcdir)/src/ascent-voicechat \
+-   -I$(top_srcdir)/src/ascent-world -I$(srcdir) -I$(srcdir)/../../../../dep/include \
++INCLUDES = -I$(top_srcdir)/src/arcemu-logonserver \
++   -I$(top_srcdir)/src/arcemu-realmserver -I$(top_srcdir)/src/arcemu-shared -I$(top_srcdir)/src/arcemu-voicechat \
++   -I$(top_srcdir)/src/arcemu-world -I$(srcdir) -I$(srcdir)/../../../../dep/include \
+    -I$(srcdir)/../../../../dep/src -I$(srcdir)/../../../../src
+ INCLUDES += -I$(srcdir)/../../../ascent-shared/g3dlite -I$(srcdir)/../../../ascent-shared/vmap
+ 
+Index: src/QuestScripts/Makefile.am
+===================================================================
+--- src/QuestScripts/Makefile.am	(revision 336)
++++ src/QuestScripts/Makefile.am	(working copy)
+@@ -1,6 +1,6 @@
+-INCLUDES = -I$(top_srcdir)/src/ascent-logonserver \
+-   -I$(top_srcdir)/src/ascent-realmserver -I$(top_srcdir)/src/ascent-shared -I$(top_srcdir)/src/ascent-voicechat \
+-   -I$(top_srcdir)/src/ascent-world -I$(srcdir) -I$(srcdir)/../../../../dep/include \
++INCLUDES = -I$(top_srcdir)/src/arcemu-logonserver \
++   -I$(top_srcdir)/src/arcemu-realmserver -I$(top_srcdir)/src/arcemu-shared -I$(top_srcdir)/src/arcemu-voicechat \
++   -I$(top_srcdir)/src/arcemu-world -I$(srcdir) -I$(srcdir)/../../../../dep/include \
+    -I$(srcdir)/../../../../dep/src -I$(srcdir)/../../../../src
+ INCLUDES += -I$(srcdir)/../../../ascent-shared/g3dlite -I$(srcdir)/../../../ascent-shared/vmap
+ 
+Index: src/ServerStatusPlugin/Makefile.am
+===================================================================
+--- src/ServerStatusPlugin/Makefile.am	(revision 336)
++++ src/ServerStatusPlugin/Makefile.am	(working copy)
+@@ -1,6 +1,5 @@
+-INCLUDES += -I$(srcdir) -I$(srcdir)/../../../../dep/include -I$(srcdir)/../../../ascent-shared
+-INCLUDES += -I$(srcdir)/../../../ascent-shared/g3dlite -I$(srcdir)/../../../ascent-shared/vmap
+-INCLUDES += -I$(srcdir)/../../../ascent-world -I$(srcdir)/../../../../dep/src
++INCLUDES += -I$(srcdir) -I$(srcdir)/../../../../dep/include -I$(srcdir)/../../../arcemu-shared
++INCLUDES += -I$(srcdir)/../../../arcemu-world -I$(srcdir)/../../../../dep/src
+ 
+ AM_CXXFLAGS = -DSCRIPTLIB
+ 
+Index: src/SpellHandlers/Makefile.am
+===================================================================
+--- src/SpellHandlers/Makefile.am	(revision 336)
++++ src/SpellHandlers/Makefile.am	(working copy)
+@@ -1,11 +1,11 @@
+-INCLUDES += -I$(srcdir) -I$(srcdir)/../../../../dep/include -I$(srcdir)/../../../ascent-shared
+-INCLUDES += -I$(srcdir)/../../../ascent-world -I$(srcdir)/../../../../dep/src
++INCLUDES += -I$(srcdir) -I$(srcdir)/../../../../dep/include -I$(srcdir)/../../../arcemu-shared
++INCLUDES += -I$(srcdir)/../../../arcemu-world -I$(srcdir)/../../../../dep/src
+ INCLUDES += -I$(srcdir)/../../../ascent-shared/g3dlite -I$(srcdir)/../../../ascent-shared/vmap
+ 
+ AM_CXXFLAGS = -DSCRIPTLIB
+ 
+ lib_LTLIBRARIES = libSpellHandlers.la
+ 
+-libSpellHandlers_la_SOURCES = DruidSpells.cpp HunterSpells.cpp ItemSpells_1.cpp \
+-MageSpells.cpp PaladinSpells.cpp PriestSpells.cpp OldSpellCPPStuff.cpp RogueSpells.cpp \
+-ShamanSpells.cpp WarlockSpells.cpp WarriorSpells.cpp Raid_BlackTemple.cpp QIspells.cpp Setup.cpp
++libSpellHandlers_la_SOURCES = HunterSpells.cpp ItemSpells_1.cpp \
++MageSpells.cpp PaladinSpells.cpp RogueSpells.cpp \
++ShamanSpells.cpp WarlockSpells.cpp WarriorSpells.cpp QIspells.cpp Setup.cpp
+
 Index: projects/SunEventScripts.vcproj
 ===================================================================
 --- projects/SunEventScripts.vcproj	(revision 366)
@@ -1503,20 +1594,6 @@ Index: scripts2008.sln
  EndProject
  Global
 
-Index: src/GossipScripts/Makefile.am
-===================================================================
---- src/GossipScripts/Makefile.am	(revision 336)
-+++ src/GossipScripts/Makefile.am	(working copy)
-@@ -1,6 +1,6 @@
--INCLUDES = -I$(top_srcdir)/src/ascent-logonserver \
--   -I$(top_srcdir)/src/ascent-realmserver -I$(top_srcdir)/src/ascent-shared -I$(top_srcdir)/src/ascent-voicechat \
--   -I$(top_srcdir)/src/ascent-world -I$(srcdir) -I$(srcdir)/../../../../dep/include \
-+INCLUDES = -I$(top_srcdir)/src/arcemu-logonserver \
-+   -I$(top_srcdir)/src/arcemu-realmserver -I$(top_srcdir)/src/arcemu-shared -I$(top_srcdir)/src/arcemu-voicechat \
-+   -I$(top_srcdir)/src/arcemu-world -I$(srcdir) -I$(srcdir)/../../../../dep/include \
-    -I$(srcdir)/../../../../dep/src -I$(srcdir)/../../../../src
- INCLUDES += -I$(srcdir)/../../../ascent-shared/g3dlite -I$(srcdir)/../../../ascent-shared/vmap
- 
 Index: src/InstanceScripts/Base.cpp
 ===================================================================
 --- src/InstanceScripts/Base.cpp	(revision 336)
@@ -1576,9 +1653,9 @@ Index: src/InstanceScripts/Instance_HellfireRamparts.cpp
  			if(!pUnit->isAlive() || _unit == pUnit)
 Index: src/InstanceScripts/Instance_SethekkHalls.cpp
 ===================================================================
---- src/InstanceScripts/Instance_SethekkHalls.cpp	(revision 336)
+--- src/InstanceScripts/Instance_SethekkHalls.cpp	(revision 385)
 +++ src/InstanceScripts/Instance_SethekkHalls.cpp	(working copy)
-@@ -2184,7 +2184,7 @@
+@@ -2277,7 +2277,7 @@
  			if(z_diff > 5.0f)
  				continue;
  
@@ -1613,20 +1690,6 @@ Index: src/InstanceScripts/Instance_TheShatteredHalls.cpp
  				continue;
  			
  			if(!pUnit->isAlive() || _unit == pUnit)
-Index: src/InstanceScripts/Makefile.am
-===================================================================
---- src/InstanceScripts/Makefile.am	(revision 336)
-+++ src/InstanceScripts/Makefile.am	(working copy)
-@@ -1,6 +1,6 @@
--INCLUDES = -I$(top_srcdir)/src/ascent-logonserver \
--   -I$(top_srcdir)/src/ascent-realmserver -I$(top_srcdir)/src/ascent-shared -I$(top_srcdir)/src/ascent-voicechat \
--   -I$(top_srcdir)/src/ascent-world -I$(srcdir) -I$(srcdir)/../../../../dep/include \
-+INCLUDES = -I$(top_srcdir)/src/arcemu-logonserver \
-+   -I$(top_srcdir)/src/arcemu-realmserver -I$(top_srcdir)/src/arcemu-shared -I$(top_srcdir)/src/arcemu-voicechat \
-+   -I$(top_srcdir)/src/arcemu-world -I$(srcdir) -I$(srcdir)/../../../../dep/include \
-    -I$(srcdir)/../../../../dep/src -I$(srcdir)/../../../../src
- INCLUDES += -I$(srcdir)/../../../ascent-shared/g3dlite -I$(srcdir)/../../../ascent-shared/vmap
- 
 Index: src/InstanceScripts/Raid_BlackTemple.cpp
 ===================================================================
 --- src/InstanceScripts/Raid_BlackTemple.cpp	(revision 336)
@@ -1879,7 +1942,7 @@ Index: src/InstanceScripts/Raid_Magtheridons_Lair.cpp
  		_unit->GetAIInterface()->SetAllowedToEnterCombat(false);
 Index: src/InstanceScripts/Raid_SerpentshrineCavern.cpp
 ===================================================================
---- src/InstanceScripts/Raid_SerpentshrineCavern.cpp	(revision 336)
+--- src/InstanceScripts/Raid_SerpentshrineCavern.cpp	(revision 384)
 +++ src/InstanceScripts/Raid_SerpentshrineCavern.cpp	(working copy)
 @@ -83,7 +83,7 @@
  		m_spellcheck[1] = false;
@@ -1936,7 +1999,7 @@ Index: src/InstanceScripts/Raid_SerpentshrineCavern.cpp
  	}
  
  	void SwitchToDemonForm()
-@@ -1216,7 +1216,7 @@
+@@ -1220,7 +1220,7 @@
  	if ( pSpell == NULL || pSpell->u_caster == NULL )
  		return true;
  
@@ -1945,7 +2008,7 @@ Index: src/InstanceScripts/Raid_SerpentshrineCavern.cpp
  	return true;
  }
  
-@@ -1726,7 +1726,7 @@
+@@ -1730,7 +1730,7 @@
  			if(pUnit->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_FEIGN_DEATH))
  				continue;
  
@@ -1954,7 +2017,7 @@ Index: src/InstanceScripts/Raid_SerpentshrineCavern.cpp
  				continue;
  			
  			if(!pUnit->isAlive() || _unit == pUnit)
-@@ -1998,11 +1998,11 @@
+@@ -2002,12 +2002,11 @@
  			{
  				creature = static_cast<Creature*>((*itr));
  
@@ -1962,7 +2025,8 @@ Index: src/InstanceScripts/Raid_SerpentshrineCavern.cpp
 -					(creature->creature_info->Id == CN_ENCHANTED_ELEMENTAL || 
 -					creature->creature_info->Id == CN_TAINTED_ELEMENTAL ||
 -					creature->creature_info->Id == CN_COILFANG_STRIDER ||
--					creature->creature_info->Id == CN_COILFANG_ELITE)
+-					creature->creature_info->Id == CN_COILFANG_ELITE ||
+-					creature->GetCreatureInfo()->Id == CN_SHIELD_GENERATOR_CHANNEL)
 +				if(creature && creature->GetCreatureInfo() && 
 +					(creature->GetCreatureInfo()->Id == CN_ENCHANTED_ELEMENTAL || 
 +					creature->GetCreatureInfo()->Id == CN_TAINTED_ELEMENTAL ||
@@ -1971,7 +2035,7 @@ Index: src/InstanceScripts/Raid_SerpentshrineCavern.cpp
  					&& creature->isAlive())
  					creature->Despawn(500, 0);
  			}
-@@ -2228,7 +2228,7 @@
+@@ -2233,7 +2232,7 @@
  				{
  					creature = static_cast<Creature*>((*itr));
  
@@ -2041,47 +2105,6 @@ Index: src/MiscScripts/Creatures.cpp
  
     	void OnCombatStart(Unit* mTarget)
      {
-Index: src/MiscScripts/Makefile.am
-===================================================================
---- src/MiscScripts/Makefile.am	(revision 336)
-+++ src/MiscScripts/Makefile.am	(working copy)
-@@ -1,6 +1,6 @@
--INCLUDES = -I$(top_srcdir)/src/ascent-logonserver \
--   -I$(top_srcdir)/src/ascent-realmserver -I$(top_srcdir)/src/ascent-shared -I$(top_srcdir)/src/ascent-voicechat \
--   -I$(top_srcdir)/src/ascent-world -I$(srcdir) -I$(srcdir)/../../../../dep/include \
-+INCLUDES = -I$(top_srcdir)/src/arcemu-logonserver \
-+   -I$(top_srcdir)/src/arcemu-realmserver -I$(top_srcdir)/src/arcemu-shared -I$(top_srcdir)/src/arcemu-voicechat \
-+   -I$(top_srcdir)/src/arcemu-world -I$(srcdir) -I$(srcdir)/../../../../dep/include \
-    -I$(srcdir)/../../../../dep/src -I$(srcdir)/../../../../src
- INCLUDES += -I$(srcdir)/../../../ascent-shared/g3dlite -I$(srcdir)/../../../ascent-shared/vmap
- 
-Index: src/QuestScripts/Makefile.am
-===================================================================
---- src/QuestScripts/Makefile.am	(revision 336)
-+++ src/QuestScripts/Makefile.am	(working copy)
-@@ -1,6 +1,6 @@
--INCLUDES = -I$(top_srcdir)/src/ascent-logonserver \
--   -I$(top_srcdir)/src/ascent-realmserver -I$(top_srcdir)/src/ascent-shared -I$(top_srcdir)/src/ascent-voicechat \
--   -I$(top_srcdir)/src/ascent-world -I$(srcdir) -I$(srcdir)/../../../../dep/include \
-+INCLUDES = -I$(top_srcdir)/src/arcemu-logonserver \
-+   -I$(top_srcdir)/src/arcemu-realmserver -I$(top_srcdir)/src/arcemu-shared -I$(top_srcdir)/src/arcemu-voicechat \
-+   -I$(top_srcdir)/src/arcemu-world -I$(srcdir) -I$(srcdir)/../../../../dep/include \
-    -I$(srcdir)/../../../../dep/src -I$(srcdir)/../../../../src
- INCLUDES += -I$(srcdir)/../../../ascent-shared/g3dlite -I$(srcdir)/../../../ascent-shared/vmap
- 
-Index: src/ServerStatusPlugin/Makefile.am
-===================================================================
---- src/ServerStatusPlugin/Makefile.am	(revision 336)
-+++ src/ServerStatusPlugin/Makefile.am	(working copy)
-@@ -1,6 +1,5 @@
--INCLUDES += -I$(srcdir) -I$(srcdir)/../../../../dep/include -I$(srcdir)/../../../ascent-shared
--INCLUDES += -I$(srcdir)/../../../ascent-shared/g3dlite -I$(srcdir)/../../../ascent-shared/vmap
--INCLUDES += -I$(srcdir)/../../../ascent-world -I$(srcdir)/../../../../dep/src
-+INCLUDES += -I$(srcdir) -I$(srcdir)/../../../../dep/include -I$(srcdir)/../../../arcemu-shared
-+INCLUDES += -I$(srcdir)/../../../arcemu-world -I$(srcdir)/../../../../dep/src
- 
- AM_CXXFLAGS = -DSCRIPTLIB
- 
 Index: src/ServerStatusPlugin/ServerStatusPlugin.cpp
 ===================================================================
 --- src/ServerStatusPlugin/ServerStatusPlugin.cpp	(revision 336)
@@ -2256,27 +2279,6 @@ Index: src/SpellHandlers/MageSpells.cpp
      mgr->register_dummy_spell(11958, &ColdSnap);
 -	mgr->register_spell_script(45438, &IceBlock::Create);
  }
-Index: src/SpellHandlers/Makefile.am
-===================================================================
---- src/SpellHandlers/Makefile.am	(revision 336)
-+++ src/SpellHandlers/Makefile.am	(working copy)
-@@ -1,11 +1,11 @@
--INCLUDES += -I$(srcdir) -I$(srcdir)/../../../../dep/include -I$(srcdir)/../../../ascent-shared
--INCLUDES += -I$(srcdir)/../../../ascent-world -I$(srcdir)/../../../../dep/src
-+INCLUDES += -I$(srcdir) -I$(srcdir)/../../../../dep/include -I$(srcdir)/../../../arcemu-shared
-+INCLUDES += -I$(srcdir)/../../../arcemu-world -I$(srcdir)/../../../../dep/src
- INCLUDES += -I$(srcdir)/../../../ascent-shared/g3dlite -I$(srcdir)/../../../ascent-shared/vmap
- 
- AM_CXXFLAGS = -DSCRIPTLIB
- 
- lib_LTLIBRARIES = libSpellHandlers.la
- 
--libSpellHandlers_la_SOURCES = DruidSpells.cpp HunterSpells.cpp ItemSpells_1.cpp \
--MageSpells.cpp PaladinSpells.cpp PriestSpells.cpp OldSpellCPPStuff.cpp RogueSpells.cpp \
--ShamanSpells.cpp WarlockSpells.cpp WarriorSpells.cpp Raid_BlackTemple.cpp QIspells.cpp Setup.cpp
-+libSpellHandlers_la_SOURCES = HunterSpells.cpp ItemSpells_1.cpp \
-+MageSpells.cpp PaladinSpells.cpp RogueSpells.cpp \
-+ShamanSpells.cpp WarlockSpells.cpp WarriorSpells.cpp QIspells.cpp Setup.cpp
 Index: src/SpellHandlers/PaladinSpells.cpp
 ===================================================================
 --- src/SpellHandlers/PaladinSpells.cpp	(revision 336)
