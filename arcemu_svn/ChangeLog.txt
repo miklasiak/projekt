@@ -1,3 +1,6 @@
+r122
+- compile fix
+-------------------------------------------------------------------------------------
 r121
 - forget to change changelog in rev 119
 - will add ncdb in pupblic subversion
