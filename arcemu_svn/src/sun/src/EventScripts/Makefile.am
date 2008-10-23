@@ -1,10 +1,12 @@
-INCLUDES += -I$(srcdir) -I$(srcdir)/../../../../dep/include -I$(srcdir)/../../../arcemu-shared
-INCLUDES += -I$(srcdir)/../../../arcemu-shared/g3dlite -I$(srcdir)/../../../arcemu-shared/vmap
-INCLUDES += -I$(srcdir)/../../../arcemu-world -I$(srcdir)/../../../../dep/src
+INCLUDES = -I$(top_srcdir)/src/ascent-logonserver \
+   -I$(top_srcdir)/src/ascent-realmserver -I$(top_srcdir)/src/ascent-shared -I$(top_srcdir)/src/ascent-voicechat \
+   -I$(top_srcdir)/src/ascent-world -I$(srcdir) -I$(srcdir)/../../../../dep/include \
+   -I$(srcdir)/../../../../dep/src -I$(srcdir)/../../../../src
+INCLUDES += -I$(srcdir)/../../../ascent-shared/g3dlite -I$(srcdir)/../../../ascent-shared/vmap
 
 AM_CXXFLAGS = -DSCRIPTLIB
 
-lib_LTLIBRARIES = libSunGossipScripts.la
+lib_LTLIBRARIES = libSunEventScripts.la
 
 libSunEventScripts_la_SOURCES = \
 Halloween.cpp \
