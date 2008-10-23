@@ -314,9 +314,9 @@ void StatDumper::DumpStats()
     {
         // Dump server information.
 #ifdef WIN32
-		fprintf(f, "    <platform>ArcEmu r%u by Evolution-Cores (www.arcemu.org)</platform>\n", BUILD_REVISION,);	
+		fprintf(f, "    <platform>ArcEmu r%u by Evolution-Cores (www.arcemu.org)</platform>\n", BUILD_REVISION);	
 #else
-		fprintf(f, "    <platform>ArcEmu r%u by Evolution-Cores (www.arcemu.org)</platform>\n", BUILD_REVISION,);
+		fprintf(f, "    <platform>ArcEmu r%u by Evolution-Cores (www.arcemu.org)</platform>\n", BUILD_REVISION);
 #endif
 
         char uptime[80];

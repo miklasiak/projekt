@@ -1,3 +1,7 @@
+r124
+- deleted tournament scripts because of no source
+- fixed server status plugin
+-------------------------------------------------------------------------------------
 r123
 - readded projects to solution
 -------------------------------------------------------------------------------------
