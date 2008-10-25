@@ -1,3 +1,0 @@
-Apparently we only support ArcEMU.
-I will try to find a way so that we can support ArcEMU and Ascent.
-- BrantX
