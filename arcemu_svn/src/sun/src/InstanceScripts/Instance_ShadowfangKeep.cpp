@@ -19,352 +19,198 @@
 
 #include "StdAfx.h"
 #include "Setup.h"
+#include "Base.h"
 
 /*********************************************************************************/
 /* Instance_ShadowfangKeep.cpp Script											*/
 /*********************************************************************************/
 
-// Commander Springvale 
-#define CN_SPRINGVALE 4278
-#define DEVOTION_AURA 10290
-#define HAMMER_OF_JUSTICE 32416
-#define DIVINE_PROTECTION 498
-// Odo the Blindwatcher
-#define CN_BLINDWATCHER 4279
-#define HOWLRAGE1 7481
-#define HOWLRAGE2 7483
-#define HOWLRAGE3 7484
-// Fenrus
-#define CN_FENRUS 4274
-//Archmage Arugal
-#define CN_ARUGAL 4275
-#define SHADOWBOLT 7124
-#define MINDCONTROL 7621
-#define TELEPORT 10418
-//Wolf Master Nandos
-#define CN_NENDOS 3927
-//Deathstalker Adamant
-#define CN_ADAMANT 3849
-//Rethilgore
-#define CN_RETHILGORE 3914
-//Arugals Voidwalkers
-#define CN_VOIDWALKER 4627
-
 // Commander Springvale AI
-class SpringvaleAI : public CreatureAIScript
+#define CN_SPRINGVALE 4278
+class SpringvaleAI : public MoonScriptCreatureAI
 {
-public:
-    ADD_CREATURE_FACTORY_FUNCTION(SpringvaleAI);
-    SpringvaleAI(Creature* pCreature) : CreatureAIScript(pCreature)
+    MOONSCRIPT_FACTORY_FUNCTION(SpringvaleAI, MoonScriptCreatureAI);
+    SpringvaleAI(Creature* pCreature) : MoonScriptCreatureAI(pCreature)
     {
-		m_fdivine = true;
-
-        infodevotion = dbcSpell.LookupEntry(DEVOTION_AURA);
-		infohammer = dbcSpell.LookupEntry(HAMMER_OF_JUSTICE);
-		infodivine = dbcSpell.LookupEntry(DIVINE_PROTECTION);
-
+		// Holy Light
+		AddSpell(1026, Target_Self, 10, 2.5f, 0);
+		// Devotion Aura (Not the right Spell ID)
+		DevoAura = AddSpell(10290, Target_Self, 0, 0, 0);
+		// Divine Protection (Not the right Spell ID)
+		DivineProt = AddSpell(498, Target_Self, 0, 0, 0);
+		// Hammer of Justice
+		AddSpell(5588, Target_Current, 12, 0, 60);
     }
     
-    void OnCombatStart(Unit* mTarget)
+    void OnCombatStart(Unit* pTarget)
     {
-        RegisterAIUpdateEvent(_unit->GetUInt32Value(UNIT_FIELD_BASEATTACKTIME));
-		_unit->CastSpell(_unit, infodevotion, false);
-    }
+		if(!GetUnit()->HasAura(DevoAura->mInfo->Id))
+			CastSpellNowNoScheduling(DevoAura);
 
-    void OnCombatStop(Unit *mTarget)
-    {
-        _unit->GetAIInterface()->setCurrentAgent(AGENT_NULL);
-        _unit->GetAIInterface()->SetAIState(STATE_IDLE);
-        RemoveAIUpdateEvent();
-    }
-
-    void OnDied(Unit * mKiller)
-    {
-       RemoveAIUpdateEvent();
+		ParentClass::OnCombatStart(pTarget);
     }
 
     void AIUpdate()
     {
-        if(_unit->GetHealthPct() <= 20 && m_fdivine)
+		if(GetHealthPercent() <= 20 && DivineProt->mEnabled == true)
         {
-			_unit->CastSpell(_unit, infodivine, false);
-            m_fdivine = false;
+			CastSpellNowNoScheduling(DivineProt);
+			DivineProt->mEnabled = false;
 		}
-		uint32 val = RandomUInt(1000);
-        SpellCast(val);
+		ParentClass::AIUpdate();
     }
 
-    void SpellCast(uint32 val)
-    {
-        if(_unit->GetCurrentSpell() == NULL && _unit->GetAIInterface()->GetNextTarget())//_unit->getAttackTarget())
-        {
-            if(m_hammerJustice)
-            {
-                _unit->CastSpell(_unit->GetAIInterface()->GetNextTarget(), infohammer, false);
-                m_hammerJustice = false;
-                return;
-            }           
-
-            if(val >= 100 && val <= 225)
-            {
-                _unit->setAttackTimer(1000, false);
-                m_hammerJustice = true;
-            }
-        }
-    }
-
-protected:
-
-    bool m_hammerJustice;
-    bool m_fdivine;
-    SpellEntry *infodevotion, *infohammer, *infodivine;
+	SpellDesc* DevoAura;
+	SpellDesc* DivineProt;
 };
 
 // Odo the Blindwatcher AI
-
-class BlindWatcherAI : public CreatureAIScript
+#define CN_BLINDWATCHER 4279
+class BlindWatcherAI : public MoonScriptBossAI
 {
-public:
-    ADD_CREATURE_FACTORY_FUNCTION(BlindWatcherAI);
-    BlindWatcherAI(Creature* pCreature) : CreatureAIScript(pCreature)
+    MOONSCRIPT_FACTORY_FUNCTION(BlindWatcherAI, MoonScriptBossAI);
+    BlindWatcherAI(Creature* pCreature) : MoonScriptBossAI(pCreature)
     {
-		m_rage1 = m_rage2 = m_rage3 =true;
-
-        infohrage1 = dbcSpell.LookupEntry(HOWLRAGE1);
-		infohrage2 = dbcSpell.LookupEntry(HOWLRAGE2);
-		infohrage3 = dbcSpell.LookupEntry(HOWLRAGE3);
-    }
-    
-    void OnCombatStart(Unit* mTarget)
-    {
-		RegisterAIUpdateEvent(_unit->GetUInt32Value(UNIT_FIELD_BASEATTACKTIME));
-    }
-
-    void OnCombatStop(Unit *mTarget)
-    {
-        _unit->GetAIInterface()->setCurrentAgent(AGENT_NULL);
-        _unit->GetAIInterface()->SetAIState(STATE_IDLE);
-       RemoveAIUpdateEvent();
-    }
-
-    void OnDied(Unit * mKiller)
-    {
-       RemoveAIUpdateEvent();
+		// Howling Rage 1
+		HowlingRage[1] = AddSpell(7481, Target_Self, 0, 5, 0);
+		// Howling Rage 2
+		HowlingRage[2] = AddSpell(7483, Target_Self, 0, 1.5f, 0);
+		// Howling Rage 3
+		HowlingRage[3] = AddSpell(7484, Target_Self, 0, 1.5f, 0);
     }
 
     void AIUpdate()
     {
-        if(_unit->GetHealthPct() <= 75 && m_rage1)
+        if(GetHealthPercent() <= 75 && GetPhase() == 1)
         {
-			_unit->CastSpell(_unit, infohrage1, false);
-            m_rage1 = false;
+			SetPhase(2, HowlingRage[1]);
 		}
-		else if(_unit->GetHealthPct() <= 45 && m_rage2)
+		else if(GetHealthPercent() <= 45 && GetPhase() == 2)
         {
-            _unit->RemoveAura(HOWLRAGE1);
-			_unit->CastSpell(_unit, infohrage2, false);
-            m_rage2 = false;
+			RemoveAura(HowlingRage[1]->mInfo->Id);
+			SetPhase(3, HowlingRage[2]);
 		}
-		else if(_unit->GetHealthPct() <= 20 && m_rage3)
+		else if(GetHealthPercent() <= 20 && GetPhase() == 3)
         {
-            _unit->RemoveAura(HOWLRAGE2);
-			_unit->CastSpell(_unit, infohrage3, false);
-            m_rage3 = false;
+			RemoveAura(HowlingRage[2]->mInfo->Id);
+			SetPhase(4, HowlingRage[3]);
 		}
+		ParentClass::AIUpdate();
     }
-protected:
-    bool m_rage1,m_rage2,m_rage3;
-    SpellEntry *infohrage1, *infohrage2, *infohrage3;
+
+	SpellDesc* HowlingRage[3];
 };
 
 // Fenrus the Devourer AI
-
-class FenrusAI : public CreatureAIScript
-{
-public:
-    ADD_CREATURE_FACTORY_FUNCTION(FenrusAI);
-    FenrusAI(Creature* pCreature) : CreatureAIScript(pCreature){}
-    void OnDied(Unit * mKiller)
-    {
-	   _unit->SendChatMessageAlternateEntry(4275, CHAT_MSG_MONSTER_YELL, LANG_UNIVERSAL, "Who dares interfere with the Sons of Arugal?");
-	   _unit->PlaySoundToSet(5791);
-	   _unit->GetMapMgr()->GetInterface()->SpawnCreature(4627, -154.274368f, 2177.196533f, 128.448517f, 5.760980f, true, false, 0, 0);
-	   _unit->GetMapMgr()->GetInterface()->SpawnCreature(4627, -142.647537f, 2181.019775f, 128.448410f, 4.178475f, true, false, 0, 0);
-	   _unit->GetMapMgr()->GetInterface()->SpawnCreature(4627, -139.146774f, 2168.201904f, 128.448364f, 2.650803f, true, false, 0, 0);
-	   _unit->GetMapMgr()->GetInterface()->SpawnCreature(4627, -150.860092f, 2165.156250f, 128.448502f, 0.999966f, true, false, 0, 0);
-	   
-    }
-
-protected:
+#define CN_FENRUS 4274
+static Coords VWSpawns[] = {
+	{}, // Spawn Locations for the 4 voidwalkers
+	{-154.274368f, 2177.196533f, 128.448517f, 5.760980f},
+	{-142.647537f, 2181.019775f, 128.448410f, 4.178475f},
+	{-139.146774f, 2168.201904f, 128.448364f, 2.650803f},
+	{-150.860092f, 2165.156250f, 128.448502f, 0.999966f},
 };
-
-//Voidwalker AI
-
-class VoidWalkerAI : public CreatureAIScript
+class FenrusAI : public MoonScriptCreatureAI
 {
-public:
-    ADD_CREATURE_FACTORY_FUNCTION(VoidWalkerAI);
-    VoidWalkerAI(Creature* pCreature) : CreatureAIScript(pCreature)
-	{}
-	
-	/*void OnDamageTaken(Unit* mAttacker, float fAmount)
+	MOONSCRIPT_FACTORY_FUNCTION(FenrusAI, MoonScriptCreatureAI);
+	FenrusAI(Creature* pCreature) : MoonScriptCreatureAI(pCreature)
 	{
-		Mob1 = _unit->GetMapMgr()->GetInterface()->GetCreatureNearestCoords(-154.274368f, 2177.196533f, 128.448517f, 4627);
-		Mob2 = _unit->GetMapMgr()->GetInterface()->GetCreatureNearestCoords(-142.647537f, 2181.019775f, 128.448410f, 4627);               
-		Mob3 = _unit->GetMapMgr()->GetInterface()->GetCreatureNearestCoords(-139.146774f, 2168.201904f, 128.448364f, 4627);
-		Mob4 = _unit->GetMapMgr()->GetInterface()->GetCreatureNearestCoords(-150.860092f, 2165.156250f, 128.448502f, 4627);
-		
-	}*/
-
-    void OnDied(Unit * mKiller)
-    {		
-		//if((!Mob1->IsInWorld() || !Mob1->isAlive()) && (!Mob2->IsInWorld() || !Mob2->isAlive()) && (!Mob3->IsInWorld() || !Mob3->isAlive()) && (!Mob4->IsInWorld() || !Mob4->isAlive()))
-		//{
-			GameObject * pDoor = _unit->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords(-129.034f, 2166.16f, 129.187f, 18972);
-			if(pDoor == 0)
-			return;
-			pDoor->SetUInt32Value(GAMEOBJECT_STATE, 0);
-		//}
+		AddSpell(7125, Target_Current, 12, 1.5f, 60);
 	}
-protected:
-	/*Unit* Mob1;
-	Unit* Mob2;
-	Unit* Mob3;
-	Unit* Mob4;*/
+
+	void OnDied(Unit * pKiller)
+	{
+		GetUnit()->SendChatMessageAlternateEntry(4275, CHAT_MSG_MONSTER_YELL, LANG_UNIVERSAL, "Who dares interfere with the Sons of Arugal?");
+		GetUnit()->PlaySoundToSet(5791);
+
+		MoonScriptCreatureAI* voidwalker = NULL;
+		// Spawn 4 x Arugal's Voidwalkers
+		for(int x=1; x<5; x++)
+		{
+			voidwalker = SpawnCreature(4627, VWSpawns[x].mX, VWSpawns[x].mY, VWSpawns[x].mZ, VWSpawns[x].mO);
+			if(voidwalker)
+			{
+				voidwalker->AggroNearestPlayer();
+				voidwalker = NULL;
+			}
+		}
+
+		ParentClass::OnDied(pKiller);
+	}
 };
 
+//Arugals Voidwalkers
+#define CN_VOIDWALKER 4627
+class VoidWalkerAI : public MoonScriptCreatureAI
+{
+	MOONSCRIPT_FACTORY_FUNCTION(VoidWalkerAI, MoonScriptCreatureAI);
+	VoidWalkerAI(Creature* pCreature) : MoonScriptCreatureAI(pCreature)
+	{
+		AddSpell(7154, Target_WoundedFriendly, 5, 0, 7);
+	}
+
+	void OnDied(Unit * pKiller)
+	{
+		GameObject * pDoor = GetUnit()->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords(-129.034f, 2166.16f, 129.187f, 18972);
+		if(pDoor)
+			pDoor->SetUInt32Value(GAMEOBJECT_STATE, 0);
+
+		ParentClass::OnDied(pKiller);
+	}
+};
 
 // Archmage Arugal AI
-
-class ArugalAI : public CreatureAIScript
+#define CN_ARUGAL 4275
+class ArugalAI : public MoonScriptCreatureAI
 {
-public:
-    ADD_CREATURE_FACTORY_FUNCTION(ArugalAI);
-    ArugalAI(Creature* pCreature) : CreatureAIScript(pCreature)
+    MOONSCRIPT_FACTORY_FUNCTION(ArugalAI, MoonScriptCreatureAI);
+    ArugalAI(Creature* pCreature) : MoonScriptCreatureAI(pCreature)
     {
-        m_shadownbolt = m_mindcontrol = m_teleport = true;
-        infoshadowbolt = dbcSpell.LookupEntry(SHADOWBOLT);
-		infomindcontrol = dbcSpell.LookupEntry(MINDCONTROL);
-		infoteleport = dbcSpell.LookupEntry(TELEPORT);
+		// Void Bolt
+		AddSpell(7588, Target_Current, 25, 3, 0);
+		// Thunder Shock
+		AddSpell(7803, Target_Self, 10, 0, 0);
+		// Arugal's Curse
+		AddSpell(7621, Target_RandomPlayer, 5, 0, 0, 0, 0, false, "Release your rage!", Text_Yell, 5797);
+		// Arugal spawn-in spell (Teleport)
+		AddSpell(10418, Target_Self, 10, 2, 0);
 
-    }
-    
-    void OnCombatStart(Unit* mTarget)
-    {
-        RegisterAIUpdateEvent(_unit->GetUInt32Value(UNIT_FIELD_BASEATTACKTIME));
-
-		_unit->SendChatMessage(CHAT_MSG_MONSTER_YELL, LANG_UNIVERSAL, "You, too, shall serve!");
-        _unit->PlaySoundToSet(5793);
-    }
-    
-    void OnTargetDied(Unit* mTarget)
-    {
-        _unit->SendChatMessage(CHAT_MSG_MONSTER_YELL, LANG_UNIVERSAL, "Another falls!");
-        _unit->PlaySoundToSet(5795);
-    }
-
-    void OnCombatStop(Unit *mTarget)
-    {
-        _unit->GetAIInterface()->setCurrentAgent(AGENT_NULL);
-        _unit->GetAIInterface()->SetAIState(STATE_IDLE);
-        RemoveAIUpdateEvent();
-    }
-
-    void OnDied(Unit * mKiller)
-    {
-       RemoveAIUpdateEvent();
-    }
-
-    void AIUpdate()
-    {
-		uint32 val = RandomUInt(1000);
-        SpellCast(val);
-    }
-
-    void SpellCast(uint32 val)
-    {
-        if(_unit->GetCurrentSpell() == NULL && _unit->GetAIInterface()->GetNextTarget())//_unit->getAttackTarget())
-        {
-            if(m_shadownbolt)
-            {
-                _unit->CastSpell(_unit->GetAIInterface()->GetNextTarget(), infoshadowbolt, false);
-                m_shadownbolt = false;
-                return;
-            }
-            if(m_mindcontrol)
-            {
-                _unit->CastSpell(_unit->GetAIInterface()->GetNextTarget(), infomindcontrol, false);
-                m_mindcontrol = false;
-                _unit->SendChatMessage(CHAT_MSG_MONSTER_YELL, LANG_UNIVERSAL, "Release your rage!");
-                _unit->PlaySoundToSet(5797);
-                return;
-            }    
-            if(m_teleport)
-            {
-                _unit->CastSpell(_unit, infoteleport, false);
-                m_teleport = false;
-                return;
-            }               
-
-            if(val >= 120 && val <= 225)
-            {
-                _unit->setAttackTimer(2000, false);
-                m_shadownbolt = true;
-            }
-            else if(val > 300 && val <= 350)
-            {
-                _unit->setAttackTimer(4000, false);
-                m_mindcontrol = true;
-            }
-            else if(val > 350 && val <= 500)
-            {
-                _unit->setAttackTimer(4000, false);
-                m_teleport = true;
-            }
-        }
-    }
-
-protected:
-
-   bool m_shadownbolt;
-   bool m_mindcontrol;
-   bool m_teleport;
-   SpellEntry *infoshadowbolt, *infomindcontrol, *infoteleport;
+		AddEmote(Event_OnCombatStart, "You, too, shall serve!", Text_Yell, 5793);
+		AddEmote(Event_OnTargetDied, "Another falls!", Text_Yell, 5795);
+	}
 };
 
 //Wolf Master Nandos AI
-
-class NandosAI : public CreatureAIScript
+#define CN_NENDOS 3927
+class NandosAI : public MoonScriptCreatureAI
 {
-public:
-    ADD_CREATURE_FACTORY_FUNCTION(NandosAI);
-    NandosAI(Creature* pCreature) : CreatureAIScript(pCreature)
-    {
-    }
+    MOONSCRIPT_FACTORY_FUNCTION(NandosAI, MoonScriptCreatureAI);
+    NandosAI(Creature* pCreature) : MoonScriptCreatureAI(pCreature){}
 
-    void OnDied(Unit * mKiller)
+    void OnDied(Unit * pKiller)
     {
-		GameObject * pDoor = _unit->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords(-118.11f, 2161.86f, 155.678f, 18971);
-		if(pDoor == 0)
-		return;
-		pDoor->SetUInt32Value(GAMEOBJECT_STATE, 0);
+		GameObject * pDoor = GetUnit()->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords(-118.11f, 2161.86f, 155.678f, 18971);
+		if(pDoor)		
+			pDoor->SetUInt32Value(GAMEOBJECT_STATE, 0);
+
+		ParentClass::OnDied(pKiller);
     }
-protected:
 };
+//Deathstalker Adamant
+#define CN_ADAMANT 3849
 
 //Rethilgore AI
-
-class RETHILGOREAI : public CreatureAIScript
+#define CN_RETHILGORE 3914
+class RETHILGOREAI : public MoonScriptCreatureAI
 {
-public:
-    ADD_CREATURE_FACTORY_FUNCTION(RETHILGOREAI);
-    RETHILGOREAI(Creature* pCreature) : CreatureAIScript(pCreature){}
-    void OnDied(Unit * mKiller)
+    MOONSCRIPT_FACTORY_FUNCTION(RETHILGOREAI, MoonScriptCreatureAI);
+    RETHILGOREAI(Creature* pCreature) : MoonScriptCreatureAI(pCreature){}
+    void OnDied(Unit * pKiller)
     {
 		_unit->SendChatMessageAlternateEntry(3849, CHAT_MSG_MONSTER_SAY, LANG_GUTTERSPEAK, "About time someone killed the wretch.");
 		_unit->SendChatMessageAlternateEntry(3850, CHAT_MSG_MONSTER_SAY, LANG_COMMON, "For once I agree with you... scum.");      // dont know the allys text yet
+		ParentClass::OnDied(pKiller);
     }
-protected:
 };
 
 void SetupShadowfangKeep(ScriptMgr * mgr)
@@ -372,10 +218,9 @@ void SetupShadowfangKeep(ScriptMgr * mgr)
 	//creature scripts
 	mgr->register_creature_script(CN_NENDOS, &NandosAI::Create);
 	mgr->register_creature_script(CN_VOIDWALKER, &VoidWalkerAI::Create);
-	mgr->register_creature_script(CN_VOIDWALKER, &VoidWalkerAI::Create);
 	mgr->register_creature_script(CN_RETHILGORE, &RETHILGOREAI::Create);
-    mgr->register_creature_script(CN_SPRINGVALE, &SpringvaleAI::Create);
-    mgr->register_creature_script(CN_BLINDWATCHER, &BlindWatcherAI::Create);
-    mgr->register_creature_script(CN_FENRUS, &FenrusAI::Create);
-    mgr->register_creature_script(CN_ARUGAL, &ArugalAI::Create);
+	mgr->register_creature_script(CN_SPRINGVALE, &SpringvaleAI::Create);
+	mgr->register_creature_script(CN_BLINDWATCHER, &BlindWatcherAI::Create);
+	mgr->register_creature_script(CN_FENRUS, &FenrusAI::Create);
+	mgr->register_creature_script(CN_ARUGAL, &ArugalAI::Create);
 }

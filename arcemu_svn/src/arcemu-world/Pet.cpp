@@ -417,7 +417,7 @@ void Pet::SendSpellsToOwner()
 
 void Pet::SendNullSpellsToOwner()
 {
-	if( m_Owner == NULL )
+	if( m_Owner == NULL || m_Owner->GetSession() == NULL)
 		return;
 
 	WorldPacket data(8);
@@ -428,7 +428,7 @@ void Pet::SendNullSpellsToOwner()
 
 void Pet::SendCastFailed( uint32 spellid, uint8 fail )
 {
-	if( m_Owner == NULL )
+	if( m_Owner == NULL || m_Owner->GetSession() == NULL)
 		return;
 
 	WorldPacket data( SMSG_PET_CAST_FAILED, (4+1) );
@@ -1841,7 +1841,7 @@ AI_Spell * Pet::HandleAutoCastEvent()
 		if((*itr)->autocast_type == AUTOCAST_EVENT_ATTACK)
 		{
 			// spells still spammed, I think the cooldowntime is being set incorrectly somewhere else
-			if( chance && getMSTime() >= (*itr)->cooldowntime &&
+			if( chance && (*itr)->spell && getMSTime() >= (*itr)->cooldowntime && //cebernic:crashfix
 				GetUInt32Value( UNIT_FIELD_POWER1 + (*itr)->spell->powerType ) >= (*itr)->spell->manaCost )
 			{
 				return *itr;

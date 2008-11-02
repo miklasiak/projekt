@@ -26,7 +26,7 @@ class PortalEffectSunwellIsle : public GameObjectAIScript
           PortalEffectSunwellIsle(GameObject* goinstance) : GameObjectAIScript(goinstance) {}
           void OnActivate(Player * pPlayer)
           {
-                if(pPlayer->getLevel() >= 70 && pPlayer->HasSpell(44934)) // optional you can check for quest 11513
+                if(pPlayer->getLevel() >= 70) 
                 {
                   //pPlayer->SafeTeleport(530, 4080, 12803.374023f, -6907.089844f, 41.114765f, 2.251736f);
 					pPlayer->CastSpell(pPlayer, dbcSpell.LookupEntry(44870), true);
@@ -34,10 +34,6 @@ class PortalEffectSunwellIsle : public GameObjectAIScript
                 else if(pPlayer->getLevel() <= 69)
                 {
 					pPlayer->BroadcastMessage("You must be level 70 to use this!");
-                }
-                else if(!pPlayer->HasSpell(44934))
-                {
-					pPlayer->BroadcastMessage("You must complete the quest first!");
                 }
           }
           static GameObjectAIScript *Create(GameObject * GO) { return new PortalEffectSunwellIsle(GO); }

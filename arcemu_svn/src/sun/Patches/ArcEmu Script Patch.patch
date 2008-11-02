@@ -27,6 +27,44 @@ Index: src/EventScripts/Makefile.am
     -I$(srcdir)/../../../../dep/src -I$(srcdir)/../../../../src
  INCLUDES += -I$(srcdir)/../../../ascent-shared/g3dlite -I$(srcdir)/../../../ascent-shared/vmap
  
+
+Index: src/ExtraScripts/Makefile.am
+===================================================================
+--- src/ExtraScripts/Makefile.am	(revision 431)
++++ src/ExtraScripts/Makefile.am	(working copy)
+@@ -1,6 +1,6 @@
+-INCLUDES += -I$(srcdir) -I$(srcdir)/../../../../dep/include -I$(srcdir)/../../../ascent-shared
+-INCLUDES += -I$(srcdir)/../../../ascent-shared/g3dlite -I$(srcdir)/../../../ascent-shared/vmap
+-INCLUDES += -I$(srcdir)/../../../ascent-world -I$(srcdir)/../../../../dep/src
++INCLUDES += -I$(srcdir) -I$(srcdir)/../../../../dep/include -I$(srcdir)/../../../arcemu-shared
++INCLUDES += -I$(srcdir)/../../../arcemu-shared/g3dlite -I$(srcdir)/../../../arcemu-shared/vmap
++INCLUDES += -I$(srcdir)/../../../arcemu-world -I$(srcdir)/../../../../dep/src
+ 
+ AM_CXXFLAGS = -DSCRIPTLIB
+ 
+Index: src/ExtraScripts/NeutralGuards.cpp
+===================================================================
+--- src/ExtraScripts/NeutralGuards.cpp	(revision 431)
++++ src/ExtraScripts/NeutralGuards.cpp	(working copy)
+@@ -7,7 +7,7 @@
+ 	ADD_CREATURE_FACTORY_FUNCTION(NeutralGuard);
+ 	NeutralGuard(Creature* pCreature) : CreatureAIScript(pCreature)
+ 	{
+-		_unit->GetAIInterface()->m_neutralGuard = true;
++		_unit->GetAIInterface()->m_isNeutralGuard = true;
+ 	}
+ };
+ 
+@@ -17,7 +17,7 @@
+ 	ADD_CREATURE_FACTORY_FUNCTION(ShatteredSunSpawner);
+ 	ShatteredSunSpawner(Creature* pCreature) : CreatureAIScript(pCreature)
+ 	{
+-		_unit->GetAIInterface()->m_neutralGuard = true;
++		_unit->GetAIInterface()->m_isNeutralGuard = true;
+ 	}
+ 
+ 	void OnCombatStart(Unit* mTarget)
+
 Index: src/GossipScripts/Makefile.am
 ===================================================================
 --- src/GossipScripts/Makefile.am	(revision 336)
@@ -1882,9 +1920,9 @@ Index: src/InstanceScripts/Raid_GruulsLair.cpp
  							continue;
 Index: src/InstanceScripts/Raid_Karazhan.cpp
 ===================================================================
---- src/InstanceScripts/Raid_Karazhan.cpp	(revision 336)
+--- src/InstanceScripts/Raid_Karazhan.cpp	(revision 458)
 +++ src/InstanceScripts/Raid_Karazhan.cpp	(working copy)
-@@ -2757,7 +2757,7 @@
+@@ -2667,7 +2667,7 @@
  			if(pUnit->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_FEIGN_DEATH))
  				continue;
  
@@ -1941,9 +1979,9 @@ Index: src/InstanceScripts/Raid_Magtheridons_Lair.cpp
  		_unit->GetAIInterface()->SetAllowedToEnterCombat(false);
 Index: src/InstanceScripts/Raid_SerpentshrineCavern.cpp
 ===================================================================
---- src/InstanceScripts/Raid_SerpentshrineCavern.cpp	(revision 384)
+--- src/InstanceScripts/Raid_SerpentshrineCavern.cpp	(revision 404)
 +++ src/InstanceScripts/Raid_SerpentshrineCavern.cpp	(working copy)
-@@ -83,7 +83,7 @@
+@@ -84,7 +84,7 @@
  		m_spellcheck[1] = false;
  
  		//frost attack type	
@@ -1952,7 +1990,7 @@ Index: src/InstanceScripts/Raid_SerpentshrineCavern.cpp
  		//frost immunity
  		_unit->SchoolImmunityList[SCHOOL_FROST] = 1;
  	}
-@@ -225,7 +225,7 @@
+@@ -226,7 +226,7 @@
  				_unit->SetUInt32Value(UNIT_FIELD_DISPLAYID, 5498);
  				_unit->SendChatMessage(CHAT_MSG_MONSTER_YELL, LANG_UNIVERSAL, "Aaghh, the poison...");
  				_unit->PlaySoundToSet(11297);
@@ -1961,7 +1999,7 @@ Index: src/InstanceScripts/Raid_SerpentshrineCavern.cpp
  				_unit->SchoolImmunityList[SCHOOL_FROST] = 0;
  				_unit->SchoolImmunityList[SCHOOL_NATURE] = 1;
  
-@@ -309,7 +309,7 @@
+@@ -310,7 +310,7 @@
  				_unit->SetUInt32Value(UNIT_FIELD_DISPLAYID, 20162);
  				_unit->SendChatMessage(CHAT_MSG_MONSTER_YELL, LANG_UNIVERSAL, "Better, much better.");
  				_unit->PlaySoundToSet(11290);
@@ -1970,7 +2008,7 @@ Index: src/InstanceScripts/Raid_SerpentshrineCavern.cpp
  				_unit->SchoolImmunityList[SCHOOL_FROST] = 1;
  				_unit->SchoolImmunityList[SCHOOL_NATURE] = 0;
  
-@@ -645,7 +645,7 @@
+@@ -646,7 +646,7 @@
  			{
  				creature = static_cast<Creature*>((*itr));
  
@@ -1979,7 +2017,7 @@ Index: src/InstanceScripts/Raid_SerpentshrineCavern.cpp
  					LeotherasEventGreyheartToKill[_unit->GetInstanceID()]++;
  			}
  		}
-@@ -754,12 +754,12 @@
+@@ -755,12 +755,12 @@
  	void SwitchToHumanForm()
  	{
  		_unit->SetUInt32Value(UNIT_FIELD_DISPLAYID, 20514);
@@ -1998,7 +2036,7 @@ Index: src/InstanceScripts/Raid_SerpentshrineCavern.cpp
  	}
  
  	void SwitchToDemonForm()
-@@ -1220,7 +1220,7 @@
+@@ -1221,7 +1221,7 @@
  	if ( pSpell == NULL || pSpell->u_caster == NULL )
  		return true;
  
@@ -2007,7 +2045,7 @@ Index: src/InstanceScripts/Raid_SerpentshrineCavern.cpp
  	return true;
  }
  
-@@ -1730,7 +1730,7 @@
+@@ -1731,7 +1731,7 @@
  			if(pUnit->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_FEIGN_DEATH))
  				continue;
  
@@ -2016,7 +2054,7 @@ Index: src/InstanceScripts/Raid_SerpentshrineCavern.cpp
  				continue;
  			
  			if(!pUnit->isAlive() || _unit == pUnit)
-@@ -2002,12 +2002,11 @@
+@@ -2003,12 +2003,12 @@
  			{
  				creature = static_cast<Creature*>((*itr));
  
@@ -2025,16 +2063,17 @@ Index: src/InstanceScripts/Raid_SerpentshrineCavern.cpp
 -					creature->creature_info->Id == CN_TAINTED_ELEMENTAL ||
 -					creature->creature_info->Id == CN_COILFANG_STRIDER ||
 -					creature->creature_info->Id == CN_COILFANG_ELITE ||
--					creature->GetCreatureInfo()->Id == CN_SHIELD_GENERATOR_CHANNEL)
+-                    creature->creature_info->Id == CN_SHIELD_GENERATOR_CHANNEL)
 +				if(creature && creature->GetCreatureInfo() && 
 +					(creature->GetCreatureInfo()->Id == CN_ENCHANTED_ELEMENTAL || 
 +					creature->GetCreatureInfo()->Id == CN_TAINTED_ELEMENTAL ||
 +					creature->GetCreatureInfo()->Id == CN_COILFANG_STRIDER ||
-+					creature->GetCreatureInfo()->Id == CN_COILFANG_ELITE)
++					creature->GetCreatureInfo()->Id == CN_COILFANG_ELITE ||
++                    creature->GetCreatureInfo()->Id == CN_SHIELD_GENERATOR_CHANNEL)
  					&& creature->isAlive())
  					creature->Despawn(500, 0);
  			}
-@@ -2233,7 +2232,7 @@
+@@ -2234,7 +2234,7 @@
  				{
  					creature = static_cast<Creature*>((*itr));
  
@@ -2058,52 +2097,45 @@ Index: src/InstanceScripts/Raid_TheEye.cpp
  		}
 Index: src/MiscScripts/Creatures.cpp
 ===================================================================
---- src/MiscScripts/Creatures.cpp	(revision 336)
+--- src/MiscScripts/Creatures.cpp	(revision 431)
 +++ src/MiscScripts/Creatures.cpp	(working copy)
-@@ -111,9 +111,7 @@
- public:
+@@ -112,7 +112,7 @@
  	ADD_CREATURE_FACTORY_FUNCTION(AllianceGryphon);
  
--	AllianceGryphon(Creature* pCreature) : CreatureAIScript(pCreature) {
+ 	AllianceGryphon(Creature* pCreature) : CreatureAIScript(pCreature) {
 -		_unit->GetAIInterface()->m_neutralGuard = true;
--	}
-+	AllianceGryphon(Creature* pCreature) : CreatureAIScript(pCreature) {}
++		_unit->GetAIInterface()->m_isNeutralGuard = true;
+ 	}
  
     	void OnCombatStart(Unit* mTarget)
-     {
-@@ -130,9 +128,7 @@
- public:
+@@ -131,7 +131,7 @@
  	ADD_CREATURE_FACTORY_FUNCTION(AllianceHippogryph);
  
--	AllianceHippogryph(Creature* pCreature) : CreatureAIScript(pCreature) {	
+ 	AllianceHippogryph(Creature* pCreature) : CreatureAIScript(pCreature) {	
 -		_unit->GetAIInterface()->m_neutralGuard = true;
--	}
-+	AllianceHippogryph(Creature* pCreature) : CreatureAIScript(pCreature) {}
++		_unit->GetAIInterface()->m_isNeutralGuard = true;
+ 	}
  
     	void OnCombatStart(Unit* mTarget)
-     {
-@@ -148,9 +144,7 @@
- {
+@@ -149,7 +149,7 @@
  public:
  	ADD_CREATURE_FACTORY_FUNCTION(HordeWyvern);
--	HordeWyvern(Creature* pCreature) : CreatureAIScript(pCreature) {
+ 	HordeWyvern(Creature* pCreature) : CreatureAIScript(pCreature) {
 -		_unit->GetAIInterface()->m_neutralGuard = true;
--	}
-+	HordeWyvern(Creature* pCreature) : CreatureAIScript(pCreature) {}
++		_unit->GetAIInterface()->m_isNeutralGuard = true;
+ 	}
  
     	void OnCombatStart(Unit* mTarget)
-     {
-@@ -167,9 +161,7 @@
- {
+@@ -168,7 +168,7 @@
  public:
  	ADD_CREATURE_FACTORY_FUNCTION(HordeBat);
--	HordeBat(Creature* pCreature) : CreatureAIScript(pCreature) {	
+ 	HordeBat(Creature* pCreature) : CreatureAIScript(pCreature) {	
 -		_unit->GetAIInterface()->m_neutralGuard = true;
--	}
-+	HordeBat(Creature* pCreature) : CreatureAIScript(pCreature) {}
++		_unit->GetAIInterface()->m_isNeutralGuard = true;
+ 	}
  
     	void OnCombatStart(Unit* mTarget)
-     {
+
 Index: src/ServerStatusPlugin/ServerStatusPlugin.cpp
 ===================================================================
 --- src/ServerStatusPlugin/ServerStatusPlugin.cpp	(revision 336)

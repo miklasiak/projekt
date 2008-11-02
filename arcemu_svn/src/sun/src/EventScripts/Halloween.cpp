@@ -10,15 +10,15 @@ Team  : Sun++
 #include "../InstanceScripts/Base.h"
 
 //Black Cat
-class BlackCat : public CreatureAIScript
+class BlackCat : public MoonScriptCreatureAI
 {
-public:
-	ADD_CREATURE_FACTORY_FUNCTION(BlackCat);
-	BlackCat(Creature* pCreature) : CreatureAIScript(pCreature) {}
+	MOONSCRIPT_FACTORY_FUNCTION(BlackCat, MoonScriptCreatureAI);
+	BlackCat(Creature* pCreature) : MoonScriptCreatureAI(pCreature) {}
 
-	void OnDied(Unit *mKiller)
+	void OnDied(Unit *pKiller)
 	{
-		mKiller->CastSpell( mKiller, 39477, true );
+		pKiller->CastSpell( pKiller, 39477, true );
+		ParentClass::OnDied(pKiller);
 	}
 };
 
@@ -60,10 +60,11 @@ static Coords WaypointGoldshire[] =
 
 // Headless HorsemanAI
 #define CN_HEADLESS_HORSEMAN				23682
+#define HEADLESS_HORSEMAN_CLEAVE			42587
+#define HEADLESS_HORSEMAN_CONFLAGRATION		42380
 
 class HeadlessHorsemanAI : public MoonScriptCreatureAI
 {
-public:
     MOONSCRIPT_FACTORY_FUNCTION(HeadlessHorsemanAI, MoonScriptCreatureAI);
 	HeadlessHorsemanAI(Creature* pCreature) : MoonScriptCreatureAI(pCreature)
 	{
@@ -76,7 +77,6 @@ public:
 
 class HeadlessHorsemanFireAI : public MoonScriptCreatureAI
 {
-public:
     MOONSCRIPT_FACTORY_FUNCTION(HeadlessHorsemanFireAI, MoonScriptCreatureAI);
 	HeadlessHorsemanFireAI(Creature* pCreature) : MoonScriptCreatureAI(pCreature)
 	{
@@ -97,7 +97,6 @@ public:
  */
 class ShadeOfTheHorsemanAI : public MoonScriptCreatureAI
 {
-public:
     MOONSCRIPT_FACTORY_FUNCTION(ShadeOfTheHorsemanAI, MoonScriptCreatureAI);
 	ShadeOfTheHorsemanAI(Creature* pCreature) : MoonScriptCreatureAI(pCreature)
 	{
@@ -133,7 +132,7 @@ public:
 			if( GetNearestCreature( CN_HEADLESS_HORSEMAN_FIRE ) == NULL ) // CASE players win
 			{
 				Emote("My flames have died, left not a spark! I shall send you now to the lifeless dark!", Text_Yell, 11968 );
-				Despawn(9000, 0); //Despawn after 9 secs
+				Despawn(30000, 0); //Despawn after 30 secs
 			}
 			else // CASE players lost
 			{
@@ -151,15 +150,18 @@ public:
 					{
 						_unit->CastSpell( _unit, 42118, true );
 					}
-				}
+				}break;
 			}
 		}
+		ParentClass::OnReachWP(iWaypointId, bForwards);
 	}
 
 	void OnDied( Unit * pKiller )
 	{
 		GameObject * Pumpkin = sEAS.SpawnGameobject( (Player*)pKiller, 2883, _unit->GetPositionX()+RandomFloat(5.0f), _unit->GetPositionY()+RandomFloat(5.0f), _unit->GetPositionZ(), 0, 1 );
 		_unit->CastSpell( (Unit*)Pumpkin, 42277, true );
+
+		ParentClass::OnDied(pKiller);
 	}
 
 	int8		WPCount;
@@ -172,16 +174,11 @@ public:
 
 class HeadlessHorsemanWispInvisAI : public MoonScriptCreatureAI
 {
-public:
     MOONSCRIPT_FACTORY_FUNCTION(HeadlessHorsemanWispInvisAI, MoonScriptCreatureAI);
-	HeadlessHorsemanWispInvisAI(Creature* pCreature) : MoonScriptCreatureAI(pCreature)
-	{
-		RegisterAIUpdateEvent( 1000 );
-	}
+	HeadlessHorsemanWispInvisAI(Creature* pCreature) : MoonScriptCreatureAI(pCreature){}
+
 	void AIUpdate()
 	{
-		ParentClass::AIUpdate();
-
 		time_t tiempo;
 		char hour[3];
 		char minute[3];
@@ -201,7 +198,8 @@ public:
 				SpawnCreature( CN_SHADE_OF_THE_HORSEMAN, _unit->GetPositionX(), _unit->GetPositionY(), _unit->GetPositionZ(), _unit->GetOrientation());
 				SetAIUpdateFreq( 4 * 60 * 1000 );
 			}
-		}	
+		}
+		ParentClass::AIUpdate();
 	}
 	
 	MoonScriptCreatureAI*	mHeadlessHorseman;

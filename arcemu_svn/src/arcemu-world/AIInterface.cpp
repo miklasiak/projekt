@@ -2013,9 +2013,6 @@ bool AIInterface::FindFriends(float dist)
 		CreatureProto * cp = CreatureProtoStorage.LookupEntry(guardid);
 		if(!cp) return result;
 
-		uint32 languageid = (team == 0) ? LANG_COMMON : LANG_ORCISH;
-		m_Unit->SendChatMessage(CHAT_MSG_MONSTER_SAY, languageid, "Guards!");
-
 		uint8 spawned = 0;
 	
 		std::set<Player*>::iterator hostileItr = m_Unit->GetInRangePlayerSetBegin();
@@ -2026,6 +2023,12 @@ bool AIInterface::FindFriends(float dist)
 
 			if(!isHostile(*hostileItr, m_Unit))
 				continue;
+
+			if (spawned == 0)
+			{
+				uint32 languageid = (team == 0) ? LANG_COMMON : LANG_ORCISH;
+				m_Unit->SendChatMessage(CHAT_MSG_MONSTER_SAY, languageid, "Guards!");
+			}
 
 			Creature * guard = m_Unit->GetMapMgr()->CreateCreature(guardid);
 			guard->Load(cp, x, y, z);

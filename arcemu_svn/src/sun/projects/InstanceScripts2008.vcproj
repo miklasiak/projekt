@@ -400,6 +400,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\InstanceScripts\Instance_BlackfathomDeeps.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\src\InstanceScripts\Instance_BlackMorass.cpp"
 				>
 			</File>

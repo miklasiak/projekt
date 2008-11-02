@@ -2,6 +2,7 @@
  * Moon++ Scripts for Ascent MMORPG Server
  * Copyright (C) 2005-2007 Ascent Team <http://www.ascentemu.com/>
  * Copyright (C) 2007-2008 Moon++ Team <http://www.moonplusplus.info/>
+ * Copyright (C) 2008 Sun++ Team <http://www.sunplusplus.info/>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2006,7 +2007,8 @@ public:
 					(creature->GetCreatureInfo()->Id == CN_ENCHANTED_ELEMENTAL || 
 					creature->GetCreatureInfo()->Id == CN_TAINTED_ELEMENTAL ||
 					creature->GetCreatureInfo()->Id == CN_COILFANG_STRIDER ||
-					creature->GetCreatureInfo()->Id == CN_COILFANG_ELITE)
+					creature->GetCreatureInfo()->Id == CN_COILFANG_ELITE ||
+                    creature->GetCreatureInfo()->Id == CN_SHIELD_GENERATOR_CHANNEL)
 					&& creature->isAlive())
 					creature->Despawn(500, 0);
 			}

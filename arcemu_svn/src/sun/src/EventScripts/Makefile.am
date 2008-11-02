@@ -8,7 +8,7 @@ AM_CXXFLAGS = -DSCRIPTLIB
 
 lib_LTLIBRARIES = libSunEventScripts.la
 
-libSunEventScripts_la_SOURCES = \
+libSunEventScripts_la_SOURCES = Setup.cpp \
+../InstanceScripts/Base.cpp \
 Halloween.cpp \
-WinterVeil.cpp \
-Setup.cpp
+WinterVeil.cpp

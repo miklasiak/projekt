@@ -98,7 +98,7 @@ void ZuluhedtheWhacked(Player* pPlayer, Object* pObject)
 
 void OnQuestAccept(Player * pPlayer, Quest * pQuest, Object * pObject)
 {
-	if ( pPlayer == NULL || pQuest == NULL || pObject == NULL || !pObject->IsCreature() )
+	if ( pPlayer == NULL || pQuest == NULL || pObject == NULL || !pObject->IsInWorld() || !pPlayer->IsInWorld() || !pObject->IsCreature() )
 		return;
 
 	switch(pQuest->id)

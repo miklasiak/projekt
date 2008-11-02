@@ -977,6 +977,7 @@ void MoonScriptCreatureAI::CancelAllSpells()
 
 bool MoonScriptCreatureAI::CastSpellInternal(SpellDesc* pSpell, uint32 pCurrentTime)
 {
+	if( pSpell == NULL) return false;
 	//Do not cast if we are already casting
 	if( IsCasting() ) return false;
 

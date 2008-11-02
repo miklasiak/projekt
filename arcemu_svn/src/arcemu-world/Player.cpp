@@ -3953,6 +3953,9 @@ void Player::_ApplyItemMods(Item* item, int8 slot, bool apply, bool justdrokedow
 				ts.procFlags = PROC_ON_MELEE_ATTACK;
 				ts.deleted = false;
 				ts.groupRelation = 0;
+				ts.ProcType = 0;
+				ts.LastTrigger = 0;
+				ts.procCharges = 0;
 				m_procSpells.push_front( ts );			
 			}
 		}
@@ -5980,6 +5983,11 @@ int32 Player::CanShootRangedWeapon( uint32 spellid, Unit* target, bool autoshot 
 	ItemPrototype * iprot=ItemPrototypeStorage.LookupEntry(GetUInt32Value(PLAYER_AMMO_ID));
 	if( iprot && getLevel()< iprot->RequiredLevel)
 		return SPELL_FAILED_LOWLEVEL;
+
+	// Check ammo type
+	ItemPrototype * iprot1 = ItemPrototypeStorage.LookupEntry(itm->GetEntry());
+	if( iprot && iprot1 && iprot->SubClass != iprot1->AmmoType )
+		return SPELL_FAILED_NEED_AMMO;
 
 	// Player has clicked off target. Fail spell.
 	if( m_curSelection != m_AutoShotTarget )

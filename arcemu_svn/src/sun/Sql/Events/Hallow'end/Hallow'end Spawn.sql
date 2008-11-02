@@ -1623,7 +1623,7 @@ INSERT INTO `gameobject_spawns` VALUES
 	('','180471', '1', '2356.38', '-2551.83', '113.815', '2.54818', '0', '0', '0.956305', '0.292372', '0', '0', '0', '1', '0');
 	
 /*=============== CREATURE ===============*/
-INSERT INTO `creature_proto` (`entry`,`minlevel`,`maxlevel`,`minhealth`,`maxhealth`,`scale`,`attacktime`,`mindamage`,`maxdamage`,`aura`,`invisibility_type`) VALUES 
+INSERT INTO `creature_proto` (`entry`,`minlevel`,`maxlevel`,`minhealth`,`maxhealth`,`scale`,`attacktime`,`mindamage`,`maxdamage`,`auras`,`invisibility_type`) VALUES 
 	-- Shade of the Headless Horseman
 	('23543','11','11','2200','2200','1','2000','10','10','0','0'),
 	

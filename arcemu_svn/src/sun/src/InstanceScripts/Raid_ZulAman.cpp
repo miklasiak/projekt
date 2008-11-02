@@ -42,297 +42,81 @@
 // Other spells
 #define NALORAKK_BERSERK			41924
 
-enum NalorakkForms
+class NalorakkAI : public MoonScriptBossAI
 {
-	NALORAKK_FORM_TROLL,
-	NALORAKK_FORM_BEAR
-};
-
-class NalorakkAI : public MoonScriptCreatureAI
-{
-public:
-    MOONSCRIPT_FACTORY_FUNCTION(NalorakkAI, MoonScriptCreatureAI);
-	SP_AI_Spell spells[7];
-	bool m_spellcheck[6];
-
-    NalorakkAI(Creature* pCreature) : MoonScriptCreatureAI(pCreature)
-    {
-		nrspells = 6;
-		for(int i = 0; i < nrspells; i++)
-		{
-			m_spellcheck[i] = false;
-		}
-
-		spells[0].info = dbcSpell.LookupEntry(NALORAKK_MANGLE); 
-		spells[0].targettype = TARGET_ATTACKING;
-		spells[0].instant = true;
-		spells[0].perctrigger = 12.0f;
-		spells[0].attackstoptimer = 1000;
-		spells[0].cooldown = 20;
-
-		spells[1].info = dbcSpell.LookupEntry(NALORAKK_SURGE); 
-		spells[1].targettype = TARGET_RANDOM_SINGLE;
-		spells[1].instant = true;
-		spells[1].perctrigger = 8.0f;
-		spells[1].attackstoptimer = 1000;
-		spells[1].mindist2cast = 0.0f;
-		spells[1].maxdist2cast = 45.0f;
-		spells[1].cooldown = 20;
-		spells[1].soundid = 12071;
-		spells[1].speech = "I bring da pain!";
-
-        spells[2].info = dbcSpell.LookupEntry(NALORAKK_BRUTAL_SWIPE); 
-		spells[2].targettype = TARGET_ATTACKING; 
-		spells[2].instant = true;
-		spells[2].perctrigger = 2.0f;
-		spells[2].attackstoptimer = 1000;
-		spells[2].cooldown = 35;
-
-		spells[3].info = dbcSpell.LookupEntry(NALORAKK_LACERATING_SLASH);
-		spells[3].targettype = TARGET_ATTACKING;
-		spells[3].instant = true;
-		spells[3].perctrigger = 12.0f;
-		spells[3].attackstoptimer = 1000;
-		spells[3].cooldown = 20;
-
-		spells[4].info = dbcSpell.LookupEntry(NALORAKK_REND_FLESH); 
-		spells[4].targettype = TARGET_ATTACKING;
-		spells[4].instant = true;
-		spells[4].perctrigger = 12.0f;
-		spells[4].attackstoptimer = 1000;
-		spells[4].cooldown = 12;
-
-		spells[5].info = dbcSpell.LookupEntry(NALORAKK_DEAFENING_ROAR); 
-		spells[5].targettype = TARGET_VARIOUS;
-		spells[5].instant = true;
-		spells[5].perctrigger = 11.0f;
-		spells[5].attackstoptimer = 1000;
-		spells[5].cooldown = 12;
-
-		spells[6].info = dbcSpell.LookupEntry(NALORAKK_BERSERK);
-		spells[6].cooldown = 600;
-
-		_unit->SetFloatValue(OBJECT_FIELD_SCALE_X , 1.0f);
-
-		Form = NALORAKK_FORM_TROLL;
-		FormTimer = 0;
-		minspell = 0;
-    }
-    
-    void OnCombatStart(Unit* mTarget)
-    {
-		_unit->SendChatMessage(CHAT_MSG_MONSTER_YELL, LANG_UNIVERSAL, "You be dead soon enough!");
-		_unit->PlaySoundToSet(12070);
-
-		RegisterAIUpdateEvent(_unit->GetUInt32Value(UNIT_FIELD_BASEATTACKTIME));
-
-		for (int i = 0; i < 6; i++)
-			spells[i].casttime = 0;
-
-		uint32 t = (uint32)time(NULL);
-		spells[6].casttime = t + spells[6].cooldown;
-		Form = NALORAKK_FORM_TROLL;
-		FormTimer = t + 45;
-		nrspells = 3;
-		minspell = 0;
-    }
-
-	void OnTargetDied(Unit* mTarget)
-    {
-		if (_unit->GetHealthPct() > 0)	
-		{
-			int RandomSpeach = rand()%2;
-			switch (RandomSpeach)
-			{
-			case 0:
-				_unit->SendChatMessage(CHAT_MSG_MONSTER_YELL, LANG_UNIVERSAL, "Da Amani gonna rule again!");
-				_unit->PlaySoundToSet(12076);
-				break;
-			case 1:
-				_unit->SendChatMessage(CHAT_MSG_MONSTER_YELL, LANG_UNIVERSAL, "Now whatchoo got to say?");
-				_unit->PlaySoundToSet(12075);
-				break;
-			}
-		}
-    }
-
-    void OnCombatStop(Unit *mTarget)
-    {
-		if (_unit->FindAura(42377))
-			_unit->RemoveAura(42377);
-
-		_unit->SetFloatValue(OBJECT_FIELD_SCALE_X , 1.0f);
-        _unit->GetAIInterface()->setCurrentAgent(AGENT_NULL);
-        _unit->GetAIInterface()->SetAIState(STATE_IDLE);
-
-        RemoveAIUpdateEvent();
-    }
-
-    void OnDied(Unit * mKiller)
-    {
-		_unit->SendChatMessage(CHAT_MSG_MONSTER_YELL, LANG_UNIVERSAL, "I... be waitin' on da udda side....");
-		_unit->PlaySoundToSet(12077);
-
-		RemoveAIUpdateEvent();
-    }
-
-    void AIUpdate()
+	MOONSCRIPT_FACTORY_FUNCTION(NalorakkAI, MoonScriptBossAI);
+	NalorakkAI(Creature* pCreature) : MoonScriptBossAI(pCreature)
 	{
-		uint32 t = (uint32)time(NULL);
-		if (_unit->GetCurrentSpell() == NULL)
-		{
-			if (t > FormTimer)
-			{
-				if (Form == NALORAKK_FORM_TROLL)
-				{
-					_unit->setAttackTimer(1500, false);
-					_unit->CastSpell(_unit, 42377, true);
-					_unit->SetFloatValue(OBJECT_FIELD_SCALE_X , 1.0f);
-					_unit->SendChatMessage(CHAT_MSG_MONSTER_YELL, LANG_UNIVERSAL, "You call on da beast, you gonna get more dan you bargain for!");
-					_unit->PlaySoundToSet(12072);
+		AddPhaseSpell(1, AddSpell(NALORAKK_BRUTAL_SWIPE, Target_Current, 2, 0, 35));
+		AddPhaseSpell(1, AddSpell(NALORAKK_MANGLE, Target_Current, 12, 0, 20));
+		AddPhaseSpell(1, AddSpell(NALORAKK_SURGE, Target_RandomPlayer, 8, 0, 20, 0.0f, 45.0f, true, "I bring da pain!", Text_Yell, 12071));
 
-					Form = NALORAKK_FORM_BEAR;
-					FormTimer = t + 20;
-					nrspells = 6;
-					minspell = 2;
-				}
-				else
-				{
-					if (_unit->FindAura(42377))
-						_unit->RemoveAura(42377);
+		AddPhaseSpell(2, AddSpell(NALORAKK_LACERATING_SLASH, Target_Current, 12, 0, 20));
+		AddPhaseSpell(2, AddSpell(NALORAKK_REND_FLESH, Target_Current, 12, 0, 12));
+		AddPhaseSpell(2, AddSpell(NALORAKK_DEAFENING_ROAR, Target_RandomPlayer, 11, 0, 12));
 
-					_unit->setAttackTimer(1500, false);
-					_unit->SetFloatValue(OBJECT_FIELD_SCALE_X , 1.0f);
-					_unit->SendChatMessage(CHAT_MSG_MONSTER_YELL, LANG_UNIVERSAL, "Make way for Nalorakk!");
-					_unit->PlaySoundToSet(12073);
+		SetEnrageInfo(AddSpell(NALORAKK_BERSERK, Target_Self, 0, 0, 600, 0, 0, false, "You had your chance, now it be too late!", Text_Yell, 12074), 600000);
 
-					Form = NALORAKK_FORM_TROLL;
-					FormTimer = t + 45;
-					nrspells = 3;
-					minspell = 0;
-				}
+		AddEmote(Event_OnCombatStart, "You be dead soon enough!", Text_Yell, 12070);
+		AddEmote(Event_OnTargetDied, "Da Amani gonna rule again!", Text_Yell, 12076);
+		AddEmote(Event_OnTargetDied, "Now whatchoo got to say?", Text_Yell, 12075);
+		AddEmote(Event_OnDied, "I... be waitin' on da udda side....", Text_Yell, 12077);
 
-				return;
-			}
-			if (t > spells[6].casttime)
-			{
-				_unit->CastSpell(_unit, spells[6].info, true);
-				_unit->SendChatMessage(CHAT_MSG_MONSTER_YELL, LANG_UNIVERSAL, "You had your chance, now it be too late!");	// check plx
-				_unit->PlaySoundToSet(12074);
-
-				spells[6].casttime = t + spells[6].cooldown;
-				return;
-			}
-		}
-
-		float val = (float)RandomFloat(100.0f);
-		SpellCast(val);
+		// Bear Form
+		Morph = AddSpell(42377, Target_Self, 0, 0, 0, 0, 0, false, "You call on da beast, you gonna get more dan you bargain for!", Text_Yell, 12072);
 	}
 
-    void SpellCast(float val)
-    {
-		if(_unit->GetCurrentSpell() == NULL && _unit->GetAIInterface()->GetNextTarget() != NULL)
-        {
-			float comulativeperc = 0;
-		    Unit *target = NULL;
-			for(int i = minspell; i < nrspells; i++)
-			{
-				if(!spells[i].perctrigger)
-					continue;
-				
-				if(m_spellcheck[i])
-				{
-					if (!spells[i].instant)
-						_unit->GetAIInterface()->StopMovement(1);
-
-					target = _unit->GetAIInterface()->GetNextTarget();
-					switch(spells[i].targettype)
-					{
-						case TARGET_SELF:
-						case TARGET_VARIOUS:
-							_unit->CastSpell(_unit, spells[i].info, spells[i].instant); break;
-						case TARGET_ATTACKING:
-							_unit->CastSpell(target, spells[i].info, spells[i].instant); break;
-						case TARGET_DESTINATION:
-							_unit->CastSpellAoF(target->GetPositionX(),target->GetPositionY(),target->GetPositionZ(), spells[i].info, spells[i].instant); break;
-						case TARGET_RANDOM_FRIEND:
-						case TARGET_RANDOM_SINGLE:
-						case TARGET_RANDOM_DESTINATION:
-							CastSpellOnRandomTarget(i, spells[i].mindist2cast, spells[i].maxdist2cast, spells[i].minhp2cast, spells[i].maxhp2cast); break;
-					}
-
-					if (spells[i].speech != "")
-					{
-						_unit->SendChatMessage(CHAT_MSG_MONSTER_YELL, LANG_UNIVERSAL, spells[i].speech.c_str());
-						_unit->PlaySoundToSet(spells[i].soundid); 
-					}
-
-					m_spellcheck[i] = false;
-					return;
-				}
-
-				uint32 t = (uint32)time(NULL);
-				if(val > comulativeperc && val <= (comulativeperc + spells[i].perctrigger) && t > spells[i].casttime)
-				{
-					_unit->setAttackTimer(spells[i].attackstoptimer, false);
-					spells[i].casttime = t + spells[i].cooldown;
-					m_spellcheck[i] = true;
-				}
-				comulativeperc += spells[i].perctrigger;
-			}
-        }
-    }
-
-	void CastSpellOnRandomTarget(uint32 i, float mindist2cast, float maxdist2cast, int minhp2cast, int maxhp2cast)
+	void OnCombatStart(Unit *pTarget)
 	{
-		if (!maxdist2cast) maxdist2cast = 100.0f;
-		if (!maxhp2cast) maxhp2cast = 100;
-
-		if(_unit->GetCurrentSpell() == NULL && _unit->GetAIInterface()->GetNextTarget())
-        {
-			std::vector<Unit*> TargetTable;		/* From M4ksiu - Big THX to Capt who helped me with std stuff to make it simple and fully working <3 */
-												/* If anyone wants to use this function, then leave this note!										 */
-			for(set<Object*>::iterator itr = _unit->GetInRangeSetBegin(); itr != _unit->GetInRangeSetEnd(); ++itr) 
-			{ 
-				if (((spells[i].targettype == TARGET_RANDOM_FRIEND && isFriendly(_unit, (*itr))) || (spells[i].targettype != TARGET_RANDOM_FRIEND && isHostile(_unit, (*itr)) && (*itr) != _unit)) && ((*itr)->GetTypeId()== TYPEID_UNIT || (*itr)->GetTypeId() == TYPEID_PLAYER) && (*itr)->GetInstanceID() == _unit->GetInstanceID()) // isAttackable(_unit, (*itr)) && 
-				{
-					Unit* RandomTarget = NULL;
-					RandomTarget = (Unit*)(*itr);
-
-					if (RandomTarget->isAlive() && _unit->GetDistance2dSq(RandomTarget) >= mindist2cast*mindist2cast && _unit->GetDistance2dSq(RandomTarget) <= maxdist2cast*maxdist2cast && ((RandomTarget->GetHealthPct() >= minhp2cast && RandomTarget->GetHealthPct() <= maxhp2cast && spells[i].targettype == TARGET_RANDOM_FRIEND) || (_unit->GetAIInterface()->getThreatByPtr(RandomTarget) > 0 && isHostile(_unit, RandomTarget))))
-					{
-						TargetTable.push_back(RandomTarget);
-					} 
-				} 
-			}
-
-			if (_unit->GetHealthPct() >= minhp2cast && _unit->GetHealthPct() <= maxhp2cast && spells[i].targettype == TARGET_RANDOM_FRIEND)
-				TargetTable.push_back(_unit);
-			if (!TargetTable.size())
-				return;
-
-			size_t RandTarget = rand()%TargetTable.size();
-			Unit * RTarget = TargetTable[RandTarget];
-			TargetTable.clear();
-			if (!RTarget)
-				return;
-
-			switch (spells[i].targettype)
-			{
-			case TARGET_RANDOM_FRIEND:
-			case TARGET_RANDOM_SINGLE:
-				_unit->CastSpell(RTarget, spells[i].info, spells[i].instant); break;
-			case TARGET_RANDOM_DESTINATION:
-				_unit->CastSpellAoF(RTarget->GetPositionX(), RTarget->GetPositionY(), RTarget->GetPositionZ(), spells[i].info, spells[i].instant); break;
-			}
-		}
+		// 45 Seconds until switch to Bear Form
+		MorphTimer = AddTimer(45000);
+		ParentClass::OnCombatStart(pTarget);
 	}
 
-protected:
+	void OnCombatStop(Unit* pTarget)
+	{
+		// On leaving combat he changes back to a troll
+		SetDisplayId(21631);
+		ParentClass::OnCombatStop(pTarget);
+	}
 
-	int nrspells, minspell;
-	uint32 FormTimer;
-	uint32 Form;
+	void OnDied(Unit* pKiller)
+	{
+		// On death he changes back to a troll
+		SetDisplayId(21631);
+		ParentClass::OnDied(pKiller);
+	}
+
+	void AIUpdate()
+	{
+		// Bear Form
+		if(IsTimerFinished(MorphTimer) && GetPhase() == 1)
+		{
+			SetPhase(2, Morph);
+			// Morph into a bear since the spell doesnt work
+			SetDisplayId(21635);
+			// 20 Seconds until switch to Troll Form
+			ResetTimer(MorphTimer, 20000);
+		}
+		
+		// Troll Form
+		else if(IsTimerFinished(MorphTimer) && GetPhase() == 2)
+		{
+			// Remove Bear Form
+			RemoveAura(42377);
+			// Transform back into a Troll
+			SetDisplayId(21631);
+			SetPhase(1);
+			// 45 Seconds until switch to Bear Form
+			ResetTimer(MorphTimer, 45000);
+
+			Emote("Make way for Nalorakk!", Text_Yell, 12073);
+		}
+		ParentClass::AIUpdate();
+	}
+
+	SpellDesc* Morph;
+	int32 MorphTimer;
 };
 
 //Akil'zon <Eagle Avatar>
@@ -344,160 +128,54 @@ protected:
 #define AKILZON_ELECTRICAL_STORM	43648
 #define AKILZON_SOARING_EAGLE		24858 //SUMMONS  Akil'zon <Eagle Avatar>
 
-
-class AKILZONAI : public MoonScriptCreatureAI
+class AKILZONAI : public MoonScriptBossAI
 {
-public:
-    MOONSCRIPT_FACTORY_FUNCTION(AKILZONAI, MoonScriptCreatureAI);
-	SP_AI_Spell spells[4];
-	bool m_spellcheck[4];
-
-    AKILZONAI(Creature* pCreature) : MoonScriptCreatureAI(pCreature)
+    MOONSCRIPT_FACTORY_FUNCTION(AKILZONAI, MoonScriptBossAI);
+    AKILZONAI(Creature* pCreature) : MoonScriptBossAI(pCreature)
     {
-			nrspells = 4;
-			for(int i=0;i<nrspells;i++)
-			{
-				m_spellcheck[i] = false;
-			}
-		
-        spells[0].info = dbcSpell.LookupEntry(AKILZON_STATIC_DISRUPTION); 
-		spells[0].targettype = TARGET_VARIOUS;
-		spells[0].instant = true;
-		spells[0].perctrigger = 2.0f;
-		spells[0].attackstoptimer = 1000;
+		AddSpell(AKILZON_STATIC_DISRUPTION, Target_Self, 2, 0, 60);
+		AddSpell(AKILZON_CALL_LIGHTING, Target_Current, 2, 0, 0);
+		AddSpell(AKILZON_GUST_OF_WIND, Target_Current, 0, 0, 0);
+		AddSpell(AKILZON_ELECTRICAL_STORM, Target_Self, 1, 0, 0);
 
-		spells[1].info = dbcSpell.LookupEntry(AKILZON_CALL_LIGHTING); 
-		spells[1].targettype = TARGET_ATTACKING;
-		spells[1].instant = true;
-		spells[1].perctrigger = 2.0f;
-		spells[1].attackstoptimer = 1000;
-
-
-		spells[2].info = dbcSpell.LookupEntry(AKILZON_GUST_OF_WIND); //crash
-		spells[2].targettype = TARGET_ATTACKING;
-		spells[2].instant = true;
-		spells[2].perctrigger = 0.0f;
-		spells[2].attackstoptimer = 1000;
-
-
-        spells[3].info = dbcSpell.LookupEntry(AKILZON_ELECTRICAL_STORM);
-		spells[3].targettype = TARGET_VARIOUS;
-		spells[3].instant = true;
-		spells[3].perctrigger = 1.0f;
-		spells[3].attackstoptimer = 1000;
-
-
-    }
-    
-    void OnCombatStart(Unit* mTarget)
-    {
-		nrspells = 4;
-		timesummon = 0;
-		_unit->SendChatMessage(CHAT_MSG_MONSTER_YELL, LANG_UNIVERSAL, "I be da predator! You da prey!");
-		_unit->PlaySoundToSet(12013);
-		RegisterAIUpdateEvent(1000);
+		AddEmote(Event_OnCombatStart, "I be da predator! You da prey!", Text_Yell, 12013);
+		AddEmote(Event_OnTargetDied, "Stop your cryin'!", Text_Yell, 12018);
+		AddEmote(Event_OnTargetDied, "Ya got nothin'!", Text_Yell, 12017);
+		AddEmote(Event_OnDied, "You can't... kill... me spirit!", Text_Yell, 12019);
     }
 
-
-	void OnTargetDied(Unit* mTarget)
-    {
-		if (_unit->GetHealthPct() > 0)	
-		{
-			int RandomSpeach;
-			RandomUInt(1000);
-			RandomSpeach=rand()%3;
-			switch (RandomSpeach)
-			{
-			case 0:
-				_unit->SendChatMessage(CHAT_MSG_MONSTER_YELL, LANG_UNIVERSAL, "Stop your cryin'!");
-				_unit->PlaySoundToSet(12018);
-				break;
-			case 1:
-				_unit->SendChatMessage(CHAT_MSG_MONSTER_YELL, LANG_UNIVERSAL, "Ya got nothin'!");
-				_unit->PlaySoundToSet(12017);
-				break;
-			}
-		}
-    }
-
-    void OnCombatStop(Unit *mTarget)
-    {
-		nrspells = 4;
-		timesummon = 0;
-        _unit->GetAIInterface()->setCurrentAgent(AGENT_NULL);
-        _unit->GetAIInterface()->SetAIState(STATE_IDLE);
-        RemoveAIUpdateEvent();
-    }
-
-    void OnDied(Unit * mKiller)
-    {
-		_unit->SendChatMessage(CHAT_MSG_MONSTER_YELL, LANG_UNIVERSAL, "You can't... kill... me spirit!");
-		_unit->PlaySoundToSet(12019);
-       RemoveAIUpdateEvent();
-    }
+	void OnCombatStart(Unit *pTarget)
+	{
+		// 2 Minute timer till Soaring Eagles are spawned
+		timesummon = AddTimer(120000);
+		ParentClass::OnCombatStart(pTarget);
+	}
 
     void AIUpdate()
 	{	
-		if (timesummon > 300)
+		if(IsTimerFinished(timesummon))
+		{
+			MoonScriptCreatureAI *Eagle = NULL;
+			// Spawn 3 Soaring Eagles
+			for(int x=0; x<3; x++)
 			{
-				Creature *cre = NULL;
-				cre = _unit->GetMapMgr()->GetInterface()->SpawnCreature(AKILZON_SOARING_EAGLE, 
-				(_unit->GetPositionX()+RandomFloat(10)-10), (_unit->GetPositionY()+RandomFloat(10)-10),
-				_unit->GetPositionZ(), _unit->GetOrientation(),
-				true, false, _unit->GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE), 0); 
-				cre->GetAIInterface()->setOutOfCombatRange(5000);
-				timesummon = 0;
-				_unit->SendChatMessage(CHAT_MSG_MONSTER_YELL, LANG_UNIVERSAL, "Feed, me bruddahs!");
-				_unit->PlaySoundToSet(12019);
+				Eagle = SpawnCreature(AKILZON_SOARING_EAGLE, (_unit->GetPositionX()+RandomFloat(10)-10), (_unit->GetPositionY()+RandomFloat(10)-10),
+				_unit->GetPositionZ(), _unit->GetOrientation(), true);
+				if(Eagle)
+				{
+					Eagle->AggroNearestUnit();
+					Eagle->SetDespawnWhenInactive(true);
+				}
 			}
-		timesummon = timesummon + RandomUInt(3);
-		float val = (float)RandomFloat(100.0f);
-		SpellCast(val);
+			Eagle = NULL;
+			Emote("Feed, me bruddahs!", Text_Yell, 12019);
+			// Restart the timer
+			ResetTimer(timesummon, 120000);
+		}
+		ParentClass::AIUpdate();
 	}
 
-    void SpellCast(float val)
-    {
-        if(_unit->GetCurrentSpell() == NULL && _unit->GetAIInterface()->GetNextTarget())
-        {
-			float comulativeperc = 0;
-		    Unit *target = NULL;
-			for(int i=0;i<nrspells;i++)
-			{
-				if(!spells[i].perctrigger) continue;
-				if(m_spellcheck[i])
-				{
-					target = _unit->GetAIInterface()->GetNextTarget();
-					switch(spells[i].targettype)
-					{
-						case TARGET_SELF:
-						case TARGET_VARIOUS:
-							_unit->CastSpell(_unit, spells[i].info, spells[i].instant); break;
-						case TARGET_ATTACKING:
-							_unit->CastSpell(target, spells[i].info, spells[i].instant); break;
-						case TARGET_DESTINATION:
-							_unit->CastSpellAoF(target->GetPositionX(),target->GetPositionY(),target->GetPositionZ(), spells[i].info, spells[i].instant); break;
-					}
-					if (spells[i].speech != "")
-					{
-						_unit->SendChatMessage(CHAT_MSG_MONSTER_YELL, LANG_UNIVERSAL, spells[i].speech.c_str());
-						_unit->PlaySoundToSet(spells[i].soundid); 
-					}
-                  	m_spellcheck[i] = false;
-					return;
-				}
-				if(val > comulativeperc && val <= (comulativeperc + spells[i].perctrigger))
-				{
-					_unit->setAttackTimer(spells[i].attackstoptimer, false);
-					m_spellcheck[i] = true;
-				}
-				comulativeperc += spells[i].perctrigger;
-			}
-        }
-    }
-protected:
-
-	int nrspells;
-	uint32 timesummon;
+	int32 timesummon;
 };
 
 
@@ -518,184 +196,142 @@ protected:
 
 
 
-class HALAZZIAI : public MoonScriptCreatureAI
+class HALAZZIAI : public MoonScriptBossAI
 {
-public:
-    MOONSCRIPT_FACTORY_FUNCTION(HALAZZIAI, MoonScriptCreatureAI);
-	SP_AI_Spell spells[3];
-	bool m_spellcheck[3];
-
-    HALAZZIAI(Creature* pCreature) : MoonScriptCreatureAI(pCreature)
+    MOONSCRIPT_FACTORY_FUNCTION(HALAZZIAI, MoonScriptBossAI);
+    HALAZZIAI(Creature* pCreature) : MoonScriptBossAI(pCreature)
     {
-			for(int i=0;i<nrspells;i++)
-			{
-				m_spellcheck[i] = false;
-			}
-		
-        spells[0].info = dbcSpell.LookupEntry(HALAZZI_SABER_LASH);
-		spells[0].targettype = TARGET_DESTINATION;
-		spells[0].instant = false;
-		spells[0].perctrigger = 0.5f;
-		spells[0].attackstoptimer = 1000;
+		AddPhaseSpell(1, AddSpell(HALAZZI_SABER_LASH, Target_Destination, 0.5, 0, 0, 0, 0, false, "Me gonna carve ya now!", Text_Yell));
 
-		spells[1].info = dbcSpell.LookupEntry(HALAZZI_FLAME_SHOCK);
-		spells[1].targettype = TARGET_ATTACKING; 
-		spells[1].instant = true;
-		spells[1].perctrigger = 2.0f;
-		spells[1].attackstoptimer = 1000;
-		
-		spells[2].info = dbcSpell.LookupEntry(HALAZZI_EARTH_SHOCK);
-		spells[2].targettype = TARGET_ATTACKING; 
-		spells[2].instant = true;
-		spells[2].perctrigger = 2.0f;
-		spells[2].attackstoptimer = 1000;
+		AddPhaseSpell(2, AddSpell(HALAZZI_FLAME_SHOCK, Target_Current, 12, 0, 0));
+		AddPhaseSpell(2, AddSpell(HALAZZI_EARTH_SHOCK, Target_Current, 12, 0, 0));
 
+		AddPhaseSpell(3, AddSpell(HALAZZI_SABER_LASH, Target_Destination, 0.5, 0, 0, 0, 0, false, "You gonna leave in pieces!", Text_Yell));
+		AddPhaseSpell(3, AddSpell(HALAZZI_FLAME_SHOCK, Target_Current, 18, 0, 0));
+		AddPhaseSpell(3, AddSpell(HALAZZI_EARTH_SHOCK, Target_Current, 18, 0, 0));
+		AddPhaseSpell(3, AddSpell(HALAZZI_ENRAGE, Target_Self, 100, 0, 60));
 
-    }
-    
-    void OnCombatStart(Unit* mTarget)
-    {
-		nrspells = 1;
-		spmin = 0;
-		phase =1;
-		_unit->SendChatMessage(CHAT_MSG_MONSTER_YELL, LANG_UNIVERSAL, "Get on your knees and bow to da fang and claw!");
-		_unit->PlaySoundToSet(12020);
-		RegisterAIUpdateEvent(1000);
-    }
+		// Transfigure: 4k aoe damage
+		Transfigure = AddSpell(44054, Target_Self, 0, 0, 0, 0, 0, false, "I fight wit' untamed spirit...", Text_Yell);
 
+		AddEmote(Event_OnCombatStart, "Get on your knees and bow to da fang and claw!", Text_Yell, 12020);
+		AddEmote(Event_OnTargetDied, "You cant fight da power...", Text_Yell, 12026);
+		AddEmote(Event_OnTargetDied, "You all gonna fail...", Text_Yell, 12027);
+		AddEmote(Event_OnDied, "Chaga... choka'jinn.", Text_Yell, 12028);
+		TotemTimer = AddTimer(1000); // Just to make the Timer ID
+		SplitCount = 0;
+		MaxHealth = GetUnit()->GetUInt32Value(UNIT_FIELD_MAXHEALTH);
+	}
 
-	void OnTargetDied(Unit* mTarget)
-    {
-			if (_unit->GetHealthPct() > 0)	
+	void OnDied(Unit *pKiller)
+	{
+		if(GetPhase() == 2) // Halazzi Can NOT die during phase 2 unless a player can do 48k damage
 		{
-			int RandomSpeach;
-			RandomUInt(1000);
-			RandomSpeach=rand()%3;
-			switch (RandomSpeach)
-			{
-			case 0:
-				_unit->SendChatMessage(CHAT_MSG_MONSTER_YELL, LANG_UNIVERSAL, "You cant fight da power...");
-				_unit->PlaySoundToSet(12026);
-				break;
-			case 1:
-				_unit->SendChatMessage(CHAT_MSG_MONSTER_YELL, LANG_UNIVERSAL, "You all gonna fail...");
-				_unit->PlaySoundToSet(12027);
-				break;
-			}
+			_unit->SetFlag(UNIT_DYNAMIC_FLAGS,U_DYN_FLAG_TAGGED_BY_OTHER);
+			_unit->RemoveFlag(UNIT_DYNAMIC_FLAGS, U_DYN_FLAG_LOOTABLE);
+			_unit->Tagged = true;
+			_unit->TaggerGuid = 0;
 		}
-
-    }
-
-    void OnCombatStop(Unit *mTarget)
-    {
-		nrspells = 1;
-		spmin = 0;
-        _unit->GetAIInterface()->setCurrentAgent(AGENT_NULL);
-        _unit->GetAIInterface()->SetAIState(STATE_IDLE);
-        RemoveAIUpdateEvent();
-    }
-
-    void OnDied(Unit * mKiller)
-    {
-		_unit->SendChatMessage(CHAT_MSG_MONSTER_YELL, LANG_UNIVERSAL, "Chaga... choka'jinn.");
-		_unit->PlaySoundToSet(12028);
-       RemoveAIUpdateEvent();
-    }
+		ParentClass::OnDied(pKiller);
+	}
 
     void AIUpdate()
 	{
-		if (!enrage && timer == 600)
-		{
-		_unit->CastSpell(_unit, dbcSpell.LookupEntry(HALAZZI_ENRAGE), true);
-		enrage = 1;
-		}
-		if (_unit->GetHealthPct() <= 75 && phase == 1) 
-		{
-			spmin = 1;
-			nrspells = 3;
-			phase = 2;
+		int32 Health = GetHealthPercent();
+		// Every 25% Halazzi calls on the lynx
+		if(!Lynx && Health <= 75 && SplitCount == 0)
+			Split();
+		else if(!Lynx && Health <= 50 && SplitCount == 1)
+			Split();
+		else if(!Lynx && Health <= 25 && SplitCount == 2)
+			Split();
 
-		}
-		if (_unit->GetHealthPct() <= 50 && phase == 2) 
+		// Lynx OR Halazzi is at 20% HP Merge them together again
+		if(Lynx && (Lynx->GetHealthPercent() <= 20 || Health <= 20))
+			Merge();
+		
+		// At <25% Phase 3 begins
+		if(GetHealthPercent() < 25 && GetPhase() == 1)
 		{
-		spmin = 0;
-		nrspells = 3;
-		phase = 3;
+			ResetTimer(TotemTimer, 30000);
+			SetPhase(3);
 		}
-		if (timetotem > 300 && phase ==2)
+
+		if(GetPhase() == 2 || GetPhase() == 3)
 		{
-			Creature *cre = NULL;
-			cre = _unit->GetMapMgr()->GetInterface()->SpawnCreature(HALAZZI_CORRUPTED_LIGHTING_TOTEM, 
-			(_unit->GetPositionX()+RandomFloat(3)-3), (_unit->GetPositionY()+RandomFloat(3)-3),
-			_unit->GetPositionZ(), _unit->GetOrientation(),
-			true, false, _unit->GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE), 0); 
-			cre->GetAIInterface()->setOutOfCombatRange(5000);
-			_unit->CastSpell(_unit, dbcSpell.LookupEntry(43302), false);
-			timetotem = 0;
+			if(IsTimerFinished(TotemTimer))
+			{
+				MoonScriptCreatureAI *Totem = NULL;
+				Totem = SpawnCreature(HALAZZI_CORRUPTED_LIGHTING_TOTEM, (_unit->GetPositionX()+RandomFloat(3)-3), (_unit->GetPositionY()+RandomFloat(3)-3), _unit->GetPositionZ(), 0, true);
+				if(Totem)
+				{
+					Totem->Despawn(60000); // Despawn in 60 seconds
+					Totem->AggroNearestPlayer();
+					Totem = NULL;
+				}
+				switch(GetPhase())
+				{
+					case 2: ResetTimer(TotemTimer, 60000); break;
+					case 3: ResetTimer(TotemTimer, 30000);  break; // Spawn them faster then phase 2
+				}
+			}
 		}
-		if (timetotem > 150 && phase ==3)
-		{
-			Creature *cre = NULL;
-			cre = _unit->GetMapMgr()->GetInterface()->SpawnCreature(HALAZZI_CORRUPTED_LIGHTING_TOTEM, 
-			(_unit->GetPositionX()+RandomFloat(3)-3), (_unit->GetPositionY()+RandomFloat(3)-3),
-			_unit->GetPositionZ(), _unit->GetOrientation(),
-			true, false, _unit->GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE), 0); 
-			cre->GetAIInterface()->setOutOfCombatRange(5000);
-			timetotem = 0;
-		}
-		timetotem = timetotem + RandomUInt(3);
-		timer++;
-		float val = (float)RandomFloat(100.0f);
-		SpellCast(val);
+
+		ParentClass::AIUpdate();
 	}
 
-    void SpellCast(float val)
-    {
-        if(_unit->GetCurrentSpell() == NULL && _unit->GetAIInterface()->GetNextTarget())
-        {
-			float comulativeperc = 0;
-		    Unit *target = NULL;
-			for(int i=spmin;i<nrspells;i++)
-			{
-				if(!spells[i].perctrigger) continue;
-				if(m_spellcheck[i])
-				{
-					target = _unit->GetAIInterface()->GetNextTarget();
-					switch(spells[i].targettype)
-					{
-						case TARGET_SELF:
-						case TARGET_VARIOUS:
-							_unit->CastSpell(_unit, spells[i].info, spells[i].instant); break;
-						case TARGET_ATTACKING:
-							_unit->CastSpell(target, spells[i].info, spells[i].instant); break;
-						case TARGET_DESTINATION:
-							_unit->CastSpellAoF(target->GetPositionX(),target->GetPositionY(),target->GetPositionZ(), spells[i].info, spells[i].instant); break;
-					}
-					if (spells[i].speech != "")
-					{
-						_unit->SendChatMessage(CHAT_MSG_MONSTER_YELL, LANG_UNIVERSAL, spells[i].speech.c_str());
-						_unit->PlaySoundToSet(spells[i].soundid); 
-					}
-                  	m_spellcheck[i] = false;
-					return;
-				}
-				if(val > comulativeperc && val <= (comulativeperc + spells[i].perctrigger))
-				{
-					_unit->setAttackTimer(spells[i].attackstoptimer, false);
-					m_spellcheck[i] = true;
-				}
-				comulativeperc += spells[i].perctrigger;
-			}
-        }
-    }
-protected:
+	void Split()
+	{
+		CurrentHealth = GetUnit()->GetUInt32Value(UNIT_FIELD_HEALTH);
+		SetDisplayId(24144);
+		GetUnit()->SetUInt32Value(UNIT_FIELD_HEALTH, 240000);
+		GetUnit()->SetUInt32Value(UNIT_FIELD_MAXHEALTH, 240000);
 
-	int nrspells;
-	int spmin;
-	int phase;
-	uint32 timetotem;
-	int timer;
-	bool enrage;
+		Lynx = SpawnCreature(24143, true);
+		if(Lynx)
+		{
+			Lynx->AggroNearestPlayer();
+			Lynx->SetDespawnWhenInactive(true);
+		}
+
+		SetPhase(2, Transfigure);
+	}
+
+	void Merge()
+	{
+		if(Lynx)
+			Lynx->Despawn();
+
+		GetUnit()->SetUInt32Value(UNIT_FIELD_HEALTH, CurrentHealth);
+		GetUnit()->SetUInt32Value(UNIT_FIELD_MAXHEALTH, MaxHealth);
+		SetDisplayId(21632);
+		
+		// Null variables
+		CurrentHealth = NULL;
+		Lynx = NULL;
+
+		SplitCount++;
+		Emote("Spirit, come back to me!",Text_Yell);
+		SetPhase(1);
+	}
+
+	MoonScriptCreatureAI* Lynx;
+	SpellDesc* Transfigure;
+	int32 TotemTimer;
+	int32 CurrentHealth, MaxHealth;
+	int SplitCount;
+};
+
+class LynxSpiritAI : public MoonScriptCreatureAI
+{
+    MOONSCRIPT_FACTORY_FUNCTION(LynxSpiritAI, MoonScriptCreatureAI);
+    LynxSpiritAI(Creature* pCreature) : MoonScriptCreatureAI(pCreature)
+    {
+		// Lynx Flurry
+		AddSpell(43290, Target_Self, 15, 0, 8);
+		// Shred Armor
+		AddSpell(43243, Target_Current, 20, 0, 0);
+	}
 };
 
 
@@ -1346,203 +982,30 @@ protected:
 
 class SOARINGEAGLEAI : public MoonScriptCreatureAI
 {
-public:
     MOONSCRIPT_FACTORY_FUNCTION(SOARINGEAGLEAI, MoonScriptCreatureAI);
-	SP_AI_Spell spells[1];
-	bool m_spellcheck[1];
-
     SOARINGEAGLEAI(Creature* pCreature) : MoonScriptCreatureAI(pCreature)
     {
-			nrspells = 1;
-			for(int i=0;i<nrspells;i++)
-			{
-				m_spellcheck[i] = false;
-			}
-		
-        spells[0].info = dbcSpell.LookupEntry(EAGLE_SWOOP);
-		spells[0].targettype = TARGET_DESTINATION;
-		spells[0].instant = true;
-		spells[0].perctrigger = 5.0f;
-		spells[0].attackstoptimer = 1000;
-
+		AddSpell(EAGLE_SWOOP, Target_Destination, 5, 0, 0);
+		GetUnit()->m_noRespawn = true;
     }
-    
-    void OnCombatStart(Unit* mTarget)
-    {
-		RegisterAIUpdateEvent(1000);
-    }
-
-
-	void OnTargetDied(Unit* mTarget)
-    {
-
-    }
-
-    void OnCombatStop(Unit *mTarget)
-    {
-		_unit->Despawn(3000,0);
-        _unit->GetAIInterface()->setCurrentAgent(AGENT_NULL);
-        _unit->GetAIInterface()->SetAIState(STATE_IDLE);
-        RemoveAIUpdateEvent();
-    }
-
-    void OnDied(Unit * mKiller)
-    {
-		_unit->Despawn(30000,0);
-		RemoveAIUpdateEvent();
-    }
-
-    void AIUpdate()
-	{
-		float val = (float)RandomFloat(100.0f);
-		SpellCast(val);
-	}
-
-    void SpellCast(float val)
-    {
-        if(_unit->GetCurrentSpell() == NULL && _unit->GetAIInterface()->GetNextTarget())
-        {
-			float comulativeperc = 0;
-		    Unit *target = NULL;
-			for(int i=0;i<nrspells;i++)
-			{
-				if(!spells[i].perctrigger) continue;
-				if(m_spellcheck[i])
-				{
-					target = _unit->GetAIInterface()->GetNextTarget();
-					switch(spells[i].targettype)
-					{
-						case TARGET_SELF:
-						case TARGET_VARIOUS:
-							_unit->CastSpell(_unit, spells[i].info, spells[i].instant); break;
-						case TARGET_ATTACKING:
-							_unit->CastSpell(target, spells[i].info, spells[i].instant); break;
-						case TARGET_DESTINATION:
-							_unit->CastSpellAoF(target->GetPositionX(),target->GetPositionY(),target->GetPositionZ(), spells[i].info, spells[i].instant); break;
-					}
-					if (spells[i].speech != "")
-					{
-						_unit->SendChatMessage(CHAT_MSG_MONSTER_YELL, LANG_UNIVERSAL, spells[i].speech.c_str());
-						_unit->PlaySoundToSet(spells[i].soundid); 
-					}
-                  	m_spellcheck[i] = false;
-					return;
-				}
-				if(val > comulativeperc && val <= (comulativeperc + spells[i].perctrigger))
-				{
-					_unit->setAttackTimer(spells[i].attackstoptimer, false);
-					m_spellcheck[i] = true;
-				}
-				comulativeperc += spells[i].perctrigger;
-			}
-        }
-    }
-protected:
-
-	int nrspells;
 };
 
 //Corrupted Lightning Totem
 #define CLT_LIGHTING 43301 //43526 //43301  //43661 //
 
-
 class CLTOTEMAI : public MoonScriptCreatureAI
 {
-public:
     MOONSCRIPT_FACTORY_FUNCTION(CLTOTEMAI, MoonScriptCreatureAI);
-	SP_AI_Spell spells[1];
-	bool m_spellcheck[1];
 
     CLTOTEMAI(Creature* pCreature) : MoonScriptCreatureAI(pCreature)
     {
-			nrspells = 1;
-			for(int i=0;i<nrspells;i++)
-			{
-				m_spellcheck[i] = false;
-			}
+		AddSpell(CLT_LIGHTING, Target_Current, 20, 0.5f, 0);
 		
-        spells[0].info = dbcSpell.LookupEntry(CLT_LIGHTING);
-		spells[0].targettype = TARGET_ATTACKING;
-		spells[0].instant = false;
-		spells[0].perctrigger = 10.0f;
-		spells[0].attackstoptimer = 1000;
-		
+		SetCanMove(false);
+		SetAllowMelee(false);
+		SetAllowRanged(false);
+		_unit->m_noRespawn = true;
     }
-    
-    void OnCombatStart(Unit* mTarget)
-    {
-		_unit->GetAIInterface()->m_canMove = false;
-		RegisterAIUpdateEvent(1000);
-    }
-
-
-	void OnTargetDied(Unit* mTarget)
-    {
-
-    }
-
-    void OnCombatStop(Unit *mTarget)
-    {
-		_unit->Despawn(30,0);
-        _unit->GetAIInterface()->setCurrentAgent(AGENT_NULL);
-        _unit->GetAIInterface()->SetAIState(STATE_IDLE);
-        RemoveAIUpdateEvent();
-    }
-
-    void OnDied(Unit * mKiller)
-    {
-		_unit->Despawn(3000,0);
-		RemoveAIUpdateEvent();
-    }
-
-    void AIUpdate()
-	{
-		float val = (float)RandomFloat(100.0f);
-		SpellCast(val);
-	}
-
-    void SpellCast(float val)
-    {
-        if(_unit->GetCurrentSpell() == NULL && _unit->GetAIInterface()->GetNextTarget())
-        {
-			float comulativeperc = 0;
-		    Unit *target = NULL;
-			for(int i=0;i<nrspells;i++)
-			{
-				if(!spells[i].perctrigger) continue;
-				if(m_spellcheck[i])
-				{
-					target = _unit->GetAIInterface()->GetNextTarget();
-					switch(spells[i].targettype)
-					{
-						case TARGET_SELF:
-						case TARGET_VARIOUS:
-							_unit->CastSpell(_unit, spells[i].info, spells[i].instant); break;
-						case TARGET_ATTACKING:
-							_unit->CastSpell(target, spells[i].info, spells[i].instant); break;
-						case TARGET_DESTINATION:
-							_unit->CastSpellAoF(target->GetPositionX(),target->GetPositionY(),target->GetPositionZ(), spells[i].info, spells[i].instant); break;
-					}
-					if (spells[i].speech != "")
-					{
-						_unit->SendChatMessage(CHAT_MSG_MONSTER_YELL, LANG_UNIVERSAL, spells[i].speech.c_str());
-						_unit->PlaySoundToSet(spells[i].soundid); 
-					}
-                  	m_spellcheck[i] = false;
-					return;
-				}
-				if(val > comulativeperc && val <= (comulativeperc + spells[i].perctrigger))
-				{
-					_unit->setAttackTimer(spells[i].attackstoptimer, false);
-					m_spellcheck[i] = true;
-				}
-				comulativeperc += spells[i].perctrigger;
-			}
-        }
-    }
-protected:
-
-	int nrspells;
 };
 
 //Gazakroth
@@ -2484,8 +1947,7 @@ protected:
 void SetupZulAman(ScriptMgr * mgr)
 {
 	mgr->register_creature_script(CN_NALORAKK, &NalorakkAI::Create);
-	mgr->register_creature_script(CN_AKILZON, &AKILZONAI::Create);
-	mgr->register_creature_script(CN_HALAZZI, &HALAZZIAI::Create);
+	/*
 	mgr->register_creature_script(CN_JANALAI, &JANALAIAI::Create);
 	mgr->register_creature_script(CN_HEX_LORD_MALACRASS, &HEXLORDMALACRASSAI::Create);
 	mgr->register_creature_script(CN_ZULJIN, &ZULJINAI::Create);
@@ -2500,5 +1962,12 @@ void SetupZulAman(ScriptMgr * mgr)
 	mgr->register_creature_script(CN_FENSTALKER, &FENSTALKERAI::Create);
 	mgr->register_creature_script(CN_ALYSON_ANTILLE, &ALYSONANTILLEAI::Create);
 	mgr->register_creature_script(CN_KORAGG, &KORAGGAI::Create);
-	mgr->register_creature_script(CN_FEATHER_VORTEX, &FEATHERVORTEXAI::Create);
+	mgr->register_creature_script(CN_FEATHER_VORTEX, &FEATHERVORTEXAI::Create);*/
+
+	mgr->register_creature_script(CN_AKILZON, &AKILZONAI::Create);
+	mgr->register_creature_script(AKILZON_SOARING_EAGLE, &SOARINGEAGLEAI::Create);
+	mgr->register_creature_script(CN_HALAZZI, &HALAZZIAI::Create);
+	// Lynx Spirit
+	mgr->register_creature_script(24143, &LynxSpiritAI::Create);
+	mgr->register_creature_script(HALAZZI_CORRUPTED_LIGHTING_TOTEM, &CLTOTEMAI::Create);
 }

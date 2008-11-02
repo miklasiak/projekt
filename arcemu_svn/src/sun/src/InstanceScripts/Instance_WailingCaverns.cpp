@@ -19,1163 +19,229 @@
 
 #include "StdAfx.h"
 #include "Setup.h"
+#include "Base.h"
 
 /************************************************************************/
 /* Instance_WailinCaverns.cpp Script		                               			     */
 /************************************************************************/
 
-struct Coords
-{
-    float x;
-    float y;
-    float z;
-    float o;
-};
-
 // Devouring Ectoplasm AI by Soulshifter
 
 #define CN_DEVOURING_ECTOPLASM		3638
-#define SPELL_SUMMON_EVOLVING      	7968 
-
-
-class DevouringEctoplasmAI : public CreatureAIScript
+class DevouringEctoplasmAI : public MoonScriptCreatureAI
 {
-public:
-	ADD_CREATURE_FACTORY_FUNCTION(DevouringEctoplasmAI);
-	SP_AI_Spell spells[1];
-	bool m_spellcheck[1];
-		
-    DevouringEctoplasmAI(Creature* pCreature) : CreatureAIScript(pCreature)
+	MOONSCRIPT_FACTORY_FUNCTION(DevouringEctoplasmAI, MoonScriptCreatureAI);		
+    DevouringEctoplasmAI(Creature* pCreature) : MoonScriptCreatureAI(pCreature)
     {
-		// -- Number of spells to add --
-		nrspells = 1;
-		
-		// --- Initialization ---
-		for(int i=0;i<nrspells;i++)
-		{
-			m_spellcheck[i] = false;
-		}
-		// ----------------------
-		
-		// Create basic info for spells here, and play with it later , fill always the info, targettype and if is instant or not! 
-        spells[0].info = dbcSpell.LookupEntry(SPELL_SUMMON_EVOLVING);
-		spells[0].targettype = TARGET_SELF;
-		spells[0].instant = false;
-		spells[0].perctrigger = 10.0f;
-		spells[0].cooldown = 20000;
-		spells[0].attackstoptimer = 1000; // 1sec
-		
+		// Summon Evolving Ectoplasm
+		AddSpell(7952, Target_Self, 10, 0, 600);	
 	}
-    
-    void OnCombatStart(Unit* mTarget)
-    {
-        RegisterAIUpdateEvent(_unit->GetUInt32Value(UNIT_FIELD_BASEATTACKTIME));
-	}
-
-    void OnCombatStop(Unit *mTarget)
-    {
-        _unit->GetAIInterface()->setCurrentAgent(AGENT_NULL);
-        _unit->GetAIInterface()->SetAIState(STATE_IDLE);
-        RemoveAIUpdateEvent();
-    }
-
-    void OnDied(Unit * mKiller)
-    {
-       RemoveAIUpdateEvent();
-    }
-
-    void AIUpdate()
-    {
-		float val = (float)RandomFloat(100.0f);
-        SpellCast(val);
-    }
-
-    void SpellCast(float val)
-    {
-        if(_unit->GetCurrentSpell() == NULL && _unit->GetAIInterface()->GetNextTarget())
-        {
-			float comulativeperc = 0;
-		    Unit *target = NULL;
-			for(int i=0;i<nrspells;i++)
-			{
-				if(!spells[i].perctrigger) continue;
-				
-				if(m_spellcheck[i])
-				{
-					target = _unit->GetAIInterface()->GetNextTarget();
-					switch(spells[i].targettype)
-					{
-						case TARGET_SELF:
-						case TARGET_VARIOUS:
-							_unit->CastSpell(_unit, spells[i].info, spells[i].instant); break;
-						case TARGET_ATTACKING:
-							_unit->CastSpell(target, spells[i].info, spells[i].instant); break;
-						case TARGET_DESTINATION:
-							_unit->CastSpellAoF(target->GetPositionX(),target->GetPositionY(),target->GetPositionZ(), spells[i].info, spells[i].instant); break;
-					}
-					m_spellcheck[i] = false;
-					return;
-				}
-
-				if(val > comulativeperc && val <= (comulativeperc + spells[i].perctrigger))
-				{
-					_unit->setAttackTimer(spells[i].attackstoptimer, false);
-					m_spellcheck[i] = true;
-				}
-				comulativeperc += spells[i].perctrigger;
-			}
-        }
-    }
-
-protected:
-
-	int nrspells;
 };
 
-
 // Druid of the Fang AI by Soulshifter
-
 #define CN_DRUID_FANG				3840
-#define SPELL_LIGHTNING_BOLT      	915 
-#define SPELL_SERPENT_FORM     		32817 
-#define SPELL_HEALINGT     			5187 
-
-class DruidFangAI : public CreatureAIScript
+class DruidFangAI : public MoonScriptCreatureAI
 {
-public:
-	ADD_CREATURE_FACTORY_FUNCTION(DruidFangAI);
-	SP_AI_Spell spells[3];
-	bool m_spellcheck[3];
-	bool healed;
-		
-    DruidFangAI(Creature* pCreature) : CreatureAIScript(pCreature)
+	MOONSCRIPT_FACTORY_FUNCTION(DruidFangAI, MoonScriptCreatureAI);	
+    DruidFangAI(Creature* pCreature) : MoonScriptCreatureAI(pCreature)
     {
-		// -- Number of spells to add --
-		nrspells = 3;
-		healed = false;
-		// --- Initialization ---
-		for(int i=0;i<nrspells;i++)
-		{
-			m_spellcheck[i] = false;
-		}
-		// ----------------------
-		
-		// Create basic info for spells here, and play with it later , fill always the info, targettype and if is instant or not! 
-        spells[0].info = dbcSpell.LookupEntry(SPELL_LIGHTNING_BOLT);
-		spells[0].targettype = TARGET_ATTACKING;
-		spells[0].instant = false;
-		spells[0].perctrigger = 30.0f;
-		spells[0].attackstoptimer = 1000; // 1sec
-		
-		spells[1].info = dbcSpell.LookupEntry(SPELL_SERPENT_FORM);
-		spells[1].targettype = TARGET_SELF;
-		spells[1].instant = true;
-		spells[1].perctrigger = 30.0f;
-		spells[1].attackstoptimer = 1000; // 1sec
-		
-		spells[2].info = dbcSpell.LookupEntry(SPELL_HEALINGT);
-		spells[2].targettype = TARGET_SELF;
-		spells[2].instant = true;
-		spells[2].perctrigger = 0.0f;
-		spells[2].attackstoptimer = 1000; // 1sec
-	}
-    
-    void OnCombatStart(Unit* mTarget)
-    {
-        RegisterAIUpdateEvent(_unit->GetUInt32Value(UNIT_FIELD_BASEATTACKTIME));
-	}
+		// Serpent Form
+		SerpentForm = AddSpell(8041, Target_Self, 0, 0, 0);
 
-    void OnCombatStop(Unit *mTarget)
-    {
-        _unit->GetAIInterface()->setCurrentAgent(AGENT_NULL);
-        _unit->GetAIInterface()->SetAIState(STATE_IDLE);
-        RemoveAIUpdateEvent();
-    }
+		// Healing Touch
+		HealingTouch = AddSpell(5187, Target_Self, 0, 2.5, 0);
 
-    void OnDied(Unit * mKiller)
-    {
-       RemoveAIUpdateEvent();
-    }
+		// Lightning Bolt
+		LightningBolt = AddSpell(9532, Target_Current, 30, 3, 0);
+
+		// Druid's Slumber
+		DruidsSlumber = AddSpell(8040, Target_RandomPlayerNotCurrent, 20, 2.5, 0);
+	}
 
     void AIUpdate()
     {
-		if(!healed && _unit->GetHealthPct() <= 5)
+		if(GetHealthPercent() <= 50 && SerpentForm->mEnabled == true)
 		{
-		_unit->CastSpell(_unit, spells[2].info, spells[2].instant);
-		healed = true;
+			CastSpellNowNoScheduling(SerpentForm);
+			SerpentForm->mEnabled = false;
+			LightningBolt->mEnabled = false;
+			DruidsSlumber->mEnabled = false;
+		} // If they dont have serpent form aura then re-enable normal spells
+		else if(SerpentForm->mEnabled == false && !GetUnit()->HasAura(8041))
+		{
+			LightningBolt->mEnabled = true;
+			DruidsSlumber->mEnabled = true;
+		}
+
+		if(GetHealthPercent() <= 5 && HealingTouch->mEnabled == true)
+		{
+			// Remove Serpent Form
+			RemoveAura(8041);
+			CastSpellNowNoScheduling(HealingTouch);
+			HealingTouch->mEnabled = false;
 		}
 		
-		float val = (float)RandomFloat(100.0f);
-        SpellCast(val);
+		ParentClass::AIUpdate();
     }
 
-    void SpellCast(float val)
-    {
-        if(_unit->GetCurrentSpell() == NULL && _unit->GetAIInterface()->GetNextTarget())
-        {
-			float comulativeperc = 0;
-		    Unit *target = NULL;
-			for(int i=0;i<nrspells;i++)
-			{
-				if(!spells[i].perctrigger) continue;
-				
-				if(m_spellcheck[i])
-				{
-					target = _unit->GetAIInterface()->GetNextTarget();
-					switch(spells[i].targettype)
-					{
-						case TARGET_SELF:
-						case TARGET_VARIOUS:
-							_unit->CastSpell(_unit, spells[i].info, spells[i].instant); break;
-						case TARGET_ATTACKING:
-							_unit->CastSpell(target, spells[i].info, spells[i].instant); break;
-						case TARGET_DESTINATION:
-							_unit->CastSpellAoF(target->GetPositionX(),target->GetPositionY(),target->GetPositionZ(), spells[i].info, spells[i].instant); break;
-					}
-					m_spellcheck[i] = false;
-					return;
-				}
-
-				if(val > comulativeperc && val <= (comulativeperc + spells[i].perctrigger))
-				{
-					_unit->setAttackTimer(spells[i].attackstoptimer, false);
-					m_spellcheck[i] = true;
-				}
-				comulativeperc += spells[i].perctrigger;
-			}
-        }
-    }
-
-protected:
-
-	int nrspells;
+	SpellDesc* SerpentForm;
+	SpellDesc* LightningBolt;
+	SpellDesc* DruidsSlumber;
+	SpellDesc* HealingTouch;
 };
 
 // BOSSES
 
 // Lady Anacondra AI by Soulshifter
-
 #define CN_LADY_ANACONDRA			3671
 #define SPELL_LIGHTNING_BOLT      	915 
 #define SPELL_SLEEP			     	1090
-#define SAY_AGGROLADY               "No one can stand against the Serpent Lords!"
-#define SOUND_AGGROLADY          	5786
 
-class LadyAnacondraAI : public CreatureAIScript
+class LadyAnacondraAI : public MoonScriptCreatureAI
 {
-public:
-	ADD_CREATURE_FACTORY_FUNCTION(LadyAnacondraAI);
-	SP_AI_Spell spells[2];
-	bool m_spellcheck[2];
-	bool Used_sleep;
-	
-    LadyAnacondraAI(Creature* pCreature) : CreatureAIScript(pCreature)
+	MOONSCRIPT_FACTORY_FUNCTION(LadyAnacondraAI, MoonScriptCreatureAI);	
+    LadyAnacondraAI(Creature* pCreature) : MoonScriptCreatureAI(pCreature)
     {
-		// -- Number of spells to add --
-		nrspells = 2;
-		
-		//This defines if Lady has used her sleep spell (just castable once)
-		Used_sleep = false;
-		
-		// --- Initialization ---
-		for(int i=0;i<nrspells;i++)
-		{
-			m_spellcheck[i] = false;
-		}
-		// ----------------------
-		
-		// Create basic info for spells here, and play with it later , fill always the info, targettype and if is instant or not! 
-        spells[0].info = dbcSpell.LookupEntry(SPELL_LIGHTNING_BOLT);
-		spells[0].targettype = TARGET_ATTACKING;
-		spells[0].instant = false;
-		spells[0].perctrigger = 30.0f;
-		spells[0].attackstoptimer = 1000; // 1sec
-		
-		spells[1].info = dbcSpell.LookupEntry(SPELL_SLEEP);
-		spells[1].targettype = TARGET_VARIOUS;
-		spells[1].instant = true;
-		spells[1].perctrigger = 0.0f;
-		spells[1].attackstoptimer = 5000; // 1sec
+		AddEmote(Event_OnCombatStart, "None can stand against the Serpent Lords!", Text_Yell, 5786);
+		// Lightning Bolt
+		AddSpell(9532, Target_Current, 30, 3, 0);
+		// Sleep
+		AddSpell(700, Target_RandomPlayerNotCurrent, 10, 1.5, 20);
 	}
-    
-    void OnCombatStart(Unit* mTarget)
-    {
-		_unit->PlaySoundToSet(SOUND_AGGROLADY);
-		_unit->SendChatMessage(CHAT_MSG_MONSTER_YELL, LANG_UNIVERSAL, SAY_AGGROLADY);
-        RegisterAIUpdateEvent(_unit->GetUInt32Value(UNIT_FIELD_BASEATTACKTIME));
-	}
-
-    void OnCombatStop(Unit *mTarget)
-    {
-        _unit->GetAIInterface()->setCurrentAgent(AGENT_NULL);
-        _unit->GetAIInterface()->SetAIState(STATE_IDLE);
-        RemoveAIUpdateEvent();
-    }
-
-    void OnDied(Unit * mKiller)
-    {
-       RemoveAIUpdateEvent();
-    }
-
-    void AIUpdate()
-    {
-		
-		if(!Used_sleep)
-		{
-		Unit *target = NULL;
-		target = _unit->GetAIInterface()->GetNextTarget();
-		_unit->CastSpell(target,spells[1].info, spells[1].instant);
-		Used_sleep = true;
-		}
-		float val = (float)RandomFloat(100.0f);
-        SpellCast(val);
-    }
-
-    void SpellCast(float val)
-    {
-        if(_unit->GetCurrentSpell() == NULL && _unit->GetAIInterface()->GetNextTarget())
-        {
-			float comulativeperc = 0;
-		    Unit *target = NULL;
-			for(int i=0;i<nrspells;i++)
-			{
-				if(!spells[i].perctrigger) continue;
-				
-				if(m_spellcheck[i])
-				{
-					target = _unit->GetAIInterface()->GetNextTarget();
-					switch(spells[i].targettype)
-					{
-						case TARGET_SELF:
-						case TARGET_VARIOUS:
-							_unit->CastSpell(_unit, spells[i].info, spells[i].instant); break;
-						case TARGET_ATTACKING:
-							_unit->CastSpell(target, spells[i].info, spells[i].instant); break;
-						case TARGET_DESTINATION:
-							_unit->CastSpellAoF(target->GetPositionX(),target->GetPositionY(),target->GetPositionZ(), spells[i].info, spells[i].instant); break;
-					}
-					m_spellcheck[i] = false;
-					return;
-				}
-
-				if(val > comulativeperc && val <= (comulativeperc + spells[i].perctrigger))
-				{
-					_unit->setAttackTimer(spells[i].attackstoptimer, false);
-					m_spellcheck[i] = true;
-				}
-				comulativeperc += spells[i].perctrigger;
-			}
-        }
-    }
-
-protected:
-
-	int nrspells;
 };
 
 // Lord Cobrahn AI by Soulshifter
-
 #define CN_LORD_COBRAHN				3669
 #define SPELL_LIGHTNING_BOLT      	915 
 #define SPELL_POISON		     	34969
 #define SPELL_SERPENTFORM			7965
-#define SAY_AGGROCOBRAHN            "You will never wake the dreamer!"
-#define SOUND_AGGROCOBRAHN        	5785
 
-class LordCobrahnAI : public CreatureAIScript
+class LordCobrahnAI : public MoonScriptCreatureAI
 {
-public:
-	ADD_CREATURE_FACTORY_FUNCTION(LordCobrahnAI);
-	SP_AI_Spell spells[3];
-	bool m_spellcheck[3];
-	bool Serpent_form;
-	
-    LordCobrahnAI(Creature* pCreature) : CreatureAIScript(pCreature)
+	MOONSCRIPT_FACTORY_FUNCTION(LordCobrahnAI, MoonScriptCreatureAI);
+    LordCobrahnAI(Creature* pCreature) : MoonScriptCreatureAI(pCreature)
     {
-		// -- Number of spells to add --
-		nrspells = 3;
-		
-		// Defines if Serpent form is active or not.
-		Serpent_form = false;
-		
-		// --- Initialization ---
-		for(int i=0;i<nrspells;i++)
-		{
-			m_spellcheck[i] = false;
-		}
-		// ----------------------
-		
-		// Create basic info for spells here, and play with it later , fill always the info, targettype and if is instant or not! 
-        spells[0].info = dbcSpell.LookupEntry(SPELL_LIGHTNING_BOLT);
-		spells[0].targettype = TARGET_ATTACKING;
-		spells[0].instant = false;
-		spells[0].perctrigger = 30.0f;
-		spells[0].attackstoptimer = 1000; // 1sec
-		
-		spells[1].info = dbcSpell.LookupEntry(SPELL_POISON);
-		spells[1].targettype = TARGET_ATTACKING;
-		spells[1].instant = true;
-		spells[1].perctrigger = 30.0f;
-		spells[1].attackstoptimer = 1000; // 1sec
-		
-		spells[2].info = dbcSpell.LookupEntry(SPELL_SERPENTFORM);
-		spells[2].targettype = TARGET_ATTACKING;
-		spells[2].instant = true;
-		spells[2].perctrigger = 0.0f;
-		spells[2].attackstoptimer = 1000; // 1sec
+		AddEmote(Event_OnCombatStart, "You will never wake the dreamer!", Text_Yell, 5785);
+		// Lightning Bolt
+		LightningBolt = AddSpell(9532, Target_Current, 30, 3, 0);
+		// Poison -- Spell ID Needs checked
+		AddSpell(34969, Target_Current, 15, 0, 0);
+		// Cobrahn Serpent Form
+		SerpentForm = AddSpell(7965, Target_Self, 0, 0, 0);
 	}
-    
-    void OnCombatStart(Unit* mTarget)
-    {
-        _unit->PlaySoundToSet(SOUND_AGGROCOBRAHN);
-		_unit->SendChatMessage(CHAT_MSG_MONSTER_YELL, LANG_UNIVERSAL, SAY_AGGROCOBRAHN);
-		RegisterAIUpdateEvent(_unit->GetUInt32Value(UNIT_FIELD_BASEATTACKTIME));
-	}
-
-    void OnCombatStop(Unit *mTarget)
-    {
-        _unit->GetAIInterface()->setCurrentAgent(AGENT_NULL);
-        _unit->GetAIInterface()->SetAIState(STATE_IDLE);
-        RemoveAIUpdateEvent();
-    }
-
-    void OnDied(Unit * mKiller)
-    {
-       RemoveAIUpdateEvent();
-    }
 
     void AIUpdate()
     {
-		if(!Serpent_form && _unit->GetHealthPct() <= 20)
+		if(GetHealthPercent() <= 20 && SerpentForm->mEnabled == true)
 		{
-		_unit->CastSpell(_unit, spells[2].info, spells[2].instant);
-		Serpent_form = true;
+			CastSpellNowNoScheduling(SerpentForm);
+			SerpentForm->mEnabled = false;
+			// Disable Lightning Bolt
+			LightningBolt->mEnabled = false;
 		}
-		float val = (float)RandomFloat(100.0f);
-        SpellCast(val);
+		else if(GetHealthPercent() <= 20 && SerpentForm->mEnabled == false && !GetUnit()->HasAura(7965))
+		{
+			// Enable Lightning Bolt
+			LightningBolt->mEnabled = true;
+		}
+		ParentClass::AIUpdate();
     }
-
-    void SpellCast(float val)
-    {
-        if(_unit->GetCurrentSpell() == NULL && _unit->GetAIInterface()->GetNextTarget())
-        {
-			float comulativeperc = 0;
-		    Unit *target = NULL;
-			for(int i=0;i<nrspells;i++)
-			{
-				if(!spells[i].perctrigger) continue;
-				
-				if(m_spellcheck[i])
-				{
-					target = _unit->GetAIInterface()->GetNextTarget();
-					switch(spells[i].targettype)
-					{
-						case TARGET_SELF:
-						case TARGET_VARIOUS:
-							_unit->CastSpell(_unit, spells[i].info, spells[i].instant); break;
-						case TARGET_ATTACKING:
-							_unit->CastSpell(target, spells[i].info, spells[i].instant); break;
-						case TARGET_DESTINATION:
-							_unit->CastSpellAoF(target->GetPositionX(),target->GetPositionY(),target->GetPositionZ(), spells[i].info, spells[i].instant); break;
-					}
-					m_spellcheck[i] = false;
-					return;
-				}
-
-				if(val > comulativeperc && val <= (comulativeperc + spells[i].perctrigger))
-				{
-					_unit->setAttackTimer(spells[i].attackstoptimer, false);
-					m_spellcheck[i] = true;
-				}
-				comulativeperc += spells[i].perctrigger;
-			}
-        }
-    }
-
-protected:
-
-	int nrspells;
+	SpellDesc* LightningBolt;
+	SpellDesc* SerpentForm;
 };
 
 // Lord Pythas AI by Soulshifter
-
 #define CN_LORD_PYTHAS				3670
-#define SPELL_LIGHTNING_BOLT      	915 
-#define SPELL_SLEEP2		     	1090
-#define SPELL_THUNDERCLAP			8732
-#define SAY_AGGROPYTHAS            "The coils of death... Will crush you!"
-#define SOUND_AGGROPYTHAS        	5787
-
-class LordPythasAI : public CreatureAIScript
+class LordPythasAI : public MoonScriptCreatureAI
 {
-public:
-	ADD_CREATURE_FACTORY_FUNCTION(LordPythasAI);
-	SP_AI_Spell spells[3];
-	bool m_spellcheck[3];
-	bool Used_sleep;
-	
-    LordPythasAI(Creature* pCreature) : CreatureAIScript(pCreature)
+	MOONSCRIPT_FACTORY_FUNCTION(LordPythasAI, MoonScriptCreatureAI);
+    LordPythasAI(Creature* pCreature) : MoonScriptCreatureAI(pCreature)
     {
-		// -- Number of spells to add --
-		nrspells = 3;
-		
-		//This defines if Pythas has used his sleep spell. Just usable once. (Starts on false).
-		Used_sleep = false;
-		
-		// --- Initialization ---
-		for(int i=0;i<nrspells;i++)
-		{
-			m_spellcheck[i] = false;
-		}
-		// ----------------------
-		
-		// Create basic info for spells here, and play with it later , fill always the info, targettype and if is instant or not! 
-        spells[0].info = dbcSpell.LookupEntry(SPELL_LIGHTNING_BOLT);
-		spells[0].targettype = TARGET_ATTACKING;
-		spells[0].instant = false;
-		spells[0].perctrigger = 30.0f;
-		spells[0].attackstoptimer = 1000; // 1sec
-		
-		spells[1].info = dbcSpell.LookupEntry(SPELL_SLEEP2);
-		spells[1].targettype = TARGET_VARIOUS;
-		spells[1].instant = true;
-		spells[1].perctrigger = 0.0f;
-		spells[1].attackstoptimer = 5000; // 1sec
-		
-		spells[2].info = dbcSpell.LookupEntry(SPELL_THUNDERCLAP);
-		spells[2].targettype = TARGET_ATTACKING;
-		spells[2].instant = true;
-		spells[2].perctrigger = 20.0f;
-		spells[2].attackstoptimer = 1000; // 1sec
+		AddEmote(Event_OnCombatStart, "The coils of death... Will crush you!", Text_Yell, 5787);
+		// Lightning Bolt
+		AddSpell(9532, Target_Current, 30, 3, 0);
+		// Sleep
+		AddSpell(700, Target_RandomPlayer, 10, 1.5, 0);
+		// Thunderclap
+		AddSpell(8147, Target_Self, 20, 0, 5);
 	}
-    
-    void OnCombatStart(Unit* mTarget)
-    {
-        _unit->PlaySoundToSet(SOUND_AGGROPYTHAS);
-		_unit->SendChatMessage(CHAT_MSG_MONSTER_YELL, LANG_UNIVERSAL, SAY_AGGROPYTHAS);
-		RegisterAIUpdateEvent(_unit->GetUInt32Value(UNIT_FIELD_BASEATTACKTIME));
-	}
-
-    void OnCombatStop(Unit *mTarget)
-    {
-        _unit->GetAIInterface()->setCurrentAgent(AGENT_NULL);
-        _unit->GetAIInterface()->SetAIState(STATE_IDLE);
-        RemoveAIUpdateEvent();
-    }
-
-    void OnDied(Unit * mKiller)
-    {
-       RemoveAIUpdateEvent();
-    }
-
-    void AIUpdate()
-    {
-		if(!Used_sleep)
-		{
-		Unit *target = NULL;
-		target = _unit->GetAIInterface()->GetNextTarget();
-		_unit->CastSpell(target,spells[1].info, spells[1].instant);
-		Used_sleep = true;
-		}
-		float val = (float)RandomFloat(100.0f);
-        SpellCast(val);
-    }
-
-    void SpellCast(float val)
-    {
-        if(_unit->GetCurrentSpell() == NULL && _unit->GetAIInterface()->GetNextTarget())
-        {
-			float comulativeperc = 0;
-		    Unit *target = NULL;
-			for(int i=0;i<nrspells;i++)
-			{
-				if(!spells[i].perctrigger) continue;
-				
-				if(m_spellcheck[i])
-				{
-					target = _unit->GetAIInterface()->GetNextTarget();
-					switch(spells[i].targettype)
-					{
-						case TARGET_SELF:
-						case TARGET_VARIOUS:
-							_unit->CastSpell(_unit, spells[i].info, spells[i].instant); break;
-						case TARGET_ATTACKING:
-							_unit->CastSpell(target, spells[i].info, spells[i].instant); break;
-						case TARGET_DESTINATION:
-							_unit->CastSpellAoF(target->GetPositionX(),target->GetPositionY(),target->GetPositionZ(), spells[i].info, spells[i].instant); break;
-					}
-					m_spellcheck[i] = false;
-					return;
-				}
-
-				if(val > comulativeperc && val <= (comulativeperc + spells[i].perctrigger))
-				{
-					_unit->setAttackTimer(spells[i].attackstoptimer, false);
-					m_spellcheck[i] = true;
-				}
-				comulativeperc += spells[i].perctrigger;
-			}
-        }
-    }
-
-protected:
-
-	int nrspells;
 };
 
 // Lord Serpentis AI by Soulshifter
 
 #define CN_LORD_SERPENTIS			3673
-#define SPELL_LIGHTNING_BOLT      	915 
-#define SPELL_SLEEP3		     	1090
-#define SAY_AGGROSERPENTIS     		"I am the serpent king, i can do anything!"
-#define SOUND_AGGROSERPENTIS      	5788
-
-class LordSerpentisAI : public CreatureAIScript
+class LordSerpentisAI : public MoonScriptCreatureAI
 {
-public:
-	ADD_CREATURE_FACTORY_FUNCTION(LordSerpentisAI);
-	SP_AI_Spell spells[2];
-	bool m_spellcheck[2];
-	bool Used_sleep;
-    LordSerpentisAI(Creature* pCreature) : CreatureAIScript(pCreature)
+	MOONSCRIPT_FACTORY_FUNCTION(LordSerpentisAI, MoonScriptCreatureAI);
+    LordSerpentisAI(Creature* pCreature) : MoonScriptCreatureAI(pCreature)
     {
-		// -- Number of spells to add --
-		nrspells = 2;
-		
-		//This defines if Serpentis has used his sleep spell. Just usable once. (Starts on false).
-		Used_sleep = false;
-		
-		// --- Initialization ---
-		for(int i=0;i<nrspells;i++)
-		{
-			m_spellcheck[i] = false;
-		}
-		// ----------------------
-		
-		// Create basic info for spells here, and play with it later , fill always the info, targettype and if is instant or not! 
-        spells[0].info = dbcSpell.LookupEntry(SPELL_LIGHTNING_BOLT);
-		spells[0].targettype = TARGET_ATTACKING;
-		spells[0].instant = false;
-		spells[0].perctrigger = 30.0f;
-		spells[0].attackstoptimer = 1000; // 1sec
-		
-		spells[1].info = dbcSpell.LookupEntry(SPELL_SLEEP3);
-		spells[1].targettype = TARGET_VARIOUS;
-		spells[1].instant = true;
-		spells[1].perctrigger = 0.0f;
-		spells[1].attackstoptimer = 5000; // 1sec
-		
+		AddEmote(Event_OnCombatStart, "I am the serpent king, i can do anything!", Text_Yell, 5788);
+		// Lightning Bolt
+		AddSpell(9532, Target_Current, 30, 3, 0);
+		// Sleep
+		AddSpell(700, Target_RandomPlayer, 10, 1.5, 0);		
 	}
-    
-    void OnCombatStart(Unit* mTarget)
-    {
-        _unit->PlaySoundToSet(SOUND_AGGROSERPENTIS);
-		_unit->SendChatMessage(CHAT_MSG_MONSTER_YELL, LANG_UNIVERSAL, SAY_AGGROSERPENTIS);
-		RegisterAIUpdateEvent(_unit->GetUInt32Value(UNIT_FIELD_BASEATTACKTIME));
-	}
-
-    void OnCombatStop(Unit *mTarget)
-    {
-        _unit->GetAIInterface()->setCurrentAgent(AGENT_NULL);
-        _unit->GetAIInterface()->SetAIState(STATE_IDLE);
-        RemoveAIUpdateEvent();
-    }
-
-    void OnDied(Unit * mKiller)
-    {
-       RemoveAIUpdateEvent();
-    }
-
-    void AIUpdate()
-    {
-		if(!Used_sleep)
-		{
-		Unit *target = NULL;
-		target = _unit->GetAIInterface()->GetNextTarget();
-		_unit->CastSpell(target, spells[1].info, spells[1].instant);
-		Used_sleep = true;
-		}
-		float val = (float)RandomFloat(100.0f);
-        SpellCast(val);
-    }
-
-    void SpellCast(float val)
-    {
-        if(_unit->GetCurrentSpell() == NULL && _unit->GetAIInterface()->GetNextTarget())
-        {
-			float comulativeperc = 0;
-		    Unit *target = NULL;
-			for(int i=0;i<nrspells;i++)
-			{
-				if(!spells[i].perctrigger) continue;
-				
-				if(m_spellcheck[i])
-				{
-					target = _unit->GetAIInterface()->GetNextTarget();
-					switch(spells[i].targettype)
-					{
-						case TARGET_SELF:
-						case TARGET_VARIOUS:
-							_unit->CastSpell(_unit, spells[i].info, spells[i].instant); break;
-						case TARGET_ATTACKING:
-							_unit->CastSpell(target, spells[i].info, spells[i].instant); break;
-						case TARGET_DESTINATION:
-							_unit->CastSpellAoF(target->GetPositionX(),target->GetPositionY(),target->GetPositionZ(), spells[i].info, spells[i].instant); break;
-					}
-					m_spellcheck[i] = false;
-					return;
-				}
-
-				if(val > comulativeperc && val <= (comulativeperc + spells[i].perctrigger))
-				{
-					_unit->setAttackTimer(spells[i].attackstoptimer, false);
-					m_spellcheck[i] = true;
-				}
-				comulativeperc += spells[i].perctrigger;
-			}
-        }
-    }
-
-protected:
-
-	int nrspells;
 };
 
 // Verdan the Everliving AI by Soulshifter
 
 #define CN_VERDAN_EVERLIVING		5775
-#define SPELL_GRASPING_VINES      	8142 
-
-class VerdanEverlivingAI : public CreatureAIScript
+class VerdanEverlivingAI : public MoonScriptCreatureAI
 {
-public:
-	ADD_CREATURE_FACTORY_FUNCTION(VerdanEverlivingAI);
-	SP_AI_Spell spells[1];
-	bool m_spellcheck[1];
-	
-    VerdanEverlivingAI(Creature* pCreature) : CreatureAIScript(pCreature)
+	MOONSCRIPT_FACTORY_FUNCTION(VerdanEverlivingAI, MoonScriptCreatureAI);	
+    VerdanEverlivingAI(Creature* pCreature) : MoonScriptCreatureAI(pCreature)
     {
-		// -- Number of spells to add --
-		nrspells = 1;
-			
-		// --- Initialization ---
-		for(int i=0;i<nrspells;i++)
-		{
-			m_spellcheck[i] = false;
-		}
-		// ----------------------
-		
-		// Create basic info for spells here, and play with it later , fill always the info, targettype and if is instant or not! 
-        spells[0].info = dbcSpell.LookupEntry(SPELL_GRASPING_VINES);
-		spells[0].targettype = TARGET_ATTACKING;
-		spells[0].instant = true;
-		spells[0].perctrigger = 30.0f;
-		spells[0].attackstoptimer = 1000; // 1sec
-			
+		// Grasping Vines
+		AddSpell(8142, Target_Current, 30, 1, 0);		
 	}
-    
-    void OnCombatStart(Unit* mTarget)
-    {
-       	RegisterAIUpdateEvent(_unit->GetUInt32Value(UNIT_FIELD_BASEATTACKTIME));
-	}
-
-    void OnCombatStop(Unit *mTarget)
-    {
-        _unit->GetAIInterface()->setCurrentAgent(AGENT_NULL);
-        _unit->GetAIInterface()->SetAIState(STATE_IDLE);
-        RemoveAIUpdateEvent();
-    }
-
-    void OnDied(Unit * mKiller)
-    {
-       RemoveAIUpdateEvent();
-    }
-
-    void AIUpdate()
-    {
-		float val = (float)RandomFloat(100.0f);
-        SpellCast(val);
-    }
-
-    void SpellCast(float val)
-    {
-        if(_unit->GetCurrentSpell() == NULL && _unit->GetAIInterface()->GetNextTarget())
-        {
-			float comulativeperc = 0;
-		    Unit *target = NULL;
-			for(int i=0;i<nrspells;i++)
-			{
-				if(!spells[i].perctrigger) continue;
-				
-				if(m_spellcheck[i])
-				{
-					target = _unit->GetAIInterface()->GetNextTarget();
-					switch(spells[i].targettype)
-					{
-						case TARGET_SELF:
-						case TARGET_VARIOUS:
-							_unit->CastSpell(_unit, spells[i].info, spells[i].instant); break;
-						case TARGET_ATTACKING:
-							_unit->CastSpell(target, spells[i].info, spells[i].instant); break;
-						case TARGET_DESTINATION:
-							_unit->CastSpellAoF(target->GetPositionX(),target->GetPositionY(),target->GetPositionZ(), spells[i].info, spells[i].instant); break;
-					}
-					m_spellcheck[i] = false;
-					return;
-				}
-
-				if(val > comulativeperc && val <= (comulativeperc + spells[i].perctrigger))
-				{
-					_unit->setAttackTimer(spells[i].attackstoptimer, false);
-					m_spellcheck[i] = true;
-				}
-				comulativeperc += spells[i].perctrigger;
-			}
-        }
-    }
-
-protected:
-
-	int nrspells;
 };
 
 // Skum AI by Soulshifter
-
 #define CN_SKUM						3674
-#define SPELL_CHAINED_BOLT      	15549 
-
-class SkumAI : public CreatureAIScript
+class SkumAI : public MoonScriptCreatureAI
 {
-public:
-	ADD_CREATURE_FACTORY_FUNCTION(SkumAI);
-	SP_AI_Spell spells[1];
-	bool m_spellcheck[1];
-	bool Run_in_fear;
-    SkumAI(Creature* pCreature) : CreatureAIScript(pCreature)
+	MOONSCRIPT_FACTORY_FUNCTION(SkumAI, MoonScriptCreatureAI);
+    SkumAI(Creature* pCreature) : MoonScriptCreatureAI(pCreature)
     {
-		// -- Number of spells to add --
-		nrspells = 1;
-			
-		// This defines if Skum is low on HP and try to run away (starts on false).
-		Run_in_fear = false;
-					
-		// --- Initialization ---
-		for(int i=0;i<nrspells;i++)
-		{
-			m_spellcheck[i] = false;
-		}
-		// ----------------------
-		
-		// Create basic info for spells here, and play with it later , fill always the info, targettype and if is instant or not! 
-        spells[0].info = dbcSpell.LookupEntry(SPELL_CHAINED_BOLT);
-		spells[0].targettype = TARGET_VARIOUS;
-		spells[0].instant = false;
-		spells[0].perctrigger = 50.0f;
-		spells[0].attackstoptimer = 1000; // 1sec
-			
+		// Chained Bolt
+		AddSpell(6254, Target_Current, 50, 1.8f, 0);			
 	}
-    
-    void OnCombatStart(Unit* mTarget)
-    {
-       	RegisterAIUpdateEvent(_unit->GetUInt32Value(UNIT_FIELD_BASEATTACKTIME));
-	}
-
-    void OnCombatStop(Unit *mTarget)
-    {
-        _unit->GetAIInterface()->setCurrentAgent(AGENT_NULL);
-        _unit->GetAIInterface()->SetAIState(STATE_IDLE);
-        RemoveAIUpdateEvent();
-    }
-
-    void OnDied(Unit * mKiller)
-    {
-       RemoveAIUpdateEvent();
-    }
-
+   
     void AIUpdate()
     {
-		if(!Run_in_fear && _unit->GetHealthPct() <= 10)
+		if(GetHealthPercent() <= 10 && GetBehavior() != Behavior_Flee)
 		{
-		_unit->SendChatMessage(CHAT_MSG_MONSTER_SAY, LANG_UNIVERSAL, "Trying to run cower in fear");
-		Run_in_fear = true;
+			Emote("Skum tries to run away in fear", Text_Emote);
+			SetBehavior(Behavior_Flee);
+			SetAllowMelee(false);
+			SetAllowRanged(false);
+			SetAllowSpell(false);
+			MoveTo(-262.829742f, -299.363159f, -68.293579f, true);
 		}
-		if(Run_in_fear)
-		{
-		_unit->GetAIInterface()->MoveTo(-262.829742f, -299.363159f, -68.293579f, 0.267827f);
-		}
-		float val = (float)RandomFloat(100.0f);
-        SpellCast(val);
-    }
-
-    void SpellCast(float val)
-    {
-        if(_unit->GetCurrentSpell() == NULL && _unit->GetAIInterface()->GetNextTarget())
-        {
-			float comulativeperc = 0;
-		    Unit *target = NULL;
-			for(int i=0;i<nrspells;i++)
-			{
-				if(!spells[i].perctrigger) continue;
-				
-				if(m_spellcheck[i])
-				{
-					target = _unit->GetAIInterface()->GetNextTarget();
-					switch(spells[i].targettype)
-					{
-						case TARGET_SELF:
-						case TARGET_VARIOUS:
-							_unit->CastSpell(_unit, spells[i].info, spells[i].instant); break;
-						case TARGET_ATTACKING:
-							_unit->CastSpell(target, spells[i].info, spells[i].instant); break;
-						case TARGET_DESTINATION:
-							_unit->CastSpellAoF(target->GetPositionX(),target->GetPositionY(),target->GetPositionZ(), spells[i].info, spells[i].instant); break;
-					}
-					m_spellcheck[i] = false;
-					return;
-				}
-
-				if(val > comulativeperc && val <= (comulativeperc + spells[i].perctrigger))
-				{
-					_unit->setAttackTimer(spells[i].attackstoptimer, false);
-					m_spellcheck[i] = true;
-				}
-				comulativeperc += spells[i].perctrigger;
-			}
-        }
-    }
-
-	
-protected:
-
-	int nrspells;
-};
-
-// Kresh AI by Soulshifter
-
-#define CN_KRESH			3653
-#define SPELL_BITE			17258
-#define	SPELL_SHELL_SHIELD	40087
-
-class KreshAI : public CreatureAIScript
-
-{
-
-public:
-	ADD_CREATURE_FACTORY_FUNCTION(KreshAI);
-	SP_AI_Spell spells[2];
-	bool m_spellcheck[2];
-		
-    KreshAI(Creature* pCreature) : CreatureAIScript(pCreature)
-    {
-		// -- Number of spells to add --
-		nrspells = 2;
-		
-		// --- Initialization ---
-		for(int i=0;i<nrspells;i++)
-		{
-			m_spellcheck[i] = false;
-		}
-		// ----------------------
-		
-		// Create basic info for spells here, and play with it later , fill always the info, targettype and if is instant or not! 
-        spells[0].info = dbcSpell.LookupEntry(SPELL_BITE);
-		spells[0].targettype = TARGET_ATTACKING;
-		spells[0].instant = true;
-		spells[0].perctrigger = 30.0f;
-		spells[0].cooldown = 20000;
-		spells[0].attackstoptimer = 1000; // 1sec
-		
-		spells[1].info = dbcSpell.LookupEntry(SPELL_SHELL_SHIELD);
-		spells[1].targettype = TARGET_SELF;
-		spells[1].instant = false;
-		spells[1].perctrigger = 15.0f;
-		spells[1].cooldown = 20000;
-		spells[1].attackstoptimer = 1000; // 1sec
-		
+		ParentClass::AIUpdate();
 	}
-    
-    void OnCombatStart(Unit* mTarget)
-    {
-        RegisterAIUpdateEvent(_unit->GetUInt32Value(UNIT_FIELD_BASEATTACKTIME));
-	}
-
-    void OnCombatStop(Unit *mTarget)
-    {
-        _unit->GetAIInterface()->setCurrentAgent(AGENT_NULL);
-        _unit->GetAIInterface()->SetAIState(STATE_IDLE);
-        RemoveAIUpdateEvent();
-    }
-
-    void OnDied(Unit * mKiller)
-    {
-       RemoveAIUpdateEvent();
-    }
-
-    void AIUpdate()
-    {
-		float val = (float)RandomFloat(100.0f);
-        SpellCast(val);
-    }
-
-    void SpellCast(float val)
-    {
-        if(_unit->GetCurrentSpell() == NULL && _unit->GetAIInterface()->GetNextTarget())
-        {
-			float comulativeperc = 0;
-		    Unit *target = NULL;
-			for(int i=0;i<nrspells;i++)
-			{
-				if(!spells[i].perctrigger) continue;
-				
-				if(m_spellcheck[i])
-				{
-					target = _unit->GetAIInterface()->GetNextTarget();
-					switch(spells[i].targettype)
-					{
-						case TARGET_SELF:
-						case TARGET_VARIOUS:
-							_unit->CastSpell(_unit, spells[i].info, spells[i].instant); break;
-						case TARGET_ATTACKING:
-							_unit->CastSpell(target, spells[i].info, spells[i].instant); break;
-						case TARGET_DESTINATION:
-							_unit->CastSpellAoF(target->GetPositionX(),target->GetPositionY(),target->GetPositionZ(), spells[i].info, spells[i].instant); break;
-					}
-					m_spellcheck[i] = false;
-					return;
-				}
-
-				if(val > comulativeperc && val <= (comulativeperc + spells[i].perctrigger))
-				{
-					_unit->setAttackTimer(spells[i].attackstoptimer, false);
-					m_spellcheck[i] = true;
-				}
-				comulativeperc += spells[i].perctrigger;
-			}
-        }
-    }
-
-protected:
-
-	int nrspells;
 };
 
 // Mutanus the Devourer AI by Soulshifter
-
 #define CN_MUTANUS				3654
-#define SPELL_THUNDERSHOCK		7803
-#define	SPELL_TERRIFY			7399
-
-class MutanusAI : public CreatureAIScript
+class MutanusAI : public MoonScriptCreatureAI
 {
-public:
-	ADD_CREATURE_FACTORY_FUNCTION(MutanusAI);
-	SP_AI_Spell spells[2];
-	bool m_spellcheck[2];
-		
-    MutanusAI(Creature* pCreature) : CreatureAIScript(pCreature)
+	MOONSCRIPT_FACTORY_FUNCTION(MutanusAI, MoonScriptCreatureAI);		
+    MutanusAI(Creature* pCreature) : MoonScriptCreatureAI(pCreature)
     {
-		// -- Number of spells to add --
-		nrspells = 2;
-		
-		// --- Initialization ---
-		for(int i=0;i<nrspells;i++)
-		{
-			m_spellcheck[i] = false;
-		}
-		// ----------------------
-		
-		// Create basic info for spells here, and play with it later , fill always the info, targettype and if is instant or not! 
-        spells[0].info = dbcSpell.LookupEntry(SPELL_THUNDERSHOCK);
-		spells[0].targettype = TARGET_VARIOUS;
-		spells[0].instant = true;
-		spells[0].perctrigger = 15.0f;
-		spells[0].cooldown = 20000;
-		spells[0].attackstoptimer = 1000; // 1sec
-		
-		spells[1].info = dbcSpell.LookupEntry(SPELL_TERRIFY);
-		spells[1].targettype = TARGET_ATTACKING;
-		spells[1].instant = true;
-		spells[1].perctrigger = 15.0f;
-		spells[1].cooldown = 20000;
-		spells[1].attackstoptimer = 1000; // 1sec
-		
+		// Thundercrack
+		AddSpell(8150, Target_Self, 15, 0, 0);
+		// Terrify
+		AddSpell(7399, Target_RandomPlayer, 15, 0, 4);		
 	}
-    
-    void OnCombatStart(Unit* mTarget)
-    {
-        RegisterAIUpdateEvent(_unit->GetUInt32Value(UNIT_FIELD_BASEATTACKTIME));
-	}
-
-    void OnCombatStop(Unit *mTarget)
-    {
-        _unit->GetAIInterface()->setCurrentAgent(AGENT_NULL);
-        _unit->GetAIInterface()->SetAIState(STATE_IDLE);
-        RemoveAIUpdateEvent();
-    }
-
-    void OnDied(Unit * mKiller)
-    {
-       RemoveAIUpdateEvent();
-    }
-
-    void AIUpdate()
-    {
-		float val = (float)RandomFloat(100.0f);
-        SpellCast(val);
-    }
-
-    void SpellCast(float val)
-    {
-        if(_unit->GetCurrentSpell() == NULL && _unit->GetAIInterface()->GetNextTarget())
-        {
-			float comulativeperc = 0;
-		    Unit *target = NULL;
-			for(int i=0;i<nrspells;i++)
-			{
-				if(!spells[i].perctrigger) continue;
-				
-				if(m_spellcheck[i])
-				{
-					target = _unit->GetAIInterface()->GetNextTarget();
-					switch(spells[i].targettype)
-					{
-						case TARGET_SELF:
-						case TARGET_VARIOUS:
-							_unit->CastSpell(_unit, spells[i].info, spells[i].instant); break;
-						case TARGET_ATTACKING:
-							_unit->CastSpell(target, spells[i].info, spells[i].instant); break;
-						case TARGET_DESTINATION:
-							_unit->CastSpellAoF(target->GetPositionX(),target->GetPositionY(),target->GetPositionZ(), spells[i].info, spells[i].instant); break;
-					}
-					m_spellcheck[i] = false;
-					return;
-				}
-
-				if(val > comulativeperc && val <= (comulativeperc + spells[i].perctrigger))
-				{
-					_unit->setAttackTimer(spells[i].attackstoptimer, false);
-					m_spellcheck[i] = true;
-				}
-				comulativeperc += spells[i].perctrigger;
-			}
-        }
-    }
-
-protected:
-
-	int nrspells;
 };
 
 
 
 // Wailing Caverns Event
 // Discipline of Naralex Gossip by Soulshifter
-
 #define CN_NARALEX				3679
-#define CN_DIS_NARALEX			3678
-#define SPELL_AWAKENING			6271
-
+#define CN_DIS_NARALEX			3678	
 static Coords ToNaralex[] = 
 {
 	{  },
@@ -1222,50 +288,37 @@ static Coords ToNaralex[] =
 class DofNaralexGossip : public GossipScript
 {
 public:
-	void GossipHello(Object * pObject, Player* Plr, bool AutoSend);
-	void GossipSelectOption(Object * pObject, Player* Plr, uint32 Id, uint32 IntId, const char * Code);
-	void GossipEnd(Object * pObject, Player* Plr);
-	void Destroy()
+	void GossipHello(Object * pObject, Player* Plr, bool AutoSend)
 	{
-	delete this;
+		Unit* Fanglord1 = pObject->GetMapMgr()->GetInterface()->GetCreatureNearestCoords(-151.139008f, 414.367004f, -72.629402f, CN_LORD_COBRAHN);
+		Unit* Fanglord2 = pObject->GetMapMgr()->GetInterface()->GetCreatureNearestCoords(36.807400f, -241.063995f, -79.498901f, CN_LORD_PYTHAS);
+		Unit* Fanglord3 = pObject->GetMapMgr()->GetInterface()->GetCreatureNearestCoords(-118.710999f, -24.990999f, -28.498501f, CN_LORD_SERPENTIS);
+		Unit* Fanglord4 = pObject->GetMapMgr()->GetInterface()->GetCreatureNearestCoords(-70.788902f, 120.072998f, -89.673599f, CN_LADY_ANACONDRA);
+			
+		if((!Fanglord1 || !Fanglord1->isAlive()) && (!Fanglord2 || !Fanglord2->isAlive()) && (!Fanglord3 || !Fanglord3->isAlive()) && (!Fanglord4 || !Fanglord4->isAlive()))
+		{
+			GossipMenu *Menu;
+			objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 699, Plr);
+			Menu->AddItem(0, "Let's go!", 2);
+			Menu->SendTo(Plr);
+		}
+		else
+		{
+			GossipMenu *Menu;
+			objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 698, Plr);
+			Menu->AddItem(0, "I will slay those Fanglords", 1);
+			Menu->SendTo(Plr);
+		}	
+			
 	}
-	
-};
-	
-	
-void DofNaralexGossip::GossipHello(Object * pObject, Player* Plr, bool AutoSend)
-{
-	
-	Unit* Fanglord1 = pObject->GetMapMgr()->GetInterface()->GetCreatureNearestCoords(-151.139008f, 414.367004f, -72.629402f, CN_LORD_COBRAHN);
-	Unit* Fanglord2 = pObject->GetMapMgr()->GetInterface()->GetCreatureNearestCoords(36.807400f, -241.063995f, -79.498901f, CN_LORD_PYTHAS);
-	Unit* Fanglord3 = pObject->GetMapMgr()->GetInterface()->GetCreatureNearestCoords(-118.710999f, -24.990999f, -28.498501f, CN_LORD_SERPENTIS);
-	Unit* Fanglord4 = pObject->GetMapMgr()->GetInterface()->GetCreatureNearestCoords(-70.788902f, 120.072998f, -89.673599f, CN_LADY_ANACONDRA);
-		
-	if((!Fanglord1 || !Fanglord1->isAlive()) && (!Fanglord2 || !Fanglord2->isAlive()) && (!Fanglord3 || !Fanglord3->isAlive()) && (!Fanglord4 || !Fanglord4->isAlive()))
+	void GossipSelectOption(Object * pObject, Player* Plr, uint32 Id, uint32 IntId, const char * Code)
 	{
-		GossipMenu *Menu;
-		objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 699, Plr);
-		Menu->AddItem(0, "Let's go!", 2);
-		Menu->SendTo(Plr);
-	}
-	else
-	{
-		GossipMenu *Menu;
-		objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 698, Plr);
-		Menu->AddItem(0, "I will slay those Fanglords", 1);
-		Menu->SendTo(Plr);
-	}
-	
-}
+		Creature * pCreature = (pObject->GetTypeId()==TYPEID_UNIT) ? ((Creature*)pObject) : NULL;
+		if(pObject == NULL)
+			return;
 
-void DofNaralexGossip::GossipSelectOption(Object * pObject, Player* Plr, uint32 Id, uint32 IntId, const char * Code)
-{
-	Creature * pCreature = (pObject->GetTypeId()==TYPEID_UNIT)?((Creature*)pObject):NULL;
-	if(pObject==NULL)
-		return;
-
-	switch(IntId)
-	{
+		switch(IntId)
+		{
 		case 0: // Return to start
 
 			GossipHello(pCreature, Plr, true);
@@ -1274,7 +327,7 @@ void DofNaralexGossip::GossipSelectOption(Object * pObject, Player* Plr, uint32 
 		case 1: // Disciple of Naralex Casts Mark of the Wild on players.
 			{
 				pCreature->SendChatMessage(CHAT_MSG_MONSTER_SAY, LANG_UNIVERSAL, "Take this! It will be useful for you. I'll be waiting here when you have slain the 4 Fanglords to awake Naralex!");
-				pCreature->CastSpell(Plr, 6756, true);
+				pCreature->CastSpell(Plr, 5232, true);
 				pCreature->Emote(EMOTE_ONESHOT_CHEER);
 				Plr->Gossip_Complete();
 			}
@@ -1286,164 +339,132 @@ void DofNaralexGossip::GossipSelectOption(Object * pObject, Player* Plr, uint32 
 				pCreature->GetAIInterface()->StopMovement(0);
 				pCreature->GetAIInterface()->SetAIState(STATE_SCRIPTMOVE);
 				pCreature->GetAIInterface()->setMoveType(MOVEMENTTYPE_WANTEDWP);
-				pCreature->GetAIInterface()->setWaypointToMove(1);
-					
+				pCreature->GetAIInterface()->setWaypointToMove(2);		
 			}
 			break;
-	}
+		}
+
+	}	
 };
 
-void DofNaralexGossip::GossipEnd(Object * pObject, Player* Plr)
-{
-GossipScript::GossipEnd(pObject, Plr);
-}
-
 // Disciple of Naralex AI by Soulshifter
-
-
-class DofNaralexAI : public CreatureAIScript
+class DofNaralexAI : public MoonScriptBossAI
 {
-public:
-    ADD_CREATURE_FACTORY_FUNCTION(DofNaralexAI);
-    DofNaralexAI(Creature* pCreature) : CreatureAIScript(pCreature)
+    MOONSCRIPT_FACTORY_FUNCTION(DofNaralexAI, MoonScriptBossAI);
+    DofNaralexAI(Creature* pCreature) : MoonScriptBossAI(pCreature)
     {
-	
 		// --- Initialization ---
 		for (int i = 1; i < 39; i++)
-		{
-			_unit->GetAIInterface()->addWayPoint(CreateWaypoint(i, 0, 256));
-		}
+			AddWaypoint(CreateWaypoint(i, 0, Flag_Run, ToNaralex[i]));
+		SetMoveType(Move_DontMoveWP);
 
-		_unit->GetAIInterface()->setMoveType(MOVEMENTTYPE_DONTMOVEWP);
-		
+		// Awakening Spell
+		Awakening = AddSpell(6271, Target_Self, 0, 0, 0, 0, 0, false, "Step back and be ready!, I'll try to Awake Naralex", Text_Say);
 
+		SpawnTimer = NULL;
 	}
     
-		
 	void OnReachWP(uint32 iWaypointId, bool bForwards)
     {
-		_unit->GetAIInterface()->setMoveType(MOVEMENTTYPE_WANTEDWP);
-		_unit->GetAIInterface()->setWaypointToMove(iWaypointId+1);
-		if(!Awakening && _unit->GetAIInterface()->getCurrentWaypoint() == 39)
-			
+		ForceWaypointMove(iWaypointId+1);
+		if(GetPhase() == 1 && GetCurrentWaypoint() == 39)		
 		{
-			RegisterAIUpdateEvent(2500);
-			_unit->SendChatMessage(CHAT_MSG_MONSTER_SAY, LANG_UNIVERSAL, "Step Back and be ready!, I'll Try to Awake Naralex");
 			_unit->Emote(EMOTE_ONESHOT_TALK);
-			_unit->CastSpell(_unit, SPELL_AWAKENING, true);	
-			SpawnTimer = 40;
+			SetPhase(2, Awakening);
+			SpawnTimer = AddTimer(100000);
 		}
+		ParentClass::OnReachWP(iWaypointId, bForwards);
 	}
 
 	void AIUpdate()
 	{
-		SpawnTimer--;
-
-		if(!Wave1 && SpawnTimer == 35)
+		if(SpawnTimer != NULL && IsTimerFinished(SpawnTimer))
+		{
+			switch(GetPhase())
 			{
-				Moccasin();
-				Wave1 = true;
+				case 2: Moccasin(); ResetTimer(SpawnTimer,100000); SetPhase(3); break;
+				case 3: Ectoplasm(); ResetTimer(SpawnTimer,100000); SetPhase(4); break;
+				case 4: BMutanus(); ResetTimer(SpawnTimer,100000); SetPhase(5); break;
 			}
-		if(!Wave2 && SpawnTimer == 20)
+		}
+		if(GetPhase() == 5 && (!Mutanus || !Mutanus->GetUnit()->isAlive()))
+		{
+			MoonScriptCreatureAI* Naralex = GetNearestCreature(3679);
+			if(Naralex && Naralex->IsAlive())
 			{
-				Ectoplasm();
-				Wave2 = true;
+				SetDisplayId(17089);
+				Naralex->SetDisplayId(17089);
+				Naralex->Emote("I am awake... at last", Text_Say, 5789);
+				Naralex->GetUnit()->SetStandState(STANDSTATE_STAND);
+				SetFlyMode(true);
+				Naralex->SetFlyMode(true);
+				MoveTo(-6.704030f, 200.308838f, -26.938824f);
+				Naralex->MoveTo(-6.704030f, 200.308838f, -26.938824f);
 			}
-		if(!Boss && SpawnTimer == 1)
-			{
-				BMutanus();
-				Boss = true;
-			}
-		
+			SetPhase(6);
+		}
+		ParentClass::AIUpdate();
 	}
 		
 	void Moccasin()
 	{
-		Unit *Moccasin1 = NULL;
-		Unit *Moccasin2 = NULL;
-		Unit *Moccasin3 = NULL;
-		Moccasin1 = _unit->GetMapMgr()->GetInterface()->SpawnCreature(5762, 134.249207f, 242.194839f, -98.375496f, 3.325373f, false, false, 0, 0);
-		Moccasin2 = _unit->GetMapMgr()->GetInterface()->SpawnCreature(5762, 124.917931f, 255.066635f, -97.796837f, 4.176745f, false, false, 0, 0);
-		Moccasin3 = _unit->GetMapMgr()->GetInterface()->SpawnCreature(5762, 113.077148f, 258.880157f, -97.190590f, 4.688039f, false, false, 0, 0);
+		MoonScriptCreatureAI* Moccasin = NULL;
+		Moccasin = SpawnCreature(5762, 134.249207f, 242.194839f, -98.375496f, 3.325373f);
+		Moccasin = SpawnCreature(5762, 124.917931f, 255.066635f, -97.796837f, 4.176745f);
+		Moccasin = SpawnCreature(5762, 113.077148f, 258.880157f, -97.190590f, 4.688039f);
 	}
+
 	void Ectoplasm()
 	{
-		Unit *Ectoplasm1 = NULL;
-		Unit *Ectoplasm2 = NULL;
-		Unit *Ectoplasm3 = NULL;
-		Unit *Ectoplasm4 = NULL;
-		Unit *Ectoplasm5 = NULL;
-		Unit *Ectoplasm6 = NULL;
-		Unit *Ectoplasm7 = NULL;
-		Ectoplasm1 = _unit->GetMapMgr()->GetInterface()->SpawnCreature(5763, 134.249207f, 242.194839f, -98.375496f, 3.325373f, false, false, 0, 0);
-		Ectoplasm2 = _unit->GetMapMgr()->GetInterface()->SpawnCreature(5763, 124.917931f, 255.066635f, -97.796837f, 4.176745f, false, false, 0, 0);
-		Ectoplasm3 = _unit->GetMapMgr()->GetInterface()->SpawnCreature(5763, 113.077148f, 258.880157f, -97.190590f, 4.688039f, false, false, 0, 0);
-		Ectoplasm4 = _unit->GetMapMgr()->GetInterface()->SpawnCreature(5763, 138.794693f, 228.224976f, -100.174332f, 2.471645f, false, false, 0, 0);
-		Ectoplasm5 = _unit->GetMapMgr()->GetInterface()->SpawnCreature(5763, 128.170364f, 225.190247f, -99.392830f, 2.411169f, false, false, 0, 0);
-		Ectoplasm6 = _unit->GetMapMgr()->GetInterface()->SpawnCreature(5763, 136.762009f, 242.685669f, -98.564545f, 3.344223f, false, false, 0, 0);
-		Ectoplasm7 = _unit->GetMapMgr()->GetInterface()->SpawnCreature(5763, 122.403961f, 259.438354f, -98.153984f, 4.366811f, false, false, 0, 0);
+		MoonScriptCreatureAI* Ectoplasm = NULL;
+		Ectoplasm = SpawnCreature(5763, 134.249207f, 242.194839f, -98.375496f, 3.325373f);
+		Ectoplasm = SpawnCreature(5763, 124.917931f, 255.066635f, -97.796837f, 4.176745f);
+		Ectoplasm = SpawnCreature(5763, 113.077148f, 258.880157f, -97.190590f, 4.688039f);
+		Ectoplasm = SpawnCreature(5763, 138.794693f, 228.224976f, -100.174332f, 2.471645f);
+		Ectoplasm = SpawnCreature(5763, 128.170364f, 225.190247f, -99.392830f, 2.411169f);
+		Ectoplasm = SpawnCreature(5763, 136.762009f, 242.685669f, -98.564545f, 3.344223f);
+		Ectoplasm = SpawnCreature(5763, 122.403961f, 259.438354f, -98.153984f, 4.366811f);
 	}
+
 	void BMutanus()
-	{		
-		Mutanus = _unit->GetMapMgr()->GetInterface()->SpawnCreature(CN_MUTANUS, 136.337006f, 263.769989f, -102.666000f, 4.002330f, false, false, 0, 0);
-		Naralex = _unit->GetMapMgr()->GetInterface()->GetCreatureNearestCoords(115.407997f, 240.016998f, -94.021004f, 3679);
-		
-		if(!Mutanus || Mutanus->isAlive())
-		{
-			_unit->SetUInt32Value(UNIT_FIELD_DISPLAYID, 17089);
-			Naralex->SetUInt32Value(UNIT_FIELD_DISPLAYID, 17089);
-			Naralex->SetStandState(STANDSTATE_STAND);
-			Naralex->SendChatMessage(CHAT_MSG_MONSTER_SAY, LANG_UNIVERSAL, "I am awake... at last");
-			Naralex->PlaySoundToSet(5789);
-			_unit->GetAIInterface()->MoveTo(-6.704030f, 200.308838f, -26.938824f, 1.667772f);
-			Naralex->GetAIInterface()->MoveTo(-6.704030f, 200.308838f, -26.938824f, 1.667772f);
-			_unit->GetAIInterface()->setMoveType(768);
-			Naralex->GetAIInterface()->setMoveType(768);
-		}
+	{
+		Mutanus = SpawnCreature(CN_MUTANUS, 136.337006f, 263.769989f, -102.666000f, 4.002330f);
 	}
 
-	inline WayPoint* CreateWaypoint(int id, uint32 waittime, uint32 flags)
-    {
-        WayPoint * wp = _unit->CreateWaypointStruct();
-        wp->id = id;
-        wp->x = ToNaralex[id].x;
-        wp->y = ToNaralex[id].y;
-        wp->z = ToNaralex[id].z;
-        wp->o = ToNaralex[id].o;
-        wp->waittime = waittime;
-        wp->flags = flags;
-        wp->forwardemoteoneshot = 0;
-        wp->forwardemoteid = 0;
-        wp->backwardemoteoneshot = 0;
-        wp->backwardemoteid = 0;
-        wp->forwardskinid = 0;
-        wp->backwardskinid = 0;
-        return wp;
-    }
-	
+	int32 SpawnTimer;
+	SpellDesc* Awakening;
+	MoonScriptCreatureAI* Mutanus;
+};
+// Deviate Moccasin
+class DeviateMoccasinAI : public MoonScriptCreatureAI
+{
+	MOONSCRIPT_FACTORY_FUNCTION(DeviateMoccasinAI, MoonScriptCreatureAI);
+	DeviateMoccasinAI(Creature* pCreature) : MoonScriptCreatureAI(pCreature)
+	{
+	}
+};
 
-protected:
-	uint32 SpawnTimer;
-	bool Wave1;
-	bool Wave2;
-	bool Boss;
-	bool Awakening;
-	Unit *Naralex;
-	Unit *Mutanus;
-
+// Nightmare Ectoplasm
+class EctoplasmAI : public MoonScriptCreatureAI
+{
+	MOONSCRIPT_FACTORY_FUNCTION(EctoplasmAI, MoonScriptCreatureAI);
+	EctoplasmAI(Creature* pCreature) : MoonScriptCreatureAI(pCreature)
+	{
+	}
 };
 
 // Naralex State
-class Naralex : public CreatureAIScript
+class Naralex : public MoonScriptCreatureAI
 {
 public:
-	ADD_CREATURE_FACTORY_FUNCTION(Naralex);
-	Naralex(Creature* pCreature) : CreatureAIScript(pCreature)
+	MOONSCRIPT_FACTORY_FUNCTION(Naralex, MoonScriptCreatureAI);
+	Naralex(Creature* pCreature) : MoonScriptCreatureAI(pCreature)
 	{
 		_unit->SetUInt32Value(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
 		_unit->SetStandState(STANDSTATE_SLEEP);
 	}
 };
+
 void SetupWailingCaverns(ScriptMgr * mgr)
 {
     mgr->register_creature_script(CN_DRUID_FANG, &DruidFangAI::Create);
@@ -1454,10 +475,13 @@ void SetupWailingCaverns(ScriptMgr * mgr)
 	mgr->register_creature_script(CN_LORD_SERPENTIS, &LordSerpentisAI::Create);
 	mgr->register_creature_script(CN_VERDAN_EVERLIVING, &VerdanEverlivingAI::Create);
 	mgr->register_creature_script(CN_SKUM, &SkumAI::Create);
-	mgr->register_creature_script(CN_KRESH, &KreshAI::Create);
 	mgr->register_creature_script(CN_MUTANUS, &MutanusAI::Create);
 	GossipScript * DNaralex = (GossipScript*) new DofNaralexGossip();
 	mgr->register_gossip_script(CN_DIS_NARALEX, DNaralex);
 	mgr->register_creature_script(CN_DIS_NARALEX, &DofNaralexAI::Create);
 	mgr->register_creature_script(CN_NARALEX, &Naralex::Create);
+
+	// Might be easier to merge this 2 into 1 since they are moving to the same locations..
+	mgr->register_creature_script(5762, &DeviateMoccasinAI::Create);
+	mgr->register_creature_script(5763, &EctoplasmAI::Create);
 }

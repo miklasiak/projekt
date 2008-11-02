@@ -1,6 +1,6 @@
 Index: arcemu-world/AIInterface.cpp
 ===================================================================
---- arcemu-world/AIInterface.cpp	(revision 1408)
+--- arcemu-world/AIInterface.cpp	(revision 1521)
 +++ arcemu-world/AIInterface.cpp	(working copy)
 @@ -243,9 +243,25 @@
  						}
@@ -45,7 +45,7 @@ Index: arcemu-world/AIInterface.cpp
  		{
  			if( m_Unit->GetDistanceSq(pUnit) < dist)
  			{
-@@ -4344,3 +4361,22 @@
+@@ -4347,3 +4364,22 @@
  #endif
  	}
  }
@@ -70,7 +70,7 @@ Index: arcemu-world/AIInterface.cpp
 +}
 Index: arcemu-world/AIInterface.h
 ===================================================================
---- arcemu-world/AIInterface.h	(revision 1408)
+--- arcemu-world/AIInterface.h	(revision 1521)
 +++ arcemu-world/AIInterface.h	(working copy)
 @@ -157,6 +157,7 @@
  {
@@ -91,7 +91,7 @@ Index: arcemu-world/AIInterface.h
  	void Init(Unit *un, AIType at, MovementType mt, Unit *owner); // used for pets
 Index: arcemu-world/Object.cpp
 ===================================================================
---- arcemu-world/Object.cpp	(revision 1408)
+--- arcemu-world/Object.cpp	(revision 1521)
 +++ arcemu-world/Object.cpp	(working copy)
 @@ -2560,6 +2560,9 @@
  		}*/	
@@ -124,7 +124,7 @@ Index: arcemu-world/Object.cpp
 +
 Index: arcemu-world/Object.h
 ===================================================================
---- arcemu-world/Object.h	(revision 1408)
+--- arcemu-world/Object.h	(revision 1521)
 +++ arcemu-world/Object.h	(working copy)
 @@ -184,6 +184,8 @@
  	bool IsBeingTeleported() { return mSemaphoreTeleport; }
@@ -137,7 +137,7 @@ Index: arcemu-world/Object.h
  	void SetRotation( uint64 guid );
 Index: arcemu-world/Unit.cpp
 ===================================================================
---- arcemu-world/Unit.cpp	(revision 1408)
+--- arcemu-world/Unit.cpp	(revision 1521)
 +++ arcemu-world/Unit.cpp	(working copy)
 @@ -112,6 +112,7 @@
  {
@@ -157,7 +157,7 @@ Index: arcemu-world/Unit.cpp
  	if( SM_CriticalChance != NULL ) {
  		delete [] SM_CriticalChance;
  		SM_CriticalChance = NULL;
-@@ -7315,6 +7319,21 @@
+@@ -7286,6 +7290,21 @@
  	return res;
  }
  
@@ -181,7 +181,7 @@ Index: arcemu-world/Unit.cpp
  	if( IsPlayer() )
 Index: arcemu-world/Unit.h
 ===================================================================
---- arcemu-world/Unit.h	(revision 1408)
+--- arcemu-world/Unit.h	(revision 1521)
 +++ arcemu-world/Unit.h	(working copy)
 @@ -688,6 +688,18 @@
  	void ClearMyHealers();

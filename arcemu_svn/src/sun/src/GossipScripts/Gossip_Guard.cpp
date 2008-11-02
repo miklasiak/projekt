@@ -63,21 +63,25 @@ public:
     void GossipHello(Object* pObject, Player * Plr, bool AutoSend)
     {
         GossipMenu *Menu;
-        objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 2593, Plr);
+        objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 933, Plr);
 
-        Menu->AddItem(0, "Auction House", 1);
-        Menu->AddItem(0, "Bank of Stormwind", 2);
-        Menu->AddItem(0, "Deeprun Tram", 3);
-        Menu->AddItem(0, "The Inn", 4);
-        Menu->AddItem(0, "Gryphon Master", 5);    
-        Menu->AddItem(0, "Guild Master", 6);
-        Menu->AddItem(0, "Mailbox", 7);
-        Menu->AddItem(0, "Stable Master", 8);
-        Menu->AddItem(0, "Weapons Trainer", 9);
-        Menu->AddItem(0, "Officers' Lounge", 10);
-        Menu->AddItem(0, "Battlemaster", 11);
-        Menu->AddItem(0, "Class Trainer", 12);
-        Menu->AddItem(0, "Profession Trainer", 13);
+        Menu->AddItem(0, "Auction House"		, 1);
+        Menu->AddItem(0, "Bank of Stormwind"	, 2);
+		if(Plr->GetSession()->GetClientBuild() > 8606) // Greater than 2.4.3
+			Menu->AddItem(0, "Stormwind Harbor"		, 3);
+        Menu->AddItem(0, "Deeprun Tram"			, 4);
+        Menu->AddItem(0, "The Inn"				, 5);
+        Menu->AddItem(0, "Gryphon Master"		, 6);    
+        Menu->AddItem(0, "Guild Master"			, 7);
+        Menu->AddItem(0, "Mailbox"				, 8);
+        Menu->AddItem(0, "Stable Master"		, 9);
+        Menu->AddItem(0, "Weapons Trainer"		, 10);
+        Menu->AddItem(0, "Officers' Lounge"		, 11);
+        Menu->AddItem(0, "Battlemaster"			, 12);
+		if(Plr->GetSession()->GetClientBuild() > 8606) // Greater than 2.4.3
+			Menu->AddItem(0, "Barber"		, 13);
+        Menu->AddItem(0, "Class Trainer"		, 14);
+        Menu->AddItem(0, "Profession Trainer"	, 15);
 
         if(AutoSend)
             Menu->SendTo(Plr);
@@ -106,82 +110,94 @@ public:
             Plr->Gossip_SendPOI(-8916.87, 622.87, 6, 6, 0, "Stormwind Bank");
             break;
 
-        case 3:     // Deeprun Tram
+		case 3:     // Stormwind Harbor
+            SendQuickMenu(13439);
+            Plr->Gossip_SendPOI(-8634.77, 949.64, 6, 6, 0, "Stormwind Harbor");
+            break;
+
+        case 4:     // Deeprun Tram
             SendQuickMenu(3813);
             Plr->Gossip_SendPOI(-8378.88, 554.23, 6, 6, 0, "The Deeprun Tram");
             break;
 
-        case 4:     // The Inn
+        case 5:     // The Inn
             SendQuickMenu(3860);
             Plr->Gossip_SendPOI(-8869.0, 675.4, 6, 6, 0, "The Gilded Rose");
             break;
 
-        case 5:     // Gryphon Master
+        case 6:     // Gryphon Master
             SendQuickMenu(879);
             Plr->Gossip_SendPOI(-8837.0, 493.5, 6, 6, 0, "Stormwind Gryphon Master");
             break;
 
-        case 6:     // Guild Master
+        case 7:     // Guild Master
             SendQuickMenu(882);
             Plr->Gossip_SendPOI(-8894.0, 611.2, 6, 6, 0, "Stormwind Vistor`s Center");
             break;
 
-        case 7:     // Mailbox
-            SendQuickMenu(3518);
+        case 8:     // Mailbox
+            SendQuickMenu(3861);
             Plr->Gossip_SendPOI(-8876.48, 649.18, 6, 6, 0, "Stormwind Mailbox");
             break;
 
-        case 8:     // Stable Master
+        case 9:     // Stable Master
             SendQuickMenu(5984);
             Plr->Gossip_SendPOI(-8433.0, 554.7, 6, 6, 0, "Jenova Stoneshield");
             break;
 
-        case 9:     // Weapons Master
+        case 10:     // Weapons Master
             SendQuickMenu(4516);
             Plr->Gossip_SendPOI(-8797.0, 612.8, 6, 6, 0, "Woo Ping");
             break;
 
-        case 10:    // Officers' Lounge
+        case 11:    // Officers' Lounge
             SendQuickMenu(7047);
             Plr->Gossip_SendPOI(-8759.92, 399.69, 6, 6, 0, "Champions` Hall");
             break;
 
-        case 11:    // Battlemaster
+        case 12:    // Battlemaster
             {
-			SendQuickMenu(7499);
+			SendQuickMenu(10218);
             Plr->Gossip_SendPOI(-8393.62, 274.21, 6, 6, 0, "Battlemasters Stormwind");
             }break;
 
-        case 12:    // Class Trainers
+		case 13:     // Barber
+            SendQuickMenu(13882);
+            Plr->Gossip_SendPOI(-8743.15, 660.36, 6, 6, 0, "Stormwind Barber");
+            break;
+
+        case 14:    // Class Trainers
             {
-                objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 4264, Plr);
-				Menu->AddItem( 0, "Druid"      , 14);
-                Menu->AddItem( 0, "Hunter"     , 15);
-                Menu->AddItem( 0, "Mage"       , 16);
-                Menu->AddItem( 0, "Paladin"    , 17);
-                Menu->AddItem( 0, "Priest"     , 18);
-                Menu->AddItem( 0, "Rogue"      , 19);
-                Menu->AddItem( 0, "Shaman"     , 20);
-                Menu->AddItem( 0, "Warlock"    , 21);
-				Menu->AddItem( 0, "Warrior"    , 22);
+                objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 898, Plr);
+				Menu->AddItem( 0, "Druid"      , 16);
+                Menu->AddItem( 0, "Hunter"     , 17);
+                Menu->AddItem( 0, "Mage"       , 18);
+                Menu->AddItem( 0, "Paladin"    , 19);
+                Menu->AddItem( 0, "Priest"     , 20);
+                Menu->AddItem( 0, "Rogue"      , 21);
+                Menu->AddItem( 0, "Shaman"     , 22);
+                Menu->AddItem( 0, "Warlock"    , 23);
+				Menu->AddItem( 0, "Warrior"    , 24);
                 Menu->SendTo(Plr);
             }break;
 
-        case 13:    // Profession Trainers
+        case 15:    // Profession Trainers
             {
-                objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 4264, Plr);
-                Menu->AddItem( 0, "Alchemy"           , 23);
-                Menu->AddItem( 0, "Blacksmithing"     , 24);
-                Menu->AddItem( 0, "Cooking"           , 25);
-                Menu->AddItem( 0, "Enchanting"        , 26);
-                Menu->AddItem( 0, "Engineering"       , 27);
-                Menu->AddItem( 0, "First Aid"         , 28);
-                Menu->AddItem( 0, "Fishing"           , 29);
-                Menu->AddItem( 0, "Herbalism"         , 30);
-                Menu->AddItem( 0, "Leatherworking"    , 31);
-                Menu->AddItem( 0, "Mining"            , 32);
-                Menu->AddItem( 0, "Skinning"          , 33);
-                Menu->AddItem( 0, "Tailoring"         , 34);
+                objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 918, Plr);
+                Menu->AddItem( 0, "Alchemy"           , 25);
+                Menu->AddItem( 0, "Blacksmithing"     , 26);
+                Menu->AddItem( 0, "Cooking"           , 27);
+                Menu->AddItem( 0, "Enchanting"        , 28);
+                Menu->AddItem( 0, "Engineering"       , 29);
+                Menu->AddItem( 0, "First Aid"         , 30);
+                Menu->AddItem( 0, "Fishing"           , 31);
+                Menu->AddItem( 0, "Herbalism"         , 32);
+				if(Plr->GetSession()->GetClientBuild() > 8606) // Greater than 2.4.3
+					Menu->AddItem(0, "Inscription"		, 33);
+                Menu->AddItem( 0, "Leatherworking"    , 34);
+                Menu->AddItem( 0, "Mining"            , 35);
+                Menu->AddItem( 0, "Skinning"          , 36);
+                Menu->AddItem( 0, "Tailoring"         , 37);
                 Menu->SendTo(Plr);
             }break;
 
@@ -189,127 +205,133 @@ public:
             // Class trainer submenu
             ////////
 
-        case 14: //Druid
+        case 16: //Druid
             {
                 Plr->Gossip_SendPOI(-8751.0, 1124.5, 6, 6, 0, "The Park");
                 SendQuickMenu(902);
             }break;
 
-        case 15: //Hunter
+        case 17: //Hunter
             {
                 Plr->Gossip_SendPOI(-8413.0, 541.5, 6, 6, 0, "Hunter Lodge");
                 SendQuickMenu(905);
             }break;
 
-        case 16: //Mage
+        case 18: //Mage
             {
                 Plr->Gossip_SendPOI(-9012.0, 867.6, 6, 6, 0, "Wizard`s Sanctum");
                 SendQuickMenu(899);
             }break;
 
-        case 17: //Paladin
+        case 19: //Paladin
             {
                 Plr->Gossip_SendPOI(-8577.0, 881.7, 6, 6, 0, "Cathedral Of Light");
                 SendQuickMenu(904);
             }break;
 
-        case 18: //Priest
+        case 20: //Priest
             {
                 Plr->Gossip_SendPOI(-8512.0, 862.4, 6, 6, 0, "Cathedral Of Light");
                 SendQuickMenu(903);
             }break;
 
-        case 19: //Rogue
+        case 21: //Rogue
             {
                 Plr->Gossip_SendPOI(-8753.0, 367.8, 6, 6, 0, "Stormwind - Rogue House");
                 SendQuickMenu(900);
             }break;
 
-        case 20: //Shaman
+        case 22: //Shaman
             {
 				Plr->Gossip_SendPOI(-9031.54, 549.87, 6, 6, 0, "Farseer Umbrua");
                 SendQuickMenu(10106);
             }break;
 
-		case 21: //Warlock
+		case 23: //Warlock
             {
                 Plr->Gossip_SendPOI(-8948.91, 998.35, 6, 6, 0, "The Slaughtered Lamb");
                 SendQuickMenu(906);
             }break;
 
-        case 22: //Warrior
+        case 24: //Warrior
             {
                 Plr->Gossip_SendPOI(-8714.14, 334.96, 6, 6, 0, "Stormwind Barracks");
                 SendQuickMenu(901);
             }break;
 
-        case 23: //Alchemy
+        case 25: //Alchemy
             {
                 Plr->Gossip_SendPOI(-8988.0, 759.60, 6, 6, 0, "Alchemy Needs");
                 SendQuickMenu(919);
             }break;
 
-        case 24: //Blacksmithing
+        case 26: //Blacksmithing
             {
                 Plr->Gossip_SendPOI(-8424.0, 616.9, 6, 6, 0, "Therum Deepforge");
                 SendQuickMenu(920);
             }break;
 
-        case 25: //Cooking
+        case 27: //Cooking
             {
                 Plr->Gossip_SendPOI(-8611.0, 364.6, 6, 6, 0, "Pig and Whistle Tavern");
                 SendQuickMenu(921);
             }break;
 
-        case 26: //Enchanting
+        case 28: //Enchanting
             {
                 Plr->Gossip_SendPOI(-8858.0, 803.7, 6, 6, 0, "Lucan Cordell");
                 SendQuickMenu(941);
             }break;
 
-        case 27: //Engineering
+        case 29: //Engineering
             {
                 Plr->Gossip_SendPOI(-8347.0, 644.1, 6, 6, 0, "Lilliam Sparkspindle");
                 SendQuickMenu(922);
             }break;
 
-        case 28: //First Aid
+        case 30: //First Aid
             {
                 Plr->Gossip_SendPOI(-8513.0, 801.8, 6, 6, 0, "Shaina Fuller");
                 SendQuickMenu(923);
             }break;
 
-        case 29: //Fishing
+        case 31: //Fishing
             {
                 Plr->Gossip_SendPOI(-8803.0, 767.5, 6, 6, 0, "Arnold Leland");
                 SendQuickMenu(940);
             }break;
 
-        case 30: //Herbalism
+        case 32: //Herbalism
             {
                 Plr->Gossip_SendPOI(-8967.0, 779.5, 6, 6, 0, "Alchemy Needs");
                 SendQuickMenu(924);
             }break;
 
-        case 31: //Leatherworking
+		case 33: //Inscription
+            {
+                Plr->Gossip_SendPOI(-8853.33, 857.66, 6, 6, 0, "Stormwind Inscription");
+                SendQuickMenu(13881);
+            }break;
+
+        case 34: //Leatherworking
             {
                 Plr->Gossip_SendPOI(-8726.0, 477.4, 6, 6, 0, "The Protective Hide");
                 SendQuickMenu(925);
             }break;
 
-        case 32: //Mining
+        case 35: //Mining
             {
                 Plr->Gossip_SendPOI(-8434.0, 692.8, 6, 6, 0, "Gelman Stonehand");
                 SendQuickMenu(927);
             }break;
 
-        case 33: //Skinning
+        case 36: //Skinning
             {
                 Plr->Gossip_SendPOI(-8716.0, 469.4, 6, 6, 0, "The Protective Hide");
                 SendQuickMenu(928);
             }break;
 
-        case 34: //Tailoring
+        case 37: //Tailoring
             {
                 Plr->Gossip_SendPOI(-8938.0, 800.7, 6, 6, 0, "Duncan`s Textiles");
                 SendQuickMenu(929);
@@ -341,6 +363,8 @@ public:
         Menu->AddItem( 0, "Battlemaster"       , 9);
         Menu->AddItem( 0, "Class Trainer"      , 10);
 	 	Menu->AddItem( 0, "Profession Trainer" , 11);
+		if(Plr->GetSession()->GetClientBuild() > 8606) // Greater than 2.4.3
+			Menu->AddItem( 0, "Lexicon of Power"   , 27);
 
         if(AutoSend)
             Menu->SendTo(Plr);
@@ -425,9 +449,11 @@ public:
                 Menu->AddItem( 0, "First Aid"         , 20);
                 Menu->AddItem( 0, "Fishing"           , 21);
                 Menu->AddItem( 0, "Herbalism"         , 22);
-                Menu->AddItem( 0, "Leatherworking"    , 23);
-                Menu->AddItem( 0, "Skinning"          , 24);
-                Menu->AddItem( 0, "Tailoring"         , 25);
+				if(Plr->GetSession()->GetClientBuild() > 8606) // Greater than 2.4.3
+					Menu->AddItem( 0, "Inscription"       , 23);
+                Menu->AddItem( 0, "Leatherworking"    , 24);
+                Menu->AddItem( 0, "Skinning"          , 25);
+                Menu->AddItem( 0, "Tailoring"         , 26);
                 Menu->SendTo(Plr);
             }break;
 		
@@ -496,26 +522,35 @@ public:
                 Plr->Gossip_SendPOI(9757.17, 2430.16, 6, 6, 0, "Darnassus Herbalism Trainer");
                 SendQuickMenu(3039);
             }break;
+		case 23: //Inscription
+            {
+                Plr->Gossip_SendPOI(10146.09, 2313.42, 6, 6, 0, "Darnassus Inscription Trainer");
+                SendQuickMenu(13886);
+            }break;
 
-        case 23: //Leatherworking
+        case 24: //Leatherworking
             {
                 Plr->Gossip_SendPOI(10086.59, 2255.77, 6, 6, 0, "Darnassus Leatherworking Trainer");
                 SendQuickMenu(3040);
             }break;
 
-        case 24: //Skinning
+        case 25: //Skinning
             {
                 Plr->Gossip_SendPOI(10081.40, 2257.18, 6, 6, 0, "Darnassus Skinning Trainer");
                 SendQuickMenu(3042);
             }break;
 
-        case 25: //Tailoring
+        case 26: //Tailoring
             {
                 Plr->Gossip_SendPOI(10079.70, 2268.19, 6, 6, 0, "Darnassus Tailor");
                 SendQuickMenu(3044);
             }break;
 
-
+		case 27: //Lexicon of Power
+            {
+                Plr->Gossip_SendPOI(10146.09, 2313.42, 6, 6, 0, "Darnassus Inscription Trainer");
+                SendQuickMenu(14174);
+            }break;
 		}
 	}
     void GossipEnd(Object* pObject, Player* Plr)
@@ -534,7 +569,7 @@ public:
     void GossipHello(Object* pObject, Player * Plr, bool AutoSend)
     {
         GossipMenu *Menu;
-        objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 2593, Plr);
+        objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 4259, Plr);
 		Menu->AddItem( 0, "Bank"                 , 1);
 		Menu->AddItem( 0, "Gryphon Master"       , 2);
 		Menu->AddItem( 0, "Guild Master"         , 3);
@@ -611,10 +646,12 @@ public:
 			Menu->AddItem( 0, "First Aid"            ,22);
 			Menu->AddItem( 0, "Fishing"              ,23);
 			Menu->AddItem( 0, "Herbalism"            ,24);
-			Menu->AddItem( 0, "Leatherworking"       ,25);
-			Menu->AddItem( 0, "Mining"               ,26);
-			Menu->AddItem( 0, "Skinning"             ,27);
-			Menu->AddItem( 0, "Tailoring"            ,28);
+			if(Plr->GetSession()->GetClientBuild() > 8606) // Greater than 2.4.3
+					Menu->AddItem( 0, "Inscription"       , 25);
+			Menu->AddItem( 0, "Leatherworking"       ,26);
+			Menu->AddItem( 0, "Mining"               ,27);
+			Menu->AddItem( 0, "Skinning"             ,28);
+			Menu->AddItem( 0, "Tailoring"            ,29);
 			Menu->SendTo(Plr);
 			}break;
 
@@ -652,10 +689,9 @@ public:
                 SendQuickMenu(4270);
             }break;
 
-		case 14: //Shaman <-- TO DO!
+		case 14: //Shaman
             {
-                Plr->Gossip_SendPOI(1781, 53, 6, 6, 0, "Undercity Mage Trainers");
-                SendQuickMenu(3513);
+                SendQuickMenu(10101);
             }break;
 
 		case 15: //Warlock
@@ -716,24 +752,30 @@ public:
                 SendQuickMenu(4281);        
             }break;
 
-		case 25: //Leatherworking
+		case 25: //Inscription
+            {
+                Plr->Gossip_SendPOI(-8853.33, 857.66, 6, 6, 0, "Stormwind Inscription");
+                SendQuickMenu(13881);
+            }break;
+
+		case 26: //Leatherworking
             {
                 Plr->Gossip_SendPOI(-9376.12, -75.23, 6, 6, 0, "Adele Fielder");
                 SendQuickMenu(4282);
             }break;
 
-		case 26: //Mining
+		case 27: //Mining
             {
                 SendQuickMenu(4283);
             }break;
 
-		case 27: //Skinning
+		case 28: //Skinning
             {
                 Plr->Gossip_SendPOI(-9536.91, -1212.76, 6, 6, 0, "Helene Peltskinner");
                 SendQuickMenu(4284);
             }break;
 
-		case 28: //Tailoring
+		case 29: //Tailoring
             {
                 Plr->Gossip_SendPOI(-9376.12, -75.23, 6, 6, 0, "Eldrin");
                 SendQuickMenu(4285);
@@ -979,7 +1021,7 @@ public:
     }
 };
 
-class DolanaarGuard : public GossipScript
+class TeldrassilGuard : public GossipScript
 {
 public:
 	void Destroy()
@@ -1058,9 +1100,11 @@ public:
                 Menu->AddItem( 0, "First Aid"         , 16);
                 Menu->AddItem( 0, "Fishing"           , 17);
                 Menu->AddItem( 0, "Herbalism"         , 18);
-                Menu->AddItem( 0, "Leatherworking"    , 19);
-                Menu->AddItem( 0, "Skinning"          , 20);
-                Menu->AddItem( 0, "Tailoring"         , 21);
+				if(Plr->GetSession()->GetClientBuild() > 8606) // Greater than 2.4.3
+					Menu->AddItem( 0, "Inscription"       , 19);
+                Menu->AddItem( 0, "Leatherworking"    , 20);
+                Menu->AddItem( 0, "Skinning"          , 21);
+                Menu->AddItem( 0, "Tailoring"         , 22);
                 Menu->SendTo(Plr);
             }break;
 
@@ -1089,7 +1133,7 @@ public:
 		case 11: // Rogue
 			{
 				Plr->Gossip_SendPOI(9789, 942.86, 6, 6, 0, "Jannok Breezesong");
-				SendQuickMenu(4327);
+				SendQuickMenu(4326);
 			}break;
 			
 		case 12: // Warrior
@@ -1133,19 +1177,25 @@ public:
 				SendQuickMenu(4334);
 			}break;
 			
-		case 19: // Leatherworking
+		case 19: // Inscription
+			{
+				Plr->Gossip_SendPOI(10146.09, 2313.42, 6, 6, 0, "Darnassus Inscription Trainer");
+				SendQuickMenu(13886);
+			}break;
+			
+		case 20: // Leatherworking
 			{
 				Plr->Gossip_SendPOI(10152.59, 1681.46, 6, 6, 0, "Nadyia Maneweaver");
 				SendQuickMenu(4335);
 			}break;
 			
-		case 20: // Skinning
+		case 21: // Skinning
 			{
 				Plr->Gossip_SendPOI(10135.59, 1673.18, 6, 6, 0, "Radnaal Maneweaver");
 				SendQuickMenu(4336);
 			}break;
 			
-		case 21: // Tailoring
+		case 22: // Tailoring
 			{
 				SendQuickMenu(4337);
 			}break;
@@ -1165,18 +1215,20 @@ public:
         GossipMenu *Menu;
         objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 9316, Plr);
 
-        Menu->AddItem(0, "Auction House", 1);
-        Menu->AddItem(0, "The Bank", 2);
-		Menu->AddItem(0, "Bat Handler", 3);
-        Menu->AddItem(0, "Guild Master", 4);
-        Menu->AddItem(0, "The Inn", 5);
-        Menu->AddItem(0, "Mailbox", 6);    
-        Menu->AddItem(0, "Stable Master", 7);
-        Menu->AddItem(0, "Weapon Master", 8);
-        Menu->AddItem(0, "Battlemaster", 9);
-        Menu->AddItem(0, "Class Trainer", 10);
-        Menu->AddItem(0, "Profession Trainer", 11);
-        Menu->AddItem(0, "Mana Loom", 12);
+        Menu->AddItem(0, "Auction House"		, 1);
+        Menu->AddItem(0, "The Bank"				, 2);
+		Menu->AddItem(0, "Dragonhawk Master"	, 3);
+        Menu->AddItem(0, "Guild Master"			, 4);
+        Menu->AddItem(0, "The Inn"				, 5);
+        Menu->AddItem(0, "Mailbox"				, 6);    
+        Menu->AddItem(0, "Stable Master"		, 7);
+        Menu->AddItem(0, "Weapon Master"		, 8);
+        Menu->AddItem(0, "Battlemaster"			, 9);
+        Menu->AddItem(0, "Class Trainer"		, 10);
+        Menu->AddItem(0, "Profession Trainer"	, 11);
+        Menu->AddItem(0, "Mana Loom"			, 12);
+		if(Plr->GetSession()->GetClientBuild() > 8606) // Greater than 2.4.3
+			Menu->AddItem(0, "Lexicon of Power"		, 40);
 
         if(AutoSend)
             Menu->SendTo(Plr);
@@ -1196,21 +1248,21 @@ public:
             /////
 
         case 1:     // Auction House
-			objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 9316, Plr);
+			objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 9317, Plr);
             Menu->AddItem(0, "To the west."  , 13);
             Menu->AddItem(0, "To the east."    , 14);
             Menu->SendTo(Plr);
             break;
 
         case 2:     // The Bank
-			objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 9322, Plr);
+			objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 9320, Plr);
             Menu->AddItem(0, "The west."  , 15);
             Menu->AddItem(0, "The east."    , 16);
             Menu->SendTo(Plr);
             break;
 
-		case 3:     // Bat Handler
-            SendQuickMenu(9316);
+		case 3:     // Dragonhawk Master
+            SendQuickMenu(9323);
             Plr->Gossip_SendPOI(9378.45, -7163.94, 6, 6, 0, "Silvermoon City, Flight Master");
             break;
 
@@ -1227,28 +1279,28 @@ public:
             break;
 
         case 6:     // Mailbox
-            SendQuickMenu(9316);
+            SendQuickMenu(9326);
             Plr->Gossip_SendPOI(9743.078, -7466.4, 6, 6, 0, "Silvermoon City, Mailbox");
             break;
 
         case 7:     // Stable Master
-            SendQuickMenu(9316);
+            SendQuickMenu(9327);
             Plr->Gossip_SendPOI(9904.95, -7404.31, 6, 6, 0, "Silvermoon City, Stable Master");
             break;
 
         case 8:     // Weapon Master
-            SendQuickMenu(9316);
+            SendQuickMenu(9328);
             Plr->Gossip_SendPOI(9841.17, -7505.13, 6, 6, 0, "Silvermoon City, Weapon Master");
             break;
 
 	    case 9:     // Battlemasters
-			SendQuickMenu(9316);
+			SendQuickMenu(9329);
             Plr->Gossip_SendPOI(9850.74, -7563.84, 6, 6, 0, "Silvermoon City, Battlemasters");
             break;
 
         case 10:    // Class Trainers
             {
-                objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 9316, Plr);
+                objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 9331, Plr);
                 Menu->AddItem( 0, "Druid"       , 19);
                 Menu->AddItem( 0, "Hunter"      , 20);
                 Menu->AddItem( 0, "Mage"        , 21);
@@ -1270,100 +1322,102 @@ public:
                 Menu->AddItem( 0, "First Aid"         , 31);
                 Menu->AddItem( 0, "Fishing"           , 32);
 				Menu->AddItem( 0, "Herbalism"         , 33);
-				Menu->AddItem( 0, "Jewelcrafting"     , 34);
-                Menu->AddItem( 0, "Leatherworking"    , 35);
-                Menu->AddItem( 0, "Mining"            , 36);
-                Menu->AddItem( 0, "Skinning"          , 37);
-                Menu->AddItem( 0, "Tailoring"         , 38);
+				if(Plr->GetSession()->GetClientBuild() > 8606) // Greater than 2.4.3
+					Menu->AddItem( 0, "Inscription"       , 34);
+				Menu->AddItem( 0, "Jewelcrafting"     , 35);
+                Menu->AddItem( 0, "Leatherworking"    , 36);
+                Menu->AddItem( 0, "Mining"            , 37);
+                Menu->AddItem( 0, "Skinning"          , 38);
+                Menu->AddItem( 0, "Tailoring"         , 39);
                 Menu->SendTo(Plr);
             }break;
 
 		case 12: //Mana Loom
             {
                 Plr->Gossip_SendPOI(9751.013, -7074.85, 6, 6, 0, "Silvermoon City, Mana Loom");
-                SendQuickMenu(9316);
+                SendQuickMenu(10502);
             }break;
 
         case 13: //To the west - Auction House no. 1
             {
                 Plr->Gossip_SendPOI(9649.429, -7134.027, 6, 6, 0, "Silvermoon City, Auction House");
-                SendQuickMenu(9316);
+                SendQuickMenu(9318);
             }break;
 
         case 14: //To the east - Auction House no. 2
             {
                 Plr->Gossip_SendPOI(9682.864, -7515.786, 6, 6, 0, "Silvermoon City, Auction House");
-                SendQuickMenu(9316);
+                SendQuickMenu(9319);
             }break;
 
         case 15:     // The bank - The west.
-            SendQuickMenu(9324);
+            SendQuickMenu(9321);
             Plr->Gossip_SendPOI(9522.104, -7208.878, 6, 6, 0, "Silvermoon City, Bank");
             break;
 
         case 16:     // The bank - The east.
-            SendQuickMenu(9324);
+            SendQuickMenu(9322);
             Plr->Gossip_SendPOI(9791.07, -7488.041, 6, 6, 0, "Silvermoon City, Bank");
             break;
 
         case 17: //The Silvermoon City Inn
             {
                 Plr->Gossip_SendPOI(9677.113, -7367.575, 6, 6, 0, "Silvermoon City, Inn");
-                SendQuickMenu(9316);
+                SendQuickMenu(9325);
             }break;
 
         case 18: //The Wayfarer's Rest tavern
             {
                 Plr->Gossip_SendPOI(9562.813, -7218.63, 6, 6, 0, "Silvermoon City, Inn");
-                SendQuickMenu(9316);
+                SendQuickMenu(9603);
             }break;
 
         case 19: //Druid
             {
                 Plr->Gossip_SendPOI(9700.55, -7262.57, 6, 6, 0, "Silvermoon City, Druid Trainer");
-                SendQuickMenu(9316);
+                SendQuickMenu(9330);
             }break;
 
         case 20: //Hunter
             {
                 Plr->Gossip_SendPOI(9930.568, -7412.115, 6, 6, 0, "Silvermoon City, Hunter Trainer");
-                SendQuickMenu(9316);
+                SendQuickMenu(9332);
             }break;
 
         case 21: //Mage
             {
                 Plr->Gossip_SendPOI(9996.914, -7104.803, 6, 6, 0, "Silvermoon City, Mage Trainer");
-                SendQuickMenu(9316);
+                SendQuickMenu(9333);
             }break;
 
         case 22: //Paladin
             {
                 Plr->Gossip_SendPOI(9850.22, -7516.93, 6, 6, 0, "Silvermoon City, Paladin Trainer");
-                SendQuickMenu(9316);
+                SendQuickMenu(9334);
             }break;
 
         case 23: //Priest
             {
                 Plr->Gossip_SendPOI(9935.37, -7131.14, 6, 6, 0, "Silvermoon City, Priest Trainer");
-                SendQuickMenu(9316);
+                SendQuickMenu(9335);
             }break;
 
         case 24: //Rogue
             {
                 Plr->Gossip_SendPOI(9739.88, -7374.33, 6, 6, 0, "Silvermoon City, Rogue Trainer");
-                SendQuickMenu(9316);
+                SendQuickMenu(9336);
             }break;
 
         case 25: //Warlock
             {
                 Plr->Gossip_SendPOI(9803.052, -7316.967, 6, 6, 0, "Silvermoon City, Warlock Trainer");
-                SendQuickMenu(9316);
+                SendQuickMenu(9337);
             }break;
 
         case 26: //Alchemy
             {
                 Plr->Gossip_SendPOI(10000.9, -7216.63, 6, 6, 0, "Silvermoon City, Alchemy");
-                SendQuickMenu(9316);
+                SendQuickMenu(9339);
             }break;
 
         case 27: //Blacksmithing
@@ -1375,7 +1429,7 @@ public:
         case 28: //Cooking
             {
                 Plr->Gossip_SendPOI(9577.26, -7243.6, 6, 6, 0, "Silvermoon City, Cooking");
-                SendQuickMenu(9316);
+                SendQuickMenu(9624);
             }break;
 
         case 29: //Enchanting
@@ -1387,55 +1441,65 @@ public:
         case 30: //Engineering
             {
                 Plr->Gossip_SendPOI(9808.85, -7287.31, 6, 6, 0, "Silvermoon City, Engineering");
-                SendQuickMenu(9316);
+                SendQuickMenu(9342);
             }break;
 
         case 31: //First Aid
             {
                 Plr->Gossip_SendPOI(9588.61, -7337.526, 6, 6, 0, "Silvermoon City, First Aid");
-                SendQuickMenu(9316);
+                SendQuickMenu(9343);
             }break;
 
         case 32: //Fishing
             {
                 Plr->Gossip_SendPOI(9601.97, -7332.34, 6, 6, 0, "Silvermoon City, Fishing");
-                SendQuickMenu(9316);
+                SendQuickMenu(9344);
             }break;
 
         case 33: //Herbalism
             {
                 Plr->Gossip_SendPOI(9996.96, -7208.39, 6, 6, 0, "Silvermoon City, Herbalism");
-                SendQuickMenu(9316);
+                SendQuickMenu(9345);
+            }break;
+		case 34: //Inscription
+            {
+                Plr->Gossip_SendPOI(9957.12, -7242.85, 6, 6, 0, "Silvermoon City, Inscription");
+                SendQuickMenu(13893);
             }break;
 
-        case 34: //Jewelcrafting
+        case 35: //Jewelcrafting
             {
                 Plr->Gossip_SendPOI(9552.8, -7502.12, 6, 6, 0, "Silvermoon City, Jewelcrafting");
                 SendQuickMenu(9346);
             }break;
 
-        case 35: //Leatherworking
+        case 36: //Leatherworking
             {
                 Plr->Gossip_SendPOI(9502.486, -7425.51, 6, 6, 0, "Silvermoon City, Leatherworking");
                 SendQuickMenu(9347);
             }break;
 
-        case 36: //Mining
+        case 37: //Mining
             {
                 Plr->Gossip_SendPOI(9813.73, -7360.19, 6, 6, 0, "Silvermoon City, Mining");
                 SendQuickMenu(9348);
             }break;
 
-        case 37: //Skinning
+        case 38: //Skinning
             {
                 Plr->Gossip_SendPOI(9513.37, -7429.4, 6, 6, 0, "Silvermoon City, Skinning");
-                SendQuickMenu(9316);
+                SendQuickMenu(9349);
             }break;
 
-		case 38: //Tailoring
+		case 39: //Tailoring
             {
                 Plr->Gossip_SendPOI(9727.56, -7086.65, 6, 6, 0, "Silvermoon City, Tailoring");
                 SendQuickMenu(9350);
+            }break;
+		case 40: //Lexicon of Power
+            {
+                Plr->Gossip_SendPOI(9957.12, -7242.85, 6, 6, 0, "Silvermoon City, Inscription");
+                SendQuickMenu(14174);
             }break;
         }
     }
@@ -1451,18 +1515,20 @@ public:
     void GossipHello(Object* pObject, Player * Plr, bool AutoSend)
     {
         GossipMenu *Menu;
-        objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 9316, Plr);
-        Menu->AddItem(0, "Auction House", 1);
-        Menu->AddItem(0, "The Bank", 2);
-        Menu->AddItem(0, "Hippogryph Master", 3);
-		Menu->AddItem(0, "Guild Master", 4);
-        Menu->AddItem(0, "The Inn", 5);    
-        Menu->AddItem(0, "Mailbox", 6);
-        Menu->AddItem(0, "Stable Master", 7);
-        Menu->AddItem(0, "Weapon Master", 8);
-        Menu->AddItem(0, "Battlemasters", 9);
-        Menu->AddItem(0, "Class Trainer", 10);
-        Menu->AddItem(0, "Profession Trainer", 11);
+        objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 9551, Plr);
+        Menu->AddItem(0, "Auction House"		, 1);
+        Menu->AddItem(0, "The Bank"				, 2);
+        Menu->AddItem(0, "Hippogryph Master"	, 3);
+		Menu->AddItem(0, "Guild Master"			, 4);
+        Menu->AddItem(0, "The Inn"				, 5);    
+        Menu->AddItem(0, "Mailbox"				, 6);
+        Menu->AddItem(0, "Stable Master"		, 7);
+        Menu->AddItem(0, "Weapon Master"		, 8);
+        Menu->AddItem(0, "Battlemasters"		, 9);
+        Menu->AddItem(0, "Class Trainer"		, 10);
+        Menu->AddItem(0, "Profession Trainer"	, 11);
+		if(Plr->GetSession()->GetClientBuild() > 8606) // Greater than 2.4.3
+			Menu->AddItem(0, "Lexicon of Power"		, 34);
         if(AutoSend)
             Menu->SendTo(Plr);
     }
@@ -1481,12 +1547,12 @@ public:
             /////
 
         case 1:     // Auction House
-            SendQuickMenu(9316);
+            SendQuickMenu(9528);
             Plr->Gossip_SendPOI(-4013.82, -11729.64, 6, 6, 0, "Exodar, Auctioneer");
             break;
 
         case 2:     // The Bank
-            SendQuickMenu(9316);
+            SendQuickMenu(9529);
             Plr->Gossip_SendPOI(-3923.89, -11544.5, 6, 6, 0, "Exodar, bank");
             break;
 
@@ -1496,40 +1562,40 @@ public:
             break;
 
         case 4:     // Guild Master
-            SendQuickMenu(9316);
+            SendQuickMenu(9539);
             Plr->Gossip_SendPOI(-4093.38, -11630.39, 6, 6, 0, "Exodar, Guild Master");
             break;
 
         case 5:     // The Inn
-            SendQuickMenu(9316);
+            SendQuickMenu(9545);
             Plr->Gossip_SendPOI(-3765.34, -11695.8, 6, 6, 0, "Exodar, Inn");
             break;
 
         case 6:     // Mailbox
-            SendQuickMenu(9316);
+            SendQuickMenu(10254);
             Plr->Gossip_SendPOI(-3913.75, -11606.83, 6, 6, 0, "Exodar, Mailbox");
             break;
 
         case 7:     // Stable Master
-            SendQuickMenu(9316);
+            SendQuickMenu(9558);
             Plr->Gossip_SendPOI(-3787.01, -11702.7, 6, 6, 0, "Exodar, Stable Master");
             break;
 
         case 8:     // Weapon Master
-            SendQuickMenu(9316);
+            SendQuickMenu(9565);
             Plr->Gossip_SendPOI(-4215.68, -11628.9, 6, 6, 0, "Exodar, Weapon Master");
             break;
 
 	    case 9:     // Battlemasters
             Plr->Gossip_SendPOI(-3999.82, -11368.33, 6, 6, 0, "Exodar, Battlemasters");
-			objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 9316, Plr);
+			objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 9531, Plr);
             Menu->AddItem(0, "Arena Battlemaster"  , 12);
             Menu->SendTo(Plr);
             break;
 
         case 10:    // Class Trainers
             {
-                objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 9316, Plr);
+                objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 9533, Plr);
                 Menu->AddItem( 0, "Druid"       , 13);
                 Menu->AddItem( 0, "Hunter"      , 14);
                 Menu->AddItem( 0, "Mage"        , 15);
@@ -1542,7 +1608,7 @@ public:
 
         case 11:    // Profession Trainers
             {
-                objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 9316, Plr);
+                objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 9555, Plr);
                 Menu->AddItem( 0, "Alchemy"           , 20);
                 Menu->AddItem( 0, "Blacksmithing"     , 21);
                 Menu->AddItem( 0, "Enchanting"        , 22);
@@ -1550,12 +1616,14 @@ public:
                 Menu->AddItem( 0, "First Aid"         , 24);
                 Menu->AddItem( 0, "Fishing"           , 25);
                 Menu->AddItem( 0, "Herbalism"         , 26);
-				Menu->AddItem( 0, "Jewelcrafting"     , 27);
-                Menu->AddItem( 0, "Leatherworking"    , 28);
-                Menu->AddItem( 0, "Mining"            , 29);
-                Menu->AddItem( 0, "Skinning"          , 30);
-                Menu->AddItem( 0, "Tailoring"         , 31);
-                Menu->AddItem( 0, "Cooking"           , 32);
+				if(Plr->GetSession()->GetClientBuild() > 8606) // Greater than 2.4.3
+					Menu->AddItem( 0, "Inscription"       , 27);
+				Menu->AddItem( 0, "Jewelcrafting"     , 28);
+                Menu->AddItem( 0, "Leatherworking"    , 29);
+                Menu->AddItem( 0, "Mining"            , 30);
+                Menu->AddItem( 0, "Skinning"          , 31);
+                Menu->AddItem( 0, "Tailoring"         , 32);
+                Menu->AddItem( 0, "Cooking"           , 33);
                 Menu->SendTo(Plr);
             }break;
 
@@ -1566,37 +1634,37 @@ public:
 		case 12://Arena Battlemaster Exodar
             {
                 Plr->Gossip_SendPOI(-3725.25, -11688.3, 6, 6, 0, "Arena Battlemaster Exodar");
-                SendQuickMenu(9316);
+                SendQuickMenu(10223);
             }break;
 
         case 13: //Druid
             {
                 Plr->Gossip_SendPOI(-4274.81, -11495.3, 6, 6, 0, "Exodar, Druid Trainer"); 
-                SendQuickMenu(9316);
+                SendQuickMenu(9534);
             }break;
 
         case 14: //Hunter
             {
                 Plr->Gossip_SendPOI(-4229.36, -11563.36, 6, 6, 0, "Exodar, Hunter Trainers");
-                SendQuickMenu(9316);
+                SendQuickMenu(9544);
             }break;
 
         case 15: //Mage
             {
                 Plr->Gossip_SendPOI(-4048.8, -11559.02, 6, 6, 0, "Exodar, Mage Trainers");
-                SendQuickMenu(9316);
+                SendQuickMenu(9550);
             }break;
 
         case 16: //Paladin
             {
                 Plr->Gossip_SendPOI(-4176.57, -11476.46, 6, 6, 0, "Exodar, Paladin Trainers");
-                SendQuickMenu(9316);
+                SendQuickMenu(9553);
             }break;
 
         case 17: //Priest
             {
                 Plr->Gossip_SendPOI(-3972.38, -11483.2, 6, 6, 0, "Exodar, Priest Trainers");
-                SendQuickMenu(9316);
+                SendQuickMenu(9554);
             }break;
 
         case 18: //Shaman
@@ -1608,85 +1676,97 @@ public:
         case 19: //Warrior
             {
                 Plr->Gossip_SendPOI(-4191.11, -11650.45, 6, 6, 0, "Exodar, Warrior Trainers");
-                SendQuickMenu(9316);
+                SendQuickMenu(9562);
             }break;
 
         case 20: //Alchemy
             {
                 Plr->Gossip_SendPOI(-4042.37, -11366.3, 6, 6, 0, "Exodar, Alchemist Trainers");
-                SendQuickMenu(9316);
+                SendQuickMenu(9527);
             }break;
 
         case 21: //Blacksmithing
             {
                 Plr->Gossip_SendPOI(-4232.4, -11705.23, 6, 6, 0, "Exodar, Blacksmithing Trainers");
-                SendQuickMenu(9340);
+                SendQuickMenu(9532);
             }break;
 
         case 22: //Enchanting
             {
                 Plr->Gossip_SendPOI(-3889.3, -11495, 6, 6, 0, "Exodar, Enchanters");
-                SendQuickMenu(9341);
+                SendQuickMenu(9535);
             }break;
 
         case 23: //Engineering
             {
                 Plr->Gossip_SendPOI(-4257.93, -11636.53, 6, 6, 0, "Exodar, Engineering");
-                SendQuickMenu(9316);
+                SendQuickMenu(9536);
             }break;
 
         case 24: //First Aid
             {
                 Plr->Gossip_SendPOI(-3766.05, -11481.8, 6, 6, 0, "Exodar, First Aid Trainer");
-                SendQuickMenu(9316);
+                SendQuickMenu(9537);
             }break;
 
         case 25: //Fishing
             {
                 Plr->Gossip_SendPOI(-3726.64, -11384.43, 6, 6, 0, "Exodar, Fishing Trainer");
-                SendQuickMenu(9316);
+                SendQuickMenu(9538);
             }break;
 
         case 26: //Herbalism
             {
                 Plr->Gossip_SendPOI(-4052.5, -11356.6, 6, 6, 0, "Exodar, Herbalism Trainer");
-                SendQuickMenu(9316);
+                SendQuickMenu(9543);
             }break;
 
-        case 27: //Jewelcrafting
+		case 27: //Inscription
+            {
+                Plr->Gossip_SendPOI(-3889.3, -11495, 6, 6, 0, "Exodar, Inscription");
+                SendQuickMenu(13887);
+            }break;
+
+        case 28: //Jewelcrafting
             {
                 Plr->Gossip_SendPOI(-3786.27, -11541.33, 6, 6, 0, "Exodar, Jewelcrafters");
-                SendQuickMenu(9346);
+                SendQuickMenu(9547);
             }break;
 
-        case 28: //Leatherworking
+        case 29: //Leatherworking
             {
                 Plr->Gossip_SendPOI(-4134.42, -11772.93, 6, 6, 0, "Exodar, Leatherworking");
-                SendQuickMenu(9347);
+                SendQuickMenu(9549);
             }break;
 
-        case 29: //Mining
+        case 30: //Mining
             {
                 Plr->Gossip_SendPOI(-4220.31, -11694.29, 6, 6, 0, "Exodar, Mining Trainers");
-                SendQuickMenu(9348);
+                SendQuickMenu(9552);
             }break;
 
-        case 30: //Skinning
+        case 31: //Skinning
             {
                 Plr->Gossip_SendPOI(-4134.97, -11760.5, 6, 6, 0, "Exodar, Skinning Trainer");
-                SendQuickMenu(9316);
+                SendQuickMenu(9557);
             }break;
 
-		case 31: //Tailoring
+		case 32: //Tailoring
             {
                 Plr->Gossip_SendPOI(-4095.78, -11746.9, 6, 6, 0, "Exodar, Tailors");
                 SendQuickMenu(9350);
             }break;
 
-        case 32: //Cooking
+        case 33: //Cooking
             {
                 Plr->Gossip_SendPOI(-3799.69, -11650.51, 6, 6, 0, "Exodar, Cook");
-                SendQuickMenu(9316);
+                SendQuickMenu(9559);
+            }break;
+
+		case 34: //Lexicon of Power
+            {
+                Plr->Gossip_SendPOI(-3889.3, -11495, 6, 6, 0, "Exodar, Inscription");
+                SendQuickMenu(14174);
             }break;
         }
     }
@@ -2745,18 +2825,22 @@ public:
     {
         GossipMenu *Menu;
         objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 2760, Plr);
-        Menu->AddItem(0, "Auction House", 1);
-        Menu->AddItem(0, "Bank of Ironforge", 2);
-        Menu->AddItem(0, "Deeprun Tram", 3);
-        Menu->AddItem(0, "Gryphon Master", 4);
-        Menu->AddItem(0, "Guild Master", 5);
-        Menu->AddItem(0, "The Inn", 6);    
-        Menu->AddItem(0, "Mailbox", 7);
-        Menu->AddItem(0, "Stable Master", 8);
-        Menu->AddItem(0, "Weapons Trainer", 9);
-        Menu->AddItem(0, "Battlemaster", 10);
-        Menu->AddItem(0, "Class Trainer", 11);
-        Menu->AddItem(0, "Profession Trainer", 12);
+        Menu->AddItem(0, "Auction House"			, 1);
+        Menu->AddItem(0, "Bank of Ironforge"		, 2);
+        Menu->AddItem(0, "Deeprun Tram"				, 3);
+        Menu->AddItem(0, "Gryphon Master"			, 4);
+        Menu->AddItem(0, "Guild Master"				, 5);
+        Menu->AddItem(0, "The Inn"					, 6);    
+        Menu->AddItem(0, "Mailbox"					, 7);
+        Menu->AddItem(0, "Stable Master"			, 8);
+        Menu->AddItem(0, "Weapons Trainer"			, 9);
+        Menu->AddItem(0, "Battlemaster"				, 10);
+		if(Plr->GetSession()->GetClientBuild() > 8606) // Greater than 2.4.3
+			Menu->AddItem(0, "Barber"					, 11);
+        Menu->AddItem(0, "Class Trainer"			, 12);
+        Menu->AddItem(0, "Profession Trainer"		, 13);
+		if(Plr->GetSession()->GetClientBuild() > 8606) // Greater than 2.4.3
+			Menu->AddItem(0, "Lexicon of Power"			, 34);
         if(AutoSend)
             Menu->SendTo(Plr);
     }
@@ -2820,39 +2904,46 @@ public:
             break;
 
         case 10:    // Battlemaster
-			SendQuickMenu(7527);
+			SendQuickMenu(10216);
 			Plr->Gossip_SendPOI(-5038.54, -1266.44, 6, 6, 0, "Battlemasters Ironforge");
             break;
 
-        case 11:    // A class trainer
+		case 11:    // Barber
+			SendQuickMenu(13885);
+			Plr->Gossip_SendPOI(-4838.49, -919.18, 6, 6, 0, "Ironforge Barber");
+            break;
+
+        case 12:    // A class trainer
             {
                 objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 2766, Plr);
-                Menu->AddItem( 0, "Hunter"      , 13);
-                Menu->AddItem( 0, "Mage"        , 14);
-                Menu->AddItem( 0, "Paladin"     , 15);
-                Menu->AddItem( 0, "Priest"      , 16);
-                Menu->AddItem( 0, "Rogue"       , 17);
-                Menu->AddItem( 0, "Warlock"     , 18);
-                Menu->AddItem( 0, "Warrior"     , 19);
-                Menu->AddItem( 0, "Shaman"      , 20);
+                Menu->AddItem( 0, "Hunter"      , 14);
+                Menu->AddItem( 0, "Mage"        , 15);
+                Menu->AddItem( 0, "Paladin"     , 16);
+                Menu->AddItem( 0, "Priest"      , 17);
+                Menu->AddItem( 0, "Rogue"       , 18);
+                Menu->AddItem( 0, "Warlock"     , 19);
+                Menu->AddItem( 0, "Warrior"     , 20);
+                Menu->AddItem( 0, "Shaman"      , 21);
                 Menu->SendTo(Plr);
             }break;
 
-        case 12:    // A profession trainer
+        case 13:    // A profession trainer
             {
                 objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 2793, Plr);
-                Menu->AddItem( 0, "Alchemy"           , 21);
-                Menu->AddItem( 0, "Blacksmithing"     , 22);
-                Menu->AddItem( 0, "Cooking"           , 23);
-                Menu->AddItem( 0, "Enchanting"        , 24);
-				Menu->AddItem( 0, "Engineering"       , 25);
-                Menu->AddItem( 0, "First Aid"         , 26);
-                Menu->AddItem( 0, "Fishing"           , 27);
-                Menu->AddItem( 0, "Herbalism"         , 28);
-                Menu->AddItem( 0, "Leatherworking"    , 29);
-                Menu->AddItem( 0, "Mining"            , 30);
-                Menu->AddItem( 0, "Skinning"          , 31);
-                Menu->AddItem( 0, "Tailoring"         , 32);
+                Menu->AddItem( 0, "Alchemy"           , 22);
+                Menu->AddItem( 0, "Blacksmithing"     , 23);
+                Menu->AddItem( 0, "Cooking"           , 24);
+                Menu->AddItem( 0, "Enchanting"        , 25);
+				Menu->AddItem( 0, "Engineering"       , 26);
+                Menu->AddItem( 0, "First Aid"         , 27);
+                Menu->AddItem( 0, "Fishing"           , 28);
+                Menu->AddItem( 0, "Herbalism"         , 29);
+				if(Plr->GetSession()->GetClientBuild() > 8606) // Greater than 2.4.3
+					Menu->AddItem(0, "Inscription"		  , 30);
+                Menu->AddItem( 0, "Leatherworking"    , 31);
+                Menu->AddItem( 0, "Mining"            , 32);
+                Menu->AddItem( 0, "Skinning"          , 33);
+                Menu->AddItem( 0, "Tailoring"         , 34);
                 Menu->SendTo(Plr);
             }break;
 
@@ -2860,124 +2951,136 @@ public:
             // Class trainer submenu
             ////////
 
-        case 13: //Hunter
+        case 14: //Hunter
             {
                 Plr->Gossip_SendPOI(-5023, -1253.68, 6, 6, 0, "Hall of Arms");
                 SendQuickMenu(2770);
             }break;
 
-        case 14: //Mage
+        case 15: //Mage
             {
                 Plr->Gossip_SendPOI(-4627, -926.45, 6, 6, 0, "Hall of Mysteries");
                 SendQuickMenu(2771);
             }break;
 
-        case 15: //Paladin
+        case 16: //Paladin
             {
                 Plr->Gossip_SendPOI(-4627.02, -926.45, 6, 6, 0, "Hall of Mysteries");
                 SendQuickMenu(2773);
             }break;
 
-        case 16: //Priest
+        case 17: //Priest
             {
                 Plr->Gossip_SendPOI(-4627, -926.45, 6, 6, 0, "Hall of Mysteries");
                 SendQuickMenu(2772);
             }break;
 
-        case 17: //Rogue
+        case 18: //Rogue
             {
                 Plr->Gossip_SendPOI(-4647.83, -1124, 6, 6, 0, "Ironforge Rogue Trainer");
                 SendQuickMenu(2774);
             }break;
 
-        case 18: //Warlock
+        case 19: //Warlock
 			{
                 Plr->Gossip_SendPOI(-4605, -1110.45, 6, 6, 0, "Ironforge Warlock Trainer");
                 SendQuickMenu(2775);
             }break;
 
-        case 19: //Warrior
+        case 20: //Warrior
 			{
                 Plr->Gossip_SendPOI(-5023.08, -1253.68, 6, 6, 0, "Hall of Arms");
                 SendQuickMenu(2776);
             }break;
 
-        case 20: //Shaman
+        case 21: //Shaman
 			{
                 Plr->Gossip_SendPOI(-4722.02, -1150.66, 6, 6, 0, "Ironforge Shaman Trainer");
-                SendQuickMenu(1299);
+                SendQuickMenu(10842);
             }break;
 
-        case 21: //Alchemy
+        case 22: //Alchemy
             {
                 Plr->Gossip_SendPOI(-4858.5, -1241.83, 6, 6, 0, "Berryfizz's Potions and Mixed Drinks");
                 SendQuickMenu(2794);
             }break;
 
-        case 22: //Blacksmithing
+        case 23: //Blacksmithing
             {
                 Plr->Gossip_SendPOI(-4796.97, -1110.17, 6, 6, 0, "The Great Forge");
                 SendQuickMenu(2795);
             }break;
 
-        case 23: //Cooking
+        case 24: //Cooking
             {
                 Plr->Gossip_SendPOI(-4767.83, -1184.59, 6, 6, 0, "The Bronze Kettle");
                 SendQuickMenu(2796);
             }break;
 
-        case 24: //Enchanting
+        case 25: //Enchanting
             {
                 Plr->Gossip_SendPOI(-4803.72, -1196.53, 6, 6, 0, "Thistlefuzz Arcanery");
                 SendQuickMenu(2797);
             }break;
 
-		case 25: //Engineering
+		case 26: //Engineering
             {
                 Plr->Gossip_SendPOI(-4799.56, -1250.23, 6, 6, 0, "Springspindle's Gadgets");
                 SendQuickMenu(2798);
             }break;
 
-        case 26: //First Aid
+        case 27: //First Aid
             {
                 Plr->Gossip_SendPOI(-4881.6, -1153.13, 6, 6, 0, "Ironforge Physician");
                 SendQuickMenu(2799);
             }break;
 
-        case 27: //Fishing
+        case 28: //Fishing
             {
                 Plr->Gossip_SendPOI(-4597.91, -1091.93, 6, 6, 0, "Traveling Fisherman");
                 SendQuickMenu(2800);
             }break;
 
-        case 28: //Herbalism
+        case 29: //Herbalism
             {
                 Plr->Gossip_SendPOI(-4876.9, -1151.92, 6, 6, 0, "Ironforge Physician");
                 SendQuickMenu(2801);
             }break;
 
-        case 29: //Leatherworking
+		case 30: //Inscription
+            {
+                Plr->Gossip_SendPOI(-4801.72, -1189.41, 6, 6, 0, "Ironforge Inscription");
+                SendQuickMenu(13884);
+            }break;
+
+        case 31: //Leatherworking
             {
                 Plr->Gossip_SendPOI(-4745, -1027.57, 6, 6, 0, "Finespindle's Leather Goods");
                 SendQuickMenu(2802);
             }break;
 
-        case 30: //Mining
+        case 32: //Mining
             {
                 Plr->Gossip_SendPOI(-4705.06, -1116.43, 6, 6, 0, "Deepmountain Mining Guild");
                 SendQuickMenu(2804);
             }break;
 
-        case 31: //Skinning
+        case 33: //Skinning
             {
                 Plr->Gossip_SendPOI(-4745, -1027.57, 6, 6, 0, "Finespindle's Leather Goods");
                 SendQuickMenu(2805); 
             }break;
 
-		case 32: //Tailoring
+		case 34: //Tailoring
             {
                 Plr->Gossip_SendPOI(-4719.60, -1056.96, 6, 6, 0, "Stonebrow's Clothier");
                 SendQuickMenu(2807);
+            }break;
+
+		case 35: //Lexicon of Power
+            {
+                Plr->Gossip_SendPOI(-4801.72, -1189.41, 6, 6, 0, "Ironforge Inscription");
+                SendQuickMenu(14174);
             }break;
         }
     }
@@ -2993,7 +3096,7 @@ public:
     void GossipHello(Object* pObject, Player * Plr, bool AutoSend)
     {
         GossipMenu *Menu;
-        objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 2593, Plr);
+        objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 4287, Plr);
         Menu->AddItem(0, "Bank", 1);
         Menu->AddItem(0, "Gryphon Master", 2);
         Menu->AddItem(0, "Guild Master", 3);
@@ -3064,10 +3167,12 @@ public:
                 Menu->AddItem( 0, "First Aid"         , 20);
                 Menu->AddItem( 0, "Fishing"           , 21);
                 Menu->AddItem( 0, "Herbalism"         , 22);
-                Menu->AddItem( 0, "Leatherworking"    , 23);
-                Menu->AddItem( 0, "Mining"            , 24);
-                Menu->AddItem( 0, "Skinning"          , 25);
-                Menu->AddItem( 0, "Tailoring"         , 26);
+				if(Plr->GetSession()->GetClientBuild() > 8606) // Greater than 2.4.3
+					Menu->AddItem( 0, "Inscription"		  , 23);
+                Menu->AddItem( 0, "Leatherworking"    , 24);
+                Menu->AddItem( 0, "Mining"            , 25);
+                Menu->AddItem( 0, "Skinning"          , 26);
+                Menu->AddItem( 0, "Tailoring"         , 27);
                 Menu->SendTo(Plr);
             }break;
 
@@ -3162,23 +3267,29 @@ public:
                 SendQuickMenu(4308);
             }break;
 
-        case 23: //Leatherworking
+		case 23: //Inscription
+            {
+                Plr->Gossip_SendPOI(-4801.72, -1189.41, 6, 6, 0, "Ironforge Inscription");
+                SendQuickMenu(13884);
+            }break;
+
+        case 24: //Leatherworking
             {
                 SendQuickMenu(4310);
             }break;
 
-        case 24: //Mining
+        case 25: //Mining
             {
 				Plr->Gossip_SendPOI(-5531, -666.53, 6, 6, 0, "Yarr Hamerstone");
                 SendQuickMenu(4311);
             }break;
 
-        case 25: //Skinning
+        case 26: //Skinning
             {
                 SendQuickMenu(4312);
             }break;
 
-		case 26: //Tailoring
+		case 27: //Tailoring
             {
                 SendQuickMenu(4313);
             }break;
@@ -3406,14 +3517,14 @@ public:
     void GossipHello(Object* pObject, Player * Plr, bool AutoSend)
     {
         GossipMenu *Menu;
-        objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 2593, Plr);
-        Menu->AddItem(0, "Bank", 1);
-        Menu->AddItem(0, "Hippogryph Master", 2);
-        Menu->AddItem(0, "Guild Master", 3);
-        Menu->AddItem(0, "Inn", 4);
-        Menu->AddItem(0, "Stable", 5);
-        Menu->AddItem(0, "Class Trainer", 6);
-		Menu->AddItem(0, "Profession Trainer", 7);
+        objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 10066, Plr);
+        Menu->AddItem(0, "Bank"					, 1);
+        Menu->AddItem(0, "Hippogryph Master"	, 2);
+        Menu->AddItem(0, "Guild Master"			, 3);
+        Menu->AddItem(0, "Inn"					, 4);
+        Menu->AddItem(0, "Stable"				, 5);
+        Menu->AddItem(0, "Class Trainer"		, 6);
+		Menu->AddItem(0, "Profession Trainer"	, 7);
         if(AutoSend)
             Menu->SendTo(Plr);
     }
@@ -3432,33 +3543,33 @@ public:
             /////
 
         case 1:     //Bank
-            SendQuickMenu(2593);
+            SendQuickMenu(10067);
             break;
 
         case 2:     //Hippogryph Master
-            SendQuickMenu(2593);
+            SendQuickMenu(10071);
 			break;
 			
         case 3:     //Guild Master
-            SendQuickMenu(2593);
+            SendQuickMenu(10073);
 			break;
 
         case 4:     //Inn
-            SendQuickMenu(2593);
+            SendQuickMenu(10074);
             Plr->Gossip_SendPOI(-4127.81, -12467.7, 6, 6, 0, "Azure Watch, Innkeeper");
             break;
 
         case 5:     //Stable Master
-            SendQuickMenu(2593);
+            SendQuickMenu(10075);
             Plr->Gossip_SendPOI(-4146.42, -12492.7, 6, 6, 0, "Azure Watch, Stable Master");
             break;
 
         case 6:     //Class Trainer
 			{
-                objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 4292, Plr);
-                Menu->AddItem( 0, "Druid"        , 8);
-				Menu->AddItem( 0, "Hunter"       , 9);
-				Menu->AddItem( 0, "Mage"        , 10);
+                objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 10076, Plr);
+                Menu->AddItem( 0, "Druid"       , 8);
+				Menu->AddItem( 0, "Hunter"      , 9);
+				Menu->AddItem( 0, "Mage"		, 10);
 				Menu->AddItem( 0, "Paladin"     , 11);
                 Menu->AddItem( 0, "Priest"      , 12);
 				Menu->AddItem( 0, "Shaman"      , 13);
@@ -3468,7 +3579,7 @@ public:
 
         case 7:     //Profession Trainer
             {
-                objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 2593, Plr);
+                objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 10087, Plr);
                 Menu->AddItem( 0, "Alchemy"           , 15);
                 Menu->AddItem( 0, "Blacksmithing"     , 16);
                 Menu->AddItem( 0, "Cooking"           , 17);
@@ -3477,11 +3588,13 @@ public:
                 Menu->AddItem( 0, "First Aid"         , 20);
                 Menu->AddItem( 0, "Fishing"           , 21);
                 Menu->AddItem( 0, "Herbalism"         , 22);
-				Menu->AddItem( 0, "Jewelcrafting"     , 23);
-                Menu->AddItem( 0, "Leatherworking"    , 24);
-                Menu->AddItem( 0, "Mining"            , 25);
-                Menu->AddItem( 0, "Skinning"          , 26);
-                Menu->AddItem( 0, "Tailoring"         , 27);
+				if(Plr->GetSession()->GetClientBuild() > 8606) // Greater than 2.4.3
+					Menu->AddItem( 0, "Inscription"       , 23);
+				Menu->AddItem( 0, "Jewelcrafting"     , 24);
+                Menu->AddItem( 0, "Leatherworking"    , 25);
+                Menu->AddItem( 0, "Mining"            , 26);
+                Menu->AddItem( 0, "Skinning"          , 27);
+                Menu->AddItem( 0, "Tailoring"         , 28);
                 Menu->SendTo(Plr);
             }break;
 
@@ -3492,119 +3605,125 @@ public:
 
         case 8: //Druid
             {
-                SendQuickMenu(2593);
+                SendQuickMenu(10077);
             }break;
 
         case 9: //Hunter
             {
                 Plr->Gossip_SendPOI(-4203.65, -12467.7, 6, 6, 0, "Azure Watch, Hunter Trainer");
-                SendQuickMenu(2593);
+                SendQuickMenu(10078);
             }break;
 
         case 10: //Mage
             {
                 Plr->Gossip_SendPOI(-4149.62, -12530.1, 6, 6, 0, "Azure Watch, Mage Trainer");
-                SendQuickMenu(2593);
+                SendQuickMenu(10081);
             }break;
 
         case 11: //Paladin
 			{
                 Plr->Gossip_SendPOI(-4138.98, -12468.5, 6, 6, 0, "Azure Watch, Paladin Trainer");
-                SendQuickMenu(2593);
+                SendQuickMenu(10083);
             }break;
 
         case 12: //Priest
             {
                 Plr->Gossip_SendPOI(-4131.66, -12478.6, 6, 6, 0, "Azure Watch, Priest Trainer");
-                SendQuickMenu(2593);
+                SendQuickMenu(10084);
             }break;
 
         case 13: //Shaman
             {
                 Plr->Gossip_SendPOI(-4162.33, -12456.1, 6, 6, 0, "Azure Watch, Shaman Trainer");
-                SendQuickMenu(2593);
+                SendQuickMenu(10085);
             }break;
 
         case 14: //Warrior
             {
                 Plr->Gossip_SendPOI(-4165.05, -12536.4, 6, 6, 0, "Azure Watch, Warrior Trainer");
-                SendQuickMenu(2593);
+                SendQuickMenu(10086);
             }break;
 
         case 15: //Alchemy
             {
                 Plr->Gossip_SendPOI(-4191.15, -12470, 6, 6, 0, "Azure Watch, Alchemist");
-                SendQuickMenu(2593);
+                SendQuickMenu(10088);
             }break;
 
         case 16: //Blacksmithing
             {
 				Plr->Gossip_SendPOI(-4726.29, -12387.0, 6, 6, 0, "Odesyus' Landing, Blacksmith");
-                SendQuickMenu(2593);
+                SendQuickMenu(10089);
             }break;
 
         case 17: //Cooking
             {
 				Plr->Gossip_SendPOI(-4708.59, -12400.3, 6, 6, 0, "Odesyus' Landing, Cook");
-                SendQuickMenu(2593);
+                SendQuickMenu(10090);
             }break;
 
         case 18: //Enchanting
             {
-				SendQuickMenu(2593);
+				SendQuickMenu(10091);
             }break;
 			
         case 19: //Engineering
             {
                 Plr->Gossip_SendPOI(-4157.57, -12470.2, 6, 6, 0, "Azure Watch, Engineering Trainer");
-                SendQuickMenu(2593);
+                SendQuickMenu(10092);
             }break;
 
         case 20: //First Aid
             {
                 Plr->Gossip_SendPOI(-4199.1, -12469.9, 6, 6, 0, "Azure Watch, First Aid Trainer");
-                SendQuickMenu(2593);
+                SendQuickMenu(10093);
             }break;
 
         case 21: //Fishing
             {
                 Plr->Gossip_SendPOI(-4266.34, -12985.4, 6, 6, 0, "Ammen Ford, Fisherwoman");
-                SendQuickMenu(2593);
+                SendQuickMenu(10094);
             }break;
 
         case 22: //Herbalism
             {
                 Plr->Gossip_SendPOI(-4189.43, -12459.4, 6, 6, 0, "Azure Watch, Herbalist");
-                SendQuickMenu(2593);
+                SendQuickMenu(10095);
             }break;
 
-        case 23: //Jewelcrafting
+		case 23: //Inscription
             {
-                SendQuickMenu(2593);
+                Plr->Gossip_SendPOI(-3889.3, -11495, 6, 6, 0, "Exodar, Inscription");
+                SendQuickMenu(13887);
             }break;
 
-        case 24: //Leatherworking
+        case 24: //Jewelcrafting
+            {
+                SendQuickMenu(10100);
+            }break;
+
+        case 25: //Leatherworking
             {
                 Plr->Gossip_SendPOI(-3442.68, -12322.2, 6, 6, 0, "Stillpine Hold, Leatherworker");
-                SendQuickMenu(2593);
+                SendQuickMenu(10096);
             }break;
 
-        case 25: //Mining
+        case 26: //Mining
             {
 				Plr->Gossip_SendPOI(-4179.89, -12493.1, 6, 6, 0, "Azure Watch, Mining Trainer");
-                SendQuickMenu(2593);
+                SendQuickMenu(10097);
             }break;
 
-        case 26: //Skinning
+        case 27: //Skinning
             {
 				Plr->Gossip_SendPOI(-3431.17, -12316.5, 6, 6, 0, "Stillpine Hold, Skinner");
-                SendQuickMenu(2593);
+                SendQuickMenu(10098);
             }break;
 
-		case 27: //Tailoring
+		case 28: //Tailoring
             {
 				Plr->Gossip_SendPOI(-4711.54, -12386.7, 6, 6, 0, "Odesyus' Landing, Tailor");
-                SendQuickMenu(2593);
+                SendQuickMenu(10099);
             }break;
         }
     }
@@ -3926,7 +4045,7 @@ void SetupGuardGossip(ScriptMgr * mgr)
 	GossipScript * gold = (GossipScript*) new GoldshireGuard();
 	GossipScript * sw = (GossipScript*) new StormwindGuard();
 	GossipScript * darn = (GossipScript*) new DarnassusGuard();
-	GossipScript * dol = (GossipScript*) new DolanaarGuard();
+	GossipScript * teldra = (GossipScript*) new TeldrassilGuard();
 	GossipScript * blood = (GossipScript*) new BloodhoofGuard();
 	GossipScript * razor = (GossipScript*) new RazorHillGuard();
 	GossipScript * brill = (GossipScript*) new BrillGuard();
@@ -3942,17 +4061,17 @@ void SetupGuardGossip(ScriptMgr * mgr)
 	GossipScript * shattr = (ShattrathGuard*) new ShattrathGuard();
 
     /* Guard List */
-    mgr->register_gossip_script(1423,  gold);        // Stormwind Guard 
-    mgr->register_gossip_script(68,    sw);        // Stormwind City Guard
-    mgr->register_gossip_script(1976,  sw);        // Stormwind City Patroller
-    mgr->register_gossip_script(4262,  darn);        // Darnassus Sentinel
-    mgr->register_gossip_script(5624,  under);		// Undercity Guardian
-    mgr->register_gossip_script(3571,  dol);			// Teldrassil Sentinel
-	mgr->register_gossip_script(16222, silver);	    // Silvermoon City Guardian
+    mgr->register_gossip_script(1423,  gold);			// Stormwind Guard 
+    mgr->register_gossip_script(68,    sw);				// Stormwind City Guard
+    mgr->register_gossip_script(1976,  sw);				// Stormwind City Patroller
+    mgr->register_gossip_script(4262,  darn);			// Darnassus Sentinel
+    mgr->register_gossip_script(5624,  under);			// Undercity Guardian
+    mgr->register_gossip_script(3571,  teldra);			// Teldrassil Sentinel
+	mgr->register_gossip_script(16222, silver);			// Silvermoon City Guardian
 	mgr->register_gossip_script(16733, exodar);	        // Exodar Peacekeeper
 	mgr->register_gossip_script(20674, exodar);	        // Shield of Velen
 	mgr->register_gossip_script(3296, ogri);	        // Orgrimmar Grunt
-	mgr->register_gossip_script(3084, thun);	    // Bluffwatcher
+	mgr->register_gossip_script(3084, thun);			// Bluffwatcher
 	mgr->register_gossip_script(3222, blood);			// Brave Wildrunner
 	mgr->register_gossip_script(3224, blood);			// Brave Cloudmane
 	mgr->register_gossip_script(3220, blood);			// Brave Darksky
@@ -3964,22 +4083,22 @@ void SetupGuardGossip(ScriptMgr * mgr)
 	mgr->register_gossip_script(3223, blood);			// Brave Rainchaser
 	mgr->register_gossip_script(3212, blood);			// Brave Ironhorn
 	mgr->register_gossip_script(5953, razor);			// Razor Hill Grunt
-	mgr->register_gossip_script(5725, brill);				// Deathguard Lundmark
-	mgr->register_gossip_script(1738, brill);				// Deathguard Terrence
-	mgr->register_gossip_script(1652, brill);				// Deathguard Burgess
-	mgr->register_gossip_script(1746, brill);				// Deathguard Cyrus
-	mgr->register_gossip_script(1745, brill);				// Deathguard Morris
-	mgr->register_gossip_script(1743, brill);				// Deathguard Lawrence
-	mgr->register_gossip_script(1744, brill);				// Deathguard Mort
-	mgr->register_gossip_script(1496, brill);				// Deathguard Dillinger
-	mgr->register_gossip_script(1742, brill);				// Deathguard Bartholomew
-	mgr->register_gossip_script(5595, irf);			// Ironforge Guard
+	mgr->register_gossip_script(5725, brill);			// Deathguard Lundmark
+	mgr->register_gossip_script(1738, brill);			// Deathguard Terrence
+	mgr->register_gossip_script(1652, brill);			// Deathguard Burgess
+	mgr->register_gossip_script(1746, brill);			// Deathguard Cyrus
+	mgr->register_gossip_script(1745, brill);			// Deathguard Morris
+	mgr->register_gossip_script(1743, brill);			// Deathguard Lawrence
+	mgr->register_gossip_script(1744, brill);			// Deathguard Mort
+	mgr->register_gossip_script(1496, brill);			// Deathguard Dillinger
+	mgr->register_gossip_script(1742, brill);			// Deathguard Bartholomew
+	mgr->register_gossip_script(5595, irf);				// Ironforge Guard
 	mgr->register_gossip_script(727,  khar);			// Ironforge Mountaineer
-	mgr->register_gossip_script(16221,falcon);		// Silvermoon Guardian
-	mgr->register_gossip_script(18038,azure);		// Azuremyst Peacekeeper
-	mgr->register_gossip_script(19687,shattr);         // Shattrath City Guard -by AeThIs
-    mgr->register_gossip_script(18568,shattr);      // Shattrath City Guard Aruspice -by AeThIs
-    mgr->register_gossip_script(18549,shattr);      // Shattrath City Guard -by AeThIs
+	mgr->register_gossip_script(16221,falcon);			// Silvermoon Guardian
+	mgr->register_gossip_script(18038,azure);			// Azuremyst Peacekeeper
+	mgr->register_gossip_script(19687,shattr);			// Shattrath City Guard -by AeThIs
+    mgr->register_gossip_script(18568,shattr);			// Shattrath City Guard Aruspice -by AeThIs
+    mgr->register_gossip_script(18549,shattr);			// Shattrath City Guard -by AeThIs
 }	
 
 	// To Bloodhoof Guards - I don't know if those are all guards with dialog menu,

@@ -1404,107 +1404,17 @@ protected:
 #define ASTRAL_FLARE_VISUAL		30237
 #define ARCING_SEAR				30235
 
-class AstralFlareAI : public CreatureAIScript
+class AstralFlareAI : public MoonScriptCreatureAI
 {
-public:
-	ADD_CREATURE_FACTORY_FUNCTION(AstralFlareAI);
-	bool m_spellcheck[2];
-	SP_AI_Spell spells[2];
-
-	AstralFlareAI(Creature* pCreature) : CreatureAIScript(pCreature)
+	MOONSCRIPT_FACTORY_FUNCTION(AstralFlareAI, MoonScriptCreatureAI);
+	AstralFlareAI(Creature* pCreature) : MoonScriptCreatureAI(pCreature)
 	{
-		nrspells = 2;
-		for(int i=0;i<nrspells;i++)
-		{
-			m_spellcheck[i] = false;
-		}
-
-		spells[0].info = dbcSpell.LookupEntry(ASTRAL_FLARE_PASSIVE);
-		spells[0].targettype = TARGET_VARIOUS;
-		spells[0].instant = true;
-		spells[0].cooldown = 3;
-		spells[0].perctrigger = 100.0f;
-		spells[0].attackstoptimer = 1000;
-
-		spells[1].info = dbcSpell.LookupEntry(ASTRAL_FLARE_VISUAL);
-		spells[1].targettype = TARGET_VARIOUS;
-		spells[1].instant = true;
-		spells[1].cooldown = 6;
-		spells[1].perctrigger = 100.0f;
-		spells[1].attackstoptimer = 500;
-
+		AddSpell(ASTRAL_FLARE_PASSIVE, Target_Self, 100, 0, 3);
+		AddSpell(ASTRAL_FLARE_VISUAL, Target_Self, 100, 0, 6);
+		AddSpell(30235, Target_Current, 20, 0, 0);
+		SetDespawnWhenInactive(true);
+		AggroNearestPlayer();
 	}
-
-	void OnCombatStart(Unit* mTarget)
-	{
-		for(int i=0;i<nrspells;i++)
-			spells[i].casttime = spells[i].cooldown;
-
-		RegisterAIUpdateEvent(1000);
-	}
-
-	void OnCombatStop(Unit *mTarget)
-	{
-		_unit->GetAIInterface()->setCurrentAgent(AGENT_NULL);
-		_unit->GetAIInterface()->SetAIState(STATE_IDLE);
-		RemoveAIUpdateEvent();
-		_unit->Despawn(2500, 0);
-	}
-
-	void OnDied(Unit * mKiller)
-	{
-		RemoveAIUpdateEvent();
-		_unit->Despawn(2500, 0);
-	}
-
-	void AIUpdate()
-	{
-		float val = (float)RandomFloat(100.0f);
-		SpellCast(val);
-	}
-
-	void SpellCast(float val)
-	{
-		if(_unit->GetCurrentSpell() == NULL && _unit->GetAIInterface()->GetNextTarget())
-		{
-			float comulativeperc = 0;
-			Unit *target = NULL;
-			for(int i=0;i<nrspells;i++)
-			{
-				if(!spells[i].perctrigger) continue;
-		
-				if (m_spellcheck[i])
-				{
-					target = _unit->GetAIInterface()->GetNextTarget();
-					switch(spells[i].targettype)
-					{
-					case TARGET_SELF:
-					case TARGET_VARIOUS:
-						_unit->CastSpell(_unit, spells[i].info, spells[i].instant); break;
-					case TARGET_ATTACKING:
-						_unit->CastSpell(target, spells[i].info, spells[i].instant); break;
-					case TARGET_DESTINATION:
-						_unit->CastSpellAoF(target->GetPositionX(),target->GetPositionY(),target->GetPositionZ(), spells[i].info, spells[i].instant); break;
-					}
-
-					m_spellcheck[i] = false;
-					return;
-				}
-
-				uint32 t = (uint32)time(NULL);
-				if(val > comulativeperc && val <= (comulativeperc + spells[i].perctrigger) && t > spells[i].casttime)
-				{
-					_unit->setAttackTimer(spells[i].attackstoptimer, false);
-					spells[i].casttime = t + spells[i].cooldown;
-					m_spellcheck[i] = true;
-				}
-				comulativeperc += spells[i].perctrigger;
-			}
-		}
-	}
-
-protected:
-	int nrspells;
 };
 
 // Shade of Aran

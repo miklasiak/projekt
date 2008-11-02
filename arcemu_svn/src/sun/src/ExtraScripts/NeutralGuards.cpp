@@ -7,7 +7,7 @@ public:
 	ADD_CREATURE_FACTORY_FUNCTION(NeutralGuard);
 	NeutralGuard(Creature* pCreature) : CreatureAIScript(pCreature)
 	{
-		_unit->GetAIInterface()->m_neutralGuard = true;
+		_unit->GetAIInterface()->m_isNeutralGuard = true;
 	}
 };
 
@@ -17,7 +17,7 @@ public:
 	ADD_CREATURE_FACTORY_FUNCTION(ShatteredSunSpawner);
 	ShatteredSunSpawner(Creature* pCreature) : CreatureAIScript(pCreature)
 	{
-		_unit->GetAIInterface()->m_neutralGuard = true;
+		_unit->GetAIInterface()->m_isNeutralGuard = true;
 	}
 
 	void OnCombatStart(Unit* mTarget)
