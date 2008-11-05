@@ -1,3 +1,6 @@
+r130
+- updated configs in packetaufbau folder
+-------------------------------------------------------------------------------------
 r129
 - updated arc rev 1531
 - updated sun rev 482
