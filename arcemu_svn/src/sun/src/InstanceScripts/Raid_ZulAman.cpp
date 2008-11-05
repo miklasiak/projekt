@@ -201,26 +201,33 @@ class HALAZZIAI : public MoonScriptBossAI
     MOONSCRIPT_FACTORY_FUNCTION(HALAZZIAI, MoonScriptBossAI);
     HALAZZIAI(Creature* pCreature) : MoonScriptBossAI(pCreature)
     {
-		AddPhaseSpell(1, AddSpell(HALAZZI_SABER_LASH, Target_Destination, 0.5, 0, 0, 0, 0, false, "Me gonna carve ya now!", Text_Yell));
+		AddPhaseSpell(1, AddSpell(HALAZZI_SABER_LASH, Target_Destination, 0.5, 0, 0, 0, 0, false, "Me gonna carve ya now!", Text_Yell, 12023));
 
 		AddPhaseSpell(2, AddSpell(HALAZZI_FLAME_SHOCK, Target_Current, 12, 0, 0));
 		AddPhaseSpell(2, AddSpell(HALAZZI_EARTH_SHOCK, Target_Current, 12, 0, 0));
 
-		AddPhaseSpell(3, AddSpell(HALAZZI_SABER_LASH, Target_Destination, 0.5, 0, 0, 0, 0, false, "You gonna leave in pieces!", Text_Yell));
+		AddPhaseSpell(3, AddSpell(HALAZZI_SABER_LASH, Target_Destination, 0.5, 0, 0, 0, 0, false, "You gonna leave in pieces!", Text_Yell, 12024));
 		AddPhaseSpell(3, AddSpell(HALAZZI_FLAME_SHOCK, Target_Current, 18, 0, 0));
 		AddPhaseSpell(3, AddSpell(HALAZZI_EARTH_SHOCK, Target_Current, 18, 0, 0));
 		AddPhaseSpell(3, AddSpell(HALAZZI_ENRAGE, Target_Self, 100, 0, 60));
 
 		// Transfigure: 4k aoe damage
-		Transfigure = AddSpell(44054, Target_Self, 0, 0, 0, 0, 0, false, "I fight wit' untamed spirit...", Text_Yell);
+		Transfigure = AddSpell(44054, Target_Self, 0, 0, 0, 0, 0, false, "I fight wit' untamed spirit...", Text_Yell, 12021);
 
 		AddEmote(Event_OnCombatStart, "Get on your knees and bow to da fang and claw!", Text_Yell, 12020);
 		AddEmote(Event_OnTargetDied, "You cant fight da power...", Text_Yell, 12026);
 		AddEmote(Event_OnTargetDied, "You all gonna fail...", Text_Yell, 12027);
 		AddEmote(Event_OnDied, "Chaga... choka'jinn.", Text_Yell, 12028);
-		TotemTimer = AddTimer(1000); // Just to make the Timer ID
+	}
+	
+	void OnCombatStart(Unit *pTarget)
+	{
+		TotemTimer = AddTimer(5000); // Just to make the Timer ID
 		SplitCount = 0;
-		MaxHealth = GetUnit()->GetUInt32Value(UNIT_FIELD_MAXHEALTH);
+		MaxHealth = _unit->GetUInt32Value(UNIT_FIELD_MAXHEALTH);
+		Lynx = NULL;
+		
+		ParentClass::OnCombatStart(pTarget);
 	}
 
 	void OnDied(Unit *pKiller)
@@ -237,17 +244,16 @@ class HALAZZIAI : public MoonScriptBossAI
 
     void AIUpdate()
 	{
-		int32 Health = GetHealthPercent();
 		// Every 25% Halazzi calls on the lynx
-		if(!Lynx && Health <= 75 && SplitCount == 0)
+		if(!Lynx && GetHealthPercent() <= 75 && SplitCount == 0)
 			Split();
-		else if(!Lynx && Health <= 50 && SplitCount == 1)
+		else if(!Lynx && GetHealthPercent() <= 50 && SplitCount == 1)
 			Split();
-		else if(!Lynx && Health <= 25 && SplitCount == 2)
+		else if(!Lynx && GetHealthPercent() <= 25 && SplitCount == 2)
 			Split();
 
 		// Lynx OR Halazzi is at 20% HP Merge them together again
-		if(Lynx && (Lynx->GetHealthPercent() <= 20 || Health <= 20))
+		if(Lynx && Lynx->GetUnit() && (Lynx->GetHealthPercent() <= 20 || GetHealthPercent() <= 20))
 			Merge();
 		
 		// At <25% Phase 3 begins
@@ -282,19 +288,16 @@ class HALAZZIAI : public MoonScriptBossAI
 
 	void Split()
 	{
-		CurrentHealth = GetUnit()->GetUInt32Value(UNIT_FIELD_HEALTH);
-		SetDisplayId(24144);
-		GetUnit()->SetUInt32Value(UNIT_FIELD_HEALTH, 240000);
-		GetUnit()->SetUInt32Value(UNIT_FIELD_MAXHEALTH, 240000);
-
 		Lynx = SpawnCreature(24143, true);
 		if(Lynx)
 		{
-			Lynx->AggroNearestPlayer();
-			Lynx->SetDespawnWhenInactive(true);
-		}
+			CurrentHealth = _unit->GetUInt32Value(UNIT_FIELD_HEALTH);
+			SetDisplayId(24144);
+			_unit->SetUInt32Value(UNIT_FIELD_HEALTH, 240000);
+			_unit->SetUInt32Value(UNIT_FIELD_MAXHEALTH, 240000);
 
-		SetPhase(2, Transfigure);
+			SetPhase(2, Transfigure);
+		}
 	}
 
 	void Merge()
@@ -302,8 +305,11 @@ class HALAZZIAI : public MoonScriptBossAI
 		if(Lynx)
 			Lynx->Despawn();
 
-		GetUnit()->SetUInt32Value(UNIT_FIELD_HEALTH, CurrentHealth);
-		GetUnit()->SetUInt32Value(UNIT_FIELD_MAXHEALTH, MaxHealth);
+		if(CurrentHealth)
+			_unit->SetUInt32Value(UNIT_FIELD_HEALTH, CurrentHealth);
+		if(MaxHealth)
+			_unit->SetUInt32Value(UNIT_FIELD_MAXHEALTH, MaxHealth);
+			
 		SetDisplayId(21632);
 		
 		// Null variables
@@ -311,14 +317,15 @@ class HALAZZIAI : public MoonScriptBossAI
 		Lynx = NULL;
 
 		SplitCount++;
-		Emote("Spirit, come back to me!",Text_Yell);
+		Emote("Spirit, come back to me!", Text_Yell, 12022);
 		SetPhase(1);
 	}
 
 	MoonScriptCreatureAI* Lynx;
 	SpellDesc* Transfigure;
 	int32 TotemTimer;
-	int32 CurrentHealth, MaxHealth;
+	int32 CurrentHealth;
+	int32 MaxHealth;
 	int SplitCount;
 };
 
@@ -864,6 +871,7 @@ public:
     void OnDied(Unit * mKiller)
     {
 		_unit->SendChatMessage(CHAT_MSG_MONSTER_YELL, LANG_UNIVERSAL, "Mebbe me fall...but da Amani empire...never gonna die...");
+		_unit->PlaySoundToSet(12100);
        RemoveAIUpdateEvent();
     }
 
@@ -1947,7 +1955,6 @@ protected:
 void SetupZulAman(ScriptMgr * mgr)
 {
 	mgr->register_creature_script(CN_NALORAKK, &NalorakkAI::Create);
-	/*
 	mgr->register_creature_script(CN_JANALAI, &JANALAIAI::Create);
 	mgr->register_creature_script(CN_HEX_LORD_MALACRASS, &HEXLORDMALACRASSAI::Create);
 	mgr->register_creature_script(CN_ZULJIN, &ZULJINAI::Create);
@@ -1962,7 +1969,7 @@ void SetupZulAman(ScriptMgr * mgr)
 	mgr->register_creature_script(CN_FENSTALKER, &FENSTALKERAI::Create);
 	mgr->register_creature_script(CN_ALYSON_ANTILLE, &ALYSONANTILLEAI::Create);
 	mgr->register_creature_script(CN_KORAGG, &KORAGGAI::Create);
-	mgr->register_creature_script(CN_FEATHER_VORTEX, &FEATHERVORTEXAI::Create);*/
+	mgr->register_creature_script(CN_FEATHER_VORTEX, &FEATHERVORTEXAI::Create);
 
 	mgr->register_creature_script(CN_AKILZON, &AKILZONAI::Create);
 	mgr->register_creature_script(AKILZON_SOARING_EAGLE, &SOARINGEAGLEAI::Create);
