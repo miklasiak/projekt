@@ -25,7 +25,7 @@
 #endif
 #include "../arcemu-shared/arcemu_getopt.h"
 
-#define BANNER "ArcEmu %s r%u/%s-%s (%s) :: Logon Server"
+#define BANNER "ArcEmu %s r%u/%s-%s (%s) :: Logon Server powered by Evolution-Cores"
 
 #ifndef WIN32
 #include <sched.h>
